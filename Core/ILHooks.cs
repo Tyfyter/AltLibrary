@@ -1,7 +1,9 @@
 ﻿using AltLibrary.Common;
 using AltLibrary.Common.Hooks;
 using AltLibrary.Common.Systems;
+#if CONTENT
 using AltLibrary.Content.NPCs;
+#endif
 using AltLibrary.Core.Baking;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +18,8 @@ namespace AltLibrary.Core
 	{
 		public static void OnInitialize()
 		{
-			On.Terraria.Main.EraseWorld += Main_EraseWorld;
-			On.Terraria.Main.GUIChatDrawInner += Main_GUIChatDrawInner;
+			Terraria.On_Main.EraseWorld += Main_EraseWorld;
+			Terraria.On_Main.GUIChatDrawInner += Main_GUIChatDrawInner;
 			WorldIcons.Init();
 			OuterVisual.Init();
 			EvenMoreWorldGen.Init();
@@ -35,14 +37,13 @@ namespace AltLibrary.Core
 			JungleHuts.Init(); // TODO: redo?
 			TenthAnniversaryFix.Init();
 			DrunkCrimsonFix.Load();
-			BiomeTorchIL.Init();
 			BackgroundsAlternating.Inject();
 		}
 
 		public static void Unload()
 		{
-			On.Terraria.Main.EraseWorld -= Main_EraseWorld;
-			On.Terraria.Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
+			Terraria.On_Main.EraseWorld -= Main_EraseWorld;
+			Terraria.On_Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
 			WorldIcons.Unload();
 			OuterVisual.Unload();
 			EvenMoreWorldGen.Unload();
@@ -61,13 +62,13 @@ namespace AltLibrary.Core
 			TenthAnniversaryFix.Unload();
 			GenPasses.Unload();
 			DrunkCrimsonFix.Unload();
-			BiomeTorchIL.Uninit();
 			BackgroundsAlternating.Uninit();
 		}
 
-		private static void Main_GUIChatDrawInner(On.Terraria.Main.orig_GUIChatDrawInner orig, Main self)
+		private static void Main_GUIChatDrawInner(Terraria.On_Main.orig_GUIChatDrawInner orig, Main self)
 		{
 			orig(self);
+#if CONTENT
 			if (Main.LocalPlayer.talkNPC != -1 && Main.npc[Main.LocalPlayer.talkNPC].type == ModContent.NPCType<PieChartTownNPC>())
 			{
 				if (AnalystShopLoader.MaxShopCount() >= 1)
@@ -80,9 +81,10 @@ namespace AltLibrary.Core
 					AltLibrary.userInterface.Draw(Main.spriteBatch, Main._drawInterfaceGameTime);
 				}
 			}
+#endif
 		}
 
-		private static void Main_EraseWorld(On.Terraria.Main.orig_EraseWorld orig, int i)
+		private static void Main_EraseWorld(Terraria.On_Main.orig_EraseWorld orig, int i)
 		{
 			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
 			var path = Path.ChangeExtension(Main.WorldList[i].Path, ".twld");

@@ -1,5 +1,4 @@
 ﻿using AltLibrary.Common.AltBiomes;
-using AltLibrary.Content.Items;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if CONTENT
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -17,7 +18,7 @@ namespace AltLibrary.Content.NPCs
 
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Hallow Bunny");
+			// DisplayName.SetDefault("Hallow Bunny");
 			Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Bunny];
 			Main.npcCatchable[Type] = true;
 			NPCID.Sets.NPCBestiaryDrawModifiers value = new(0)
@@ -80,7 +81,7 @@ namespace AltLibrary.Content.NPCs
 			}
 		}
 
-		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+		public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
 		{
 			if (AltLibrary.HallowBunnyUnlocked)
 			{
@@ -90,7 +91,7 @@ namespace AltLibrary.Content.NPCs
 			}
 		}
 
-		public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
 		{
 			if (AltLibrary.HallowBunnyUnlocked)
 			{
@@ -141,3 +142,4 @@ namespace AltLibrary.Content.NPCs
 		}
 	}
 }
+#endif

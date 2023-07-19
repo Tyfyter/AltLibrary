@@ -45,8 +45,6 @@ namespace AltLibrary
 		internal static List<int> NPCsToNowShowUp = new();
 		internal static List<int> TilesToNowShowUp = new();
 
-		internal static List<BiomeTorchTile> BiomeTorchModItems = new();
-
 		/// <summary>
 		///     Gets or sets a value indicating whether the mouse should be checked in an interface or not.
 		/// </summary>
@@ -73,7 +71,9 @@ namespace AltLibrary
 			ALConvert.Load();
 			GuideHelpText.Load();
 			ExtractinatorOres.Load();
+#if CONTENT
 			AnalystShopLoader.Load();
+#endif
 			ModIconVariation = Main.rand.Next(ALTextureAssets.AnimatedModIcon.Length);
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
@@ -92,34 +92,6 @@ namespace AltLibrary
 			MimicSummon.SetupContent();
 			ALConvertInheritanceData.FillData();
 			ModSupport.ModSupport.HookAll();
-
-			List<BiomeTorchTile> torchList = new()
-			{
-				new() { Priority = BiomeTorchPriority.Dungeon, item = ItemID.BoneTorch, style = 13, check = (p) => p.ZoneDungeon },
-				new() { Priority = BiomeTorchPriority.Demon, item = ItemID.DemonTorch, style = 7, check = (p) => p.position.Y > Main.UnderworldLayer * 16 },
-				new() { Priority = BiomeTorchPriority.Hallowed, item = ItemID.HallowedTorch, style = 20, check = (p) => p.ZoneHallow },
-				new() { Priority = BiomeTorchPriority.Corrupt, item = ItemID.CorruptTorch, style = 18, check = (p) => p.ZoneCorrupt },
-				new() { Priority = BiomeTorchPriority.Crimson, item = ItemID.CrimsonTorch, style = 19, check = (p) => p.ZoneCrimson },
-				new() { Priority = BiomeTorchPriority.Ice, item = ItemID.IceTorch, style = 9, check = (p) => p.ZoneSnow },
-				new() { Priority = BiomeTorchPriority.Jungle, item = ItemID.JungleTorch, style = 21, check = (p) => p.ZoneJungle },
-				new() { Priority = BiomeTorchPriority.Desert, item = ItemID.DesertTorch, style = 16, check = (p) => (p.ZoneDesert && p.position.Y < Main.worldSurface * 16) || p.ZoneUndergroundDesert },
-			};
-			foreach (Item item in ContentSamples.ItemsByType.Values)
-			{
-				if (item.ModItem is null || item.ModItem is not IBiomeTorch)
-					continue;
-
-				torchList.Add(new()
-				{
-					Priority = (item.ModItem as IBiomeTorch).Priority,
-					item = item.type,
-					tile = (ushort)item.createTile,
-					style = item.placeStyle,
-					check = (item.ModItem as IBiomeTorch).InWhatBiome
-				});
-			}
-			torchList.Sort((x, y) => x.Priority.CompareTo(y.Priority));
-			BiomeTorchModItems = torchList;
 
 			BackgroundsAlternating.Init();
 		}
@@ -226,6 +198,7 @@ namespace AltLibrary
 							throw new ArgumentException("Arguments cannot be less or more than 5 or 6 in length for Convert");
 						}
 						return "Success";
+#if CONTENT
 					case "addanalystitem":
 						{
 							if (args.Length == 4)
@@ -258,6 +231,7 @@ namespace AltLibrary
 							}
 						}
 						return "Success";
+#endif
 					case "getbiomepercentage":
 						{
 							if (args[1] is string type)
@@ -321,12 +295,13 @@ namespace AltLibrary
 			UIChanges.Unapply();
 			ExtractinatorOres.Unload();
 			ALReflection.Unload();
+#if CONTENT
 			AnalystShopLoader.Unload();
+#endif
 			AltLibraryConfig.Config = null;
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
 			PreviewWorldIcons = null;
-			BiomeTorchModItems = null;
 			if (!Main.dedServ)
 			{
 				Instance = null;

@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -10,12 +11,12 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Load()
 		{
-			IL.Terraria.Main.HelpText += Main_HelpText;
+			Terraria.IL_Main.HelpText += Main_HelpText;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.Main.HelpText -= Main_HelpText;
+			Terraria.IL_Main.HelpText -= Main_HelpText;
 		}
 
 		private static void Main_HelpText(ILContext il)
@@ -31,7 +32,7 @@ namespace AltLibrary.Common.Hooks
 			}
 
 			c.Index += 3;
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				int ore = WorldGen.SavedOreTiers.Adamantite;
 				string key = "";
@@ -45,7 +46,7 @@ namespace AltLibrary.Common.Hooks
 				}
 				else
 				{
-					key = AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).GuideHelpText.GetTranslation(Language.ActiveCulture) ?? Language.GetTextValue("Mods.AltLibrary.OreHelpTextBase", AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).DisplayName.GetTranslation(Language.ActiveCulture).ToLowerInvariant());
+					key = AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).GuideHelpText.Value ?? Language.GetTextValue("Mods.AltLibrary.OreHelpTextBase", AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).DisplayName.Value.ToLowerInvariant());
 				}
 				Main.npcChatText = key;
 			});
@@ -56,7 +57,7 @@ namespace AltLibrary.Common.Hooks
 				return;
 			}
 
-			c.EmitDelegate((int i) => WorldGen.altarCount > 2 ? 111 : 0);
+			c.EmitDelegate<Func<int, int>>((int i) => WorldGen.altarCount > 2 ? 111 : 0);
 
 			if (!c.TryGotoNext(i => i.MatchLdcI4(223)))
 			{

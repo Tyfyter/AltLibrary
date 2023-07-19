@@ -1,4 +1,5 @@
-﻿using AltLibrary.Common;
+﻿#if CONTENT
+using AltLibrary.Common;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ namespace AltLibrary.Content.Items
 
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Hallow Bunny Cage");
-			Tooltip.SetDefault("Illusive bunny, lost in this wacky world...");
+			// DisplayName.SetDefault("Hallow Bunny Cage");
+			// Tooltip.SetDefault("Illusive bunny, lost in this wacky world...");
 		}
 
 		public override void SetDefaults()
@@ -75,3 +76,4 @@ namespace AltLibrary.Content.Items
 		public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset) => ModContent.GetInstance<HallowBunny>().PreDrawTooltipLine(line, ref yOffset);
 	}
 }
+#endif

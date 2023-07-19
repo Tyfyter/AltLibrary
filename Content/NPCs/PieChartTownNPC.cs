@@ -1,4 +1,5 @@
-﻿using AltLibrary.Common;
+﻿#if CONTENT
+using AltLibrary.Common;
 using AltLibrary.Common.Systems;
 using AltLibrary.Core.Baking;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +29,7 @@ namespace AltLibrary.Content.NPCs
 		public override void Load()
 		{
 			CurrentPage = 0;
-			IL.Terraria.Main.GUIChatDrawInner += Main_GUIChatDrawInner;
+			Terraria.IL_Main.GUIChatDrawInner += Main_GUIChatDrawInner;
 		}
 
 		private void Main_GUIChatDrawInner(ILContext il)
@@ -116,13 +117,13 @@ namespace AltLibrary.Content.NPCs
 
 		public override void Unload()
 		{
-			IL.Terraria.Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
+			Terraria.IL_Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
 			CurrentPage = 0;
 		}
 
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Analyst");
+			// DisplayName.SetDefault("Analyst");
 
 			Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Mechanic];
 
@@ -151,7 +152,7 @@ namespace AltLibrary.Content.NPCs
 			;
 		}
 
-		public override bool CanTownNPCSpawn(int numTownNPCs, int money) => false;
+		public override bool CanTownNPCSpawn(int numTownNPCs)/* tModPorter Suggestion: Copy the implementation of NPC.SpawnAllowed_Merchant in vanilla if you to count money, and be sure to set a flag when unlocked, so you don't count every tick. */ => false;
 
 		public override void SetDefaults()
 		{
@@ -212,7 +213,7 @@ namespace AltLibrary.Content.NPCs
 			button2 = Language.GetTextValue("Mods.AltLibrary.Analysis");
 		}
 
-		public override void SetupShop(Chest shop, ref int nextSlot)
+		public override void ModifyActiveShop(string shopName, Item[] items)
 		{
 			nextSlot = 0;
 
@@ -233,7 +234,7 @@ namespace AltLibrary.Content.NPCs
 			}
 		}
 
-		public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+		public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 		{
 			Main.LocalPlayer.GetModPlayer<ALPlayer>().IsAnalysing = false;
 			Main.LocalPlayer.GetModPlayer<ALPlayer>().IsAnalysingClick = false;
@@ -296,3 +297,4 @@ namespace AltLibrary.Content.NPCs
 		}
 	}
 }
+#endif

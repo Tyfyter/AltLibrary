@@ -10,12 +10,13 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Generation;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.AltBiomes
 {
-	public abstract class AltBiome : ModType
+	public abstract class AltBiome : ModType, ILocalizedModType
 	{
 		internal int SpecialValueForWorldUIDoNotTouchElseYouCanBreakStuff { get; set; }
 		internal bool? IsForCrimsonOrCorruptWorldUIFix { get; set; }
@@ -24,31 +25,20 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public BiomeType BiomeType { get; set; }
 		public int Type { get; internal set; }
+		public string LocalizationCategory => "AltBiomes";
 
 		/// <summary>
 		/// The name of this biome that will display on the biome selection screen.
 		/// </summary>
-		public ModTranslation DisplayName
-		{
-			get;
-			private set;
-		}
+		public LocalizedText DisplayName => this.GetLocalization("DisplayName", PrettyPrintName);
 		/// <summary>
 		/// The description for this biome that will appear on the biome selection screen.
 		/// </summary>
-		public ModTranslation Description
-		{
-			get;
-			private set;
-		}
+		public LocalizedText Description => this.GetLocalization("Description", PrettyPrintName);
 		/// <summary>
 		/// The message that will appear during world generation. Used by Underworld and Jungle alts. Yet.
 		/// </summary>
-		public ModTranslation GenPassName
-		{
-			get;
-			private set;
-		}
+		public LocalizedText GenPassName => this.GetLocalization("GenPassName", PrettyPrintName);
 
 		/// <summary>
 		/// Set this to something if for some reason you need RNG generation types or something
@@ -317,24 +307,10 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual Color AltUnderworldColor => Color.Black;
 		public virtual Asset<Texture2D>[] AltUnderworldBackgrounds => new Asset<Texture2D>[14];
 		public virtual AltMaterialContext MaterialContext => null;
-
 		public sealed override void SetupContent()
 		{
-			AutoStaticDefaults();
 			SetStaticDefaults();
 			BakeAllAltBlockData();
-		}
-
-		public virtual void AutoStaticDefaults()
-		{
-			if (DisplayName.IsDefault())
-			{
-				DisplayName.SetDefault(Regex.Replace(Name, "([A-Z])", " $1").Trim());
-			}
-			if (GenPassName.IsDefault())
-			{
-				GenPassName.SetDefault("Generating " + Regex.Replace(Name, "([A-Z])", " $1").Trim());
-			}
 		}
 
 		/// <summary>
@@ -418,10 +394,6 @@ namespace AltLibrary.Common.AltBiomes
 		protected sealed override void Register()
 		{
 			ModTypeLookup<AltBiome>.Register(this);
-
-			DisplayName = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltBiomeName.{Name}", false);
-			Description = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltBiomeDescription.{Name}", true);
-			GenPassName = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltBiomeGen.{Name}", true);
 
 			AltLibrary.Biomes.Add(this);
 			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);

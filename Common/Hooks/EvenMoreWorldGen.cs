@@ -19,24 +19,19 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.WorldGen.GenerateWorld += GenPasses.ILGenerateWorld;
+			Terraria.IL_WorldGen.GenerateWorld += GenPasses.ILGenerateWorld;
 			GenPasses.HookGenPassReset += GenPasses_HookGenPassReset;
 			GenPasses.HookGenPassShinies += GenPasses_HookGenPassShinies;
 			GenPasses.HookGenPassUnderworld += GenPasses_HookGenPassUnderworld;
 			GenPasses.HookGenPassAltars += ILGenPassAltars;
 			GenPasses.HookGenPassMicroBiomes += GenPasses_HookGenPassMicroBiomes;
-			IL.Terraria.GameContent.Biomes.MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
+			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.WorldGen.GenerateWorld -= GenPasses.ILGenerateWorld;
-			GenPasses.HookGenPassReset -= GenPasses_HookGenPassReset;
-			GenPasses.HookGenPassShinies -= GenPasses_HookGenPassShinies;
-			GenPasses.HookGenPassUnderworld -= GenPasses_HookGenPassUnderworld;
-			GenPasses.HookGenPassAltars -= ILGenPassAltars;
-			GenPasses.HookGenPassMicroBiomes -= GenPasses_HookGenPassMicroBiomes;
-			IL.Terraria.GameContent.Biomes.MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;
+			Terraria.IL_WorldGen.GenerateWorld -= GenPasses.ILGenerateWorld;
+			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;
 		}
 
 		private static void MiningExplosivesBiome_Place(ILContext il)
@@ -81,7 +76,7 @@ namespace AltLibrary.Common.Hooks
 			{
 				if (WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).GenPassName != null)
 				{
-					progress.Message = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).GenPassName.GetTranslation(Language.ActiveCulture);
+					progress.Message = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).GenPassName.Value;
 				}
 			});
 
@@ -99,7 +94,7 @@ namespace AltLibrary.Common.Hooks
 			}
 
 			ILLabel label = c.DefineLabel();
-			c.EmitDelegate(() => WorldBiomeManager.WorldHell == "");
+			c.EmitDelegate<Func<bool>>(() => WorldBiomeManager.WorldHell == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 			c.Index++;
 			c.MarkLabel(label);
@@ -122,7 +117,7 @@ namespace AltLibrary.Common.Hooks
 			var label = il.DefineLabel();
 
 			c.Index++;
-			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
+			c.EmitDelegate<Func<bool>>(() => WorldBiomeManager.WorldJungle == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 
 			if (!c.TryGotoNext(i => i.MatchLdstr("..Long Minecart Tracks")))
@@ -149,11 +144,11 @@ namespace AltLibrary.Common.Hooks
 				AltLibrary.Instance.Logger.Info("e $ 1");
 				return;
 			}
-			c.EmitDelegate(() => WorldGen.crimson || WorldBiomeManager.WorldEvil != "");
+			c.EmitDelegate<Func<bool>>(() => WorldGen.crimson || WorldBiomeManager.WorldEvil != "");
 			c.Emit(OpCodes.Brfalse, startNormalAltar);
 			c.Emit(OpCodes.Ldloc, 3);
 			c.Emit(OpCodes.Ldloc, 4);
-			c.EmitDelegate((int x, int y) =>
+			c.EmitDelegate<Action<int, int>>((int x, int y) =>
 			{
 				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).AltarTile.HasValue)
 				{
@@ -289,24 +284,24 @@ namespace AltLibrary.Common.Hooks
 				var label = c.DefineLabel();
 				var label2 = c.DefineLabel();
 				var label3 = c.DefineLabel();
-				c.EmitDelegate(type.Invoke);
+				c.EmitDelegate(type);
 				c.Emit(OpCodes.Ldc_I4, value1.Item1);
 				c.Emit(OpCodes.Bne_Un_S, label);
 				c.Emit(OpCodes.Ldarg, 0);
-				c.EmitDelegate(() => value1.Item2);
+				c.Emit(OpCodes.Ldc_I4, value1.Item2);
 				c.Emit(OpCodes.Stfld, field);
 				c.Emit(OpCodes.Br_S, label3);
 				c.MarkLabel(label);
-				c.EmitDelegate(type.Invoke);
+				c.EmitDelegate(type);
 				c.Emit(OpCodes.Ldc_I4, value2.Item1);
 				c.Emit(OpCodes.Bne_Un_S, label2);
 				c.Emit(OpCodes.Ldarg, 0);
-				c.EmitDelegate(() => value2.Item2);
+				c.Emit(OpCodes.Ldc_I4, value2.Item2);
 				c.Emit(OpCodes.Stfld, field);
 				c.Emit(OpCodes.Br_S, label3);
 				c.MarkLabel(label2);
 				c.Emit(OpCodes.Ldarg, 0);
-				c.EmitDelegate(() => AltLibrary.Ores[type.Invoke() - 1].ore);
+				c.EmitDelegate<Func<int>>(() => AltLibrary.Ores[type() - 1].ore);
 				c.Emit(OpCodes.Stfld, field);
 				c.MarkLabel(label3);
 			}
@@ -471,7 +466,7 @@ namespace AltLibrary.Common.Hooks
 				return;
 			}
 			c.Index++;
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.HasValue)
 				{
@@ -494,9 +489,9 @@ namespace AltLibrary.Common.Hooks
 				return;
 			}
 			ILLabel startCorruptionGen = c.DefineLabel();
-			c.EmitDelegate(() => !WorldGen.crimson && WorldBiomeManager.WorldEvil != "");
+			c.EmitDelegate<Func<bool>>(() => !WorldGen.crimson && WorldBiomeManager.WorldEvil != "");
 			c.Emit(OpCodes.Brfalse, startCorruptionGen);
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.HasValue)
 				{

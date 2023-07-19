@@ -302,15 +302,6 @@ namespace AltLibrary.Common.Hooks
 		{
 			private static Mod mod;
 
-			static event hook_GetItems GetItems
-			{
-				add => HookEndpointManager.Add(mod.GetType().Assembly
-						.GetType("HEROsMod.UIKit.UIComponents.ItemBrowser")
-						.GetMethod("GetItems", BindingFlags.Public | BindingFlags.Instance), value);
-				remove => HookEndpointManager.Remove(mod.GetType().Assembly
-						.GetType("HEROsMod.UIKit.UIComponents.ItemBrowser")
-						.GetMethod("GetItems", BindingFlags.Public | BindingFlags.Instance), value);
-			}
 			delegate Item[] hook_GetItems(orig_GetItems orig, object self);
 			delegate Item[] orig_GetItems(object self);
 
@@ -319,15 +310,13 @@ namespace AltLibrary.Common.Hooks
 				mod = null;
 				if (!ModLoader.TryGetMod("HEROsMod", out mod))
 					return;
-				GetItems += HerosDetour_GetItems;
+				MonoModHooks.Add(mod.GetType().Assembly
+						.GetType("HEROsMod.UIKit.UIComponents.ItemBrowser")
+						.GetMethod("GetItems", BindingFlags.Public | BindingFlags.Instance), (hook_GetItems)HerosDetour_GetItems);
 			}
 
 			internal static void Unload()
 			{
-				if (mod != null)
-				{
-					GetItems -= HerosDetour_GetItems;
-				}
 				mod = null;
 			}
 
@@ -346,17 +335,7 @@ namespace AltLibrary.Common.Hooks
 			private static Mod mod;
 
 			private static MethodInfo ItemViewSet = null;
-			private static event ILContext.Manipulator ModifyItemViewSet
-			{
-				add => HookEndpointManager.Modify(ItemViewSet, value);
-				remove => HookEndpointManager.Unmodify(ItemViewSet, value);
-			}
 			private static MethodInfo RecipeViewSet = null;
-			private static event ILContext.Manipulator ModifyRecipeViewSet
-			{
-				add => HookEndpointManager.Modify(RecipeViewSet, value);
-				remove => HookEndpointManager.Unmodify(RecipeViewSet, value);
-			}
 
 			internal static void Load()
 			{
@@ -371,7 +350,7 @@ namespace AltLibrary.Common.Hooks
 				}
 				if (ItemViewSet != null)
 				{
-					ModifyItemViewSet += CheatSheetChanges_ModifyItemViewSet;
+					MonoModHooks.Modify(ItemViewSet, CheatSheetChanges_ModifyItemViewSet);
 				}
 
 				p = mod.GetType().Assembly.GetType("CheatSheet.Menus.RecipeBrowserWindow");
@@ -381,20 +360,12 @@ namespace AltLibrary.Common.Hooks
 				}
 				if (RecipeViewSet != null)
 				{
-					ModifyRecipeViewSet += CheatSheetChanges_ModifyRecipeViewSet;
+					MonoModHooks.Modify(RecipeViewSet, CheatSheetChanges_ModifyRecipeViewSet);
 				}
 			}
 
 			internal static void Unload()
 			{
-				if (ItemViewSet != null)
-				{
-					ModifyItemViewSet -= CheatSheetChanges_ModifyItemViewSet;
-				}
-				if (RecipeViewSet != null)
-				{
-					ModifyRecipeViewSet -= CheatSheetChanges_ModifyRecipeViewSet;
-				}
 				ItemViewSet = null;
 				RecipeViewSet = null;
 				mod = null;

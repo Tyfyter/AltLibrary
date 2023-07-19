@@ -2,6 +2,7 @@
 using AltLibrary.Common.Condition;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using System;
 using System.Linq;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -12,12 +13,12 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.GameContent.ItemDropRules.ItemDropDatabase.RegisterBoss_Twins += ItemDropDatabase_RegisterBoss_Twins;
+			Terraria.GameContent.ItemDropRules.IL_ItemDropDatabase.RegisterBoss_Twins += ItemDropDatabase_RegisterBoss_Twins;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.GameContent.ItemDropRules.ItemDropDatabase.RegisterBoss_Twins -= ItemDropDatabase_RegisterBoss_Twins;
+			Terraria.GameContent.ItemDropRules.IL_ItemDropDatabase.RegisterBoss_Twins -= ItemDropDatabase_RegisterBoss_Twins;
 		}
 
 		private static void ItemDropDatabase_RegisterBoss_Twins(ILContext il)
@@ -35,7 +36,7 @@ namespace AltLibrary.Common.Hooks
 			}
 			c.Index++;
 			c.Emit(OpCodes.Ldloc, 1);
-			c.EmitDelegate(LeadingConditionRule);
+			c.EmitDelegate<Func<LeadingConditionRule, LeadingConditionRule>>(LeadingConditionRule);
 			c.Emit(OpCodes.Stloc, 1);
 		}
 

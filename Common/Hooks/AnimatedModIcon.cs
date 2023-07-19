@@ -18,31 +18,16 @@ namespace AltLibrary.Common.Hooks
 	{
 		private static MethodInfo OnInit = null;
 
-		private static event ILContext.Manipulator ModifyOnInit
-		{
-			add
-			{
-				HookEndpointManager.Modify(OnInit, value);
-			}
-			remove
-			{
-				HookEndpointManager.Unmodify(OnInit, value);
-			}
-		}
-
 		internal static void Init()
 		{
 			var UIMods = typeof(Main).Assembly.GetType("Terraria.ModLoader.UI.UIModItem");
 			OnInit = UIMods.GetMethod("OnInitialize", BindingFlags.Public | BindingFlags.Instance);
-			ModifyOnInit += AnimatedModIcon_ModifyOnInit;
+			MonoModHooks.Modify(OnInit, AnimatedModIcon_ModifyOnInit);
 			NoSecretItems.Load();
 		}
 
 		internal static void Unload()
 		{
-			var UIMods = typeof(Main).Assembly.GetType("Terraria.ModLoader.UI.UIModItem");
-			OnInit = UIMods.GetMethod("OnInitialize", BindingFlags.Public | BindingFlags.Instance);
-			ModifyOnInit -= AnimatedModIcon_ModifyOnInit;
 			OnInit = null;
 			NoSecretItems.Unload();
 		}
@@ -89,7 +74,7 @@ namespace AltLibrary.Common.Hooks
 
 			c.Emit(OpCodes.Ldarg, 0);
 			c.Emit(OpCodes.Ldfld, _modIcon);
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Func<UIImageFramed>>(() =>
 			{
 				UIImageFramed image = new(ALTextureAssets.AnimatedModIcon[0], new Rectangle(0, 0, 80, 80))
 				{

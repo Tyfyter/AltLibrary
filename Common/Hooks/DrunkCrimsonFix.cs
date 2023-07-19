@@ -1,6 +1,7 @@
 ﻿using AltLibrary.Common.Systems;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -11,12 +12,12 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Load()
 		{
-			IL.Terraria.Main.UpdateTime_StartDay += Main_UpdateTime_StartDay;
+			Terraria.IL_Main.UpdateTime_StartDay += Main_UpdateTime_StartDay;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.Main.UpdateTime_StartDay -= Main_UpdateTime_StartDay;
+			Terraria.IL_Main.UpdateTime_StartDay -= Main_UpdateTime_StartDay;
 		}
 
 		private static void Main_UpdateTime_StartDay(ILContext il)
@@ -46,7 +47,7 @@ namespace AltLibrary.Common.Hooks
 
 			c.Index++;
 			c.MarkLabel(skipVanilla);
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				List<int> AllBiomes = new() { -333, -666 };
 				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().ForEach(x => AllBiomes.Add(x.Type));

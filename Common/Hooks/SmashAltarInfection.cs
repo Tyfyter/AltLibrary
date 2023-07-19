@@ -17,12 +17,12 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.WorldGen.SmashAltar += WorldGen_SmashAltar;
+			Terraria.IL_WorldGen.SmashAltar += WorldGen_SmashAltar;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.WorldGen.SmashAltar -= WorldGen_SmashAltar;
+			Terraria.IL_WorldGen.SmashAltar -= WorldGen_SmashAltar;
 		}
 
 		private static void WorldGen_SmashAltar(ILContext il)
@@ -37,7 +37,7 @@ namespace AltLibrary.Common.Hooks
 
 			c.Index++;
 			c.Emit(OpCodes.Ldloc_0);
-			c.EmitDelegate(DrunkenBaking.GetDrunkSmashingData);
+			c.EmitDelegate<Func<bool, int, bool>>(DrunkenBaking.GetDrunkSmashingData);
 
 			for (int j = 0; j < 3; j++)
 			{
@@ -51,7 +51,7 @@ namespace AltLibrary.Common.Hooks
 
 					c.Index++;
 					c.Emit(OpCodes.Pop);
-					c.EmitDelegate(() => false);
+					c.Emit(OpCodes.Ldc_I4_0);// was c.EmitDelegate(() => false);
 				}
 				else if (j == 2)
 				{
@@ -63,7 +63,7 @@ namespace AltLibrary.Common.Hooks
 
 					c.Index++;
 					c.Emit(OpCodes.Pop);
-					c.EmitDelegate(() => false);
+					c.Emit(OpCodes.Ldc_I4_0);// was c.EmitDelegate(() => false);
 				}
 
 				if (!c.TryGotoNext(i => i.MatchLdsfld<Lang>(nameof(Lang.misc)),
@@ -78,7 +78,7 @@ namespace AltLibrary.Common.Hooks
 				c.Index += 4;
 				c.Emit(OpCodes.Pop);
 				c.Emit(OpCodes.Ldc_I4, j);
-				c.EmitDelegate(DrunkenBaking.GetSmashAltarText);
+				c.EmitDelegate<Func<int, string>>(DrunkenBaking.GetSmashAltarText);
 
 				if (!c.TryGotoNext(i => i.MatchLdsfld<Lang>(nameof(Lang.misc)),
 					i => i.MatchLdloc(7 + j),

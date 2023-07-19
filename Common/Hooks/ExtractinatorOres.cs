@@ -1,19 +1,23 @@
 ﻿using AltLibrary.Common.AltOres;
 using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 
-namespace AltLibrary.Common.Hooks
-{
-	public static class ExtractinatorOres
-	{
-		private static readonly string NoteToEveryone = "Yes, this is a detour, and it WILL have incompatibilities with ILs, but it was made for the sake of other detours.";
+namespace AltLibrary.Common.Hooks {
+	public static class ExtractinatorOres {
+		private const string OldNote = "Yes, this is a detour, and it WILL have incompatibilities with ILs, but it was made for the sake of other detours.";
+		private const string NoteToFox = "Could you explain what the above note meant? My experience with competing detours has consisted of detours that don't call orig breaking those that don't, and being fixed most effectively by using IL";
 
 		public static List<int> Gems;
+		public static List<int> PrehardmodeOres;
 		public static List<int> Ores;
 
 		internal static void Load()
@@ -28,6 +32,17 @@ namespace AltLibrary.Common.Hooks
 				ItemID.Diamond,
 			};
 
+			PrehardmodeOres = new()
+			{
+				ItemID.CopperOre,
+				ItemID.TinOre,
+				ItemID.IronOre,
+				ItemID.LeadOre,
+				ItemID.SilverOre,
+				ItemID.TungstenOre,
+				ItemID.GoldOre,
+				ItemID.PlatinumOre
+			};
 			Ores = new()
 			{
 				ItemID.CopperOre,
@@ -40,212 +55,76 @@ namespace AltLibrary.Common.Hooks
 				ItemID.PlatinumOre
 			};
 
-			foreach (AltOre o in AltLibrary.Ores.Where(x => x.OreType >= OreType.Copper && x.OreType <= OreType.Gold || x.IncludeInExtractinator))
-				Ores.Add(o.ore);
+			foreach (AltOre o in AltLibrary.Ores.Where(x => x.IncludeInExtractinator)) {
+				int oreItem = TileLoader.GetItemDropFromTypeAndStyle(o.ore);
+				if (o.OreType >= OreType.Copper && o.OreType <= OreType.Gold) PrehardmodeOres.Add(oreItem);
+				Ores.Add(oreItem);
+			}
 
-			On.Terraria.Player.ExtractinatorUse += Player_ExtractinatorUse1;
+			IL_Player.ExtractinatorUse += Player_ExtractinatorUse;
 		}
 
 		internal static void Unload()
 		{
-			On.Terraria.Player.ExtractinatorUse -= Player_ExtractinatorUse1;
+			IL_Player.ExtractinatorUse -= Player_ExtractinatorUse;
 
 			Gems = null;
 			Ores = null;
 		}
-
-		private static void Player_ExtractinatorUse1(On.Terraria.Player.orig_ExtractinatorUse orig, Player self, int extractType)
-		{
-			int mosquito = 5000;
-			int num8 = 25;
-			int num5 = 50;
-			int studryFossil = -1;
-			if (extractType == ItemID.DesertFossil)
-			{
-				mosquito /= 3;
-				num8 *= 2;
-				num5 = 20;
-				studryFossil = 10;
-			}
-
-			int itemType;
-			int itemStack = 1;
-			if (studryFossil != -1 && Main.rand.NextBool(studryFossil))
-			{
-				itemType = ItemID.FossilOre;
-				if (Main.rand.NextBool(5))
-					itemStack += Main.rand.Next(2);
-
-				if (Main.rand.NextBool(10))
-					itemStack += Main.rand.Next(3);
-
-				if (Main.rand.NextBool(15))
-					itemStack += Main.rand.Next(4);
-			}
-			else if (Main.rand.NextBool(2))
-			{
-				if (Main.rand.NextBool(12000))
-				{
-					itemType = ItemID.PlatinumCoin;
-					if (Main.rand.NextBool(14))
-						itemStack += Main.rand.Next(0, 2);
-					if (Main.rand.NextBool(14))
-						itemStack += Main.rand.Next(0, 2);
-					if (Main.rand.NextBool(14))
-						itemStack += Main.rand.Next(0, 2);
+		static void Player_ExtractinatorUse(ILContext il) {
+			ILCursor c = new(il);
+			ILLabel elseBlock = default;
+			try {
+				c.GotoNext(MoveType.After,
+					ins => ins.MatchLdarg(2),
+					ins => ins.MatchLdcI4(TileID.ChlorophyteExtractinator),
+					ins => ins.MatchBneUn(out elseBlock)
+				);
+				for (int i = 0; i < 2; i++) {
+					int randParam = -1;
+					Func<Instruction, bool>[] predicates = {
+						ins => ins.MatchCall<Main>("get_rand"),
+						ins => ins.MatchLdcI4(out _),
+						ins => ins.MatchCall<UnifiedRandom>("Next"),
+						ins => ins.MatchStloc(out randParam),
+						ins => ins.MatchLdloc(randParam),
+						ins => ins.MatchSwitch(out _),
+						ins => ins.MatchBr(out _)
+					};
+					c.GotoNext(MoveType.Before, predicates);
+					c.RemoveRange(predicates.Length);
+					int itemType = -1;
+					loop:
+					if (c.RemoveMatching(
+						ins => ins.MatchLdcI4(out _),
+						ins => ins.MatchStloc(out itemType),
+						ins => ins.MatchBr(out _)
+					)) goto loop;
+					c.RemoveMatchingThrow(AltLibrary.Instance, il,
+						ins => ins.MatchLdcI4(out _),
+						ins => ins.MatchStloc(itemType)
+					);
+					c.Emit(OpCodes.Ldloca, itemType);
+					switch (i) {
+						case 0:
+						c.EmitDelegate<_SetExtractinatorDrop>(SetGreenExtractinatorDrop);
+						break;
+						case 1:
+						c.EmitDelegate<_SetExtractinatorDrop>(SetExtractinatorDrop);
+						break;
+					}
 				}
-				else if (Main.rand.NextBool(800))
-				{
-					itemType = ItemID.GoldCoin;
-					if (Main.rand.NextBool(6))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(6))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(6))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(6))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(6))
-						itemStack += Main.rand.Next(1, 20);
-				}
-				else if (Main.rand.NextBool(60))
-				{
-					itemType = ItemID.SilverCoin;
-					if (Main.rand.NextBool(4))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(4))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(4))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(4))
-						itemStack += Main.rand.Next(5, 25);
-				}
-				else
-				{
-					itemType = ItemID.CopperCoin;
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(10, 25);
-				}
+			} catch (Exception e) {
+				if (e is not ILPatchFailureException) MonoModHooks.DumpIL(AltLibrary.Instance, il);
+				throw;
 			}
-			else if (mosquito != -1 && Main.rand.NextBool(mosquito))
-			{
-				itemType = ItemID.AmberMosquito;
-			}
-			else if (num8 != -1 && Main.rand.NextBool(num8))
-			{
-				itemType = Main.rand.Next(Gems);
-				if (Main.rand.NextBool(20))
-					itemStack += Main.rand.Next(0, 2);
-				if (Main.rand.NextBool(30))
-					itemStack += Main.rand.Next(0, 3);
-				if (Main.rand.NextBool(40))
-					itemStack += Main.rand.Next(0, 4);
-				if (Main.rand.NextBool(50))
-					itemStack += Main.rand.Next(0, 5);
-				if (Main.rand.NextBool(60))
-					itemStack += Main.rand.Next(0, 6);
-			}
-			else if (num5 != -1 && Main.rand.NextBool(num5))
-			{
-				itemType = ItemID.Amber;
-				if (Main.rand.NextBool(20))
-					itemStack += Main.rand.Next(0, 2);
-				if (Main.rand.NextBool(30))
-					itemStack += Main.rand.Next(0, 3);
-				if (Main.rand.NextBool(40))
-					itemStack += Main.rand.Next(0, 4);
-				if (Main.rand.NextBool(50))
-					itemStack += Main.rand.Next(0, 5);
-				if (Main.rand.NextBool(60))
-					itemStack += Main.rand.Next(0, 6);
-			}
-			else if (Main.rand.NextBool(3))
-			{
-				if (Main.rand.NextBool(5000))
-				{
-					itemType = ItemID.PlatinumCoin;
-					if (Main.rand.NextBool(10))
-						itemStack += Main.rand.Next(0, 3);
-					if (Main.rand.NextBool(10))
-						itemStack += Main.rand.Next(0, 3);
-					if (Main.rand.NextBool(10))
-						itemStack += Main.rand.Next(0, 3);
-					if (Main.rand.NextBool(10))
-						itemStack += Main.rand.Next(0, 3);
-					if (Main.rand.NextBool(10))
-						itemStack += Main.rand.Next(0, 3);
-				}
-				else if (Main.rand.NextBool(400))
-				{
-					itemType = ItemID.GoldCoin;
-					if (Main.rand.NextBool(5))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(5))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(5))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(5))
-						itemStack += Main.rand.Next(1, 21);
-					if (Main.rand.NextBool(5))
-						itemStack += Main.rand.Next(1, 20);
-				}
-				else if (Main.rand.NextBool(30))
-				{
-					itemType = ItemID.SilverCoin;
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(5, 26);
-					if (Main.rand.NextBool(3))
-						itemStack += Main.rand.Next(5, 25);
-				}
-				else
-				{
-					itemType = ItemID.CopperCoin;
-					if (Main.rand.NextBool(2))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(2))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(2))
-						itemStack += Main.rand.Next(10, 26);
-					if (Main.rand.NextBool(2))
-						itemStack += Main.rand.Next(10, 25);
-				}
-			}
-			else
-			{
-				itemType = Main.rand.Next(Ores);
-				if (Main.rand.NextBool(20))
-					itemStack += Main.rand.Next(0, 2);
-				if (Main.rand.NextBool(30))
-					itemStack += Main.rand.Next(0, 3);
-				if (Main.rand.NextBool(40))
-					itemStack += Main.rand.Next(0, 4);
-				if (Main.rand.NextBool(50))
-					itemStack += Main.rand.Next(0, 5);
-				if (Main.rand.NextBool(60))
-					itemStack += Main.rand.Next(0, 6);
-			}
-			ItemLoader.ExtractinatorUse(ref itemType, ref itemStack, extractType);
-
-			if (itemType > 0)
-			{
-				Vector2 position = Main.ReverseGravitySupport(Main.MouseScreen, 0f) + Main.screenPosition;
-				if (Main.SmartCursorIsUsed || PlayerInput.UsingGamepad)
-					position = self.Center;
-
-				int itemIndex = Item.NewItem(self.GetSource_TileInteraction(Player.tileTargetX, Player.tileTargetY), (int)position.X, (int)position.Y, 1, 1, itemType, itemStack, pfix: -1);
-				if (Main.netMode == NetmodeID.MultiplayerClient)
-					NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex, 1f);
-			}
+		}
+		delegate void _SetExtractinatorDrop(ref int itemType);
+		static void SetExtractinatorDrop(ref int itemType) {
+			itemType = Main.rand.Next(PrehardmodeOres);
+		}
+		static void SetGreenExtractinatorDrop(ref int itemType) {
+			itemType = Main.rand.Next(Ores);
 		}
 	}
 }

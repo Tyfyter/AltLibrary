@@ -6,8 +6,7 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltOres
 {
-	public abstract class AltOre : ModTexturedType
-	{
+	public abstract class AltOre : ModTexturedType, ILocalizedModType {
 		/// <summary>
 		/// The TileID of the ore that will generate in the world.
 		/// </summary>
@@ -34,39 +33,24 @@ namespace AltLibrary.Common.AltOres
 		public bool IncludeInExtractinator = false;
 
 		public int Type { get; internal set; }
+		public string LocalizationCategory => "AltOres";
 
 		/// <summary>
 		/// The name of this ore that will display on the biome selection screen.
 		/// </summary>
-		public ModTranslation DisplayName
-		{
-			get;
-			private set;
-		}
+		public LocalizedText DisplayName => this.GetLocalization("DisplayName", PrettyPrintName);
 		/// <summary>
 		/// The description for this ore that will appear on the biome selection screen.
 		/// </summary>
-		public ModTranslation Description
-		{
-			get;
-			private set;
-		}
+		public LocalizedText Description => this.GetLocalization("Description", PrettyPrintName);
 		/// <summary>
 		/// The 'World was blessed by ...' message. Used for hardmode ore alts.
 		/// </summary>
-		public ModTranslation BlessingMessage
-		{
-			get;
-			private set;
-		}
+		public LocalizedText BlessingMessage => this.GetLocalization("BlessingMessage", PrettyPrintName);
 		/// <summary>
 		/// Used for adamantite ore alts.
 		/// </summary>
-		public ModTranslation GuideHelpText
-		{
-			get;
-			private set;
-		}
+		public LocalizedText GuideHelpText => this.GetLocalization("GuideHelpText", PrettyPrintName);
 
 		public bool includeInHardmodeDrunken = false;
 
@@ -109,31 +93,13 @@ namespace AltLibrary.Common.AltOres
 		{
 			ModTypeLookup<AltOre>.Register(this);
 
-			DisplayName = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltOreName.{Name}", false);
-			Description = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltOreDescription.{Name}", true);
-			BlessingMessage = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltOreBless.{Name}", true);
-			GuideHelpText = LocalizationLoader.GetOrCreateTranslation(Mod, $"AltBiomeHelpText.{Name}", true);
-
 			AltLibrary.Ores.Add(this);
 			Type = AltLibrary.Ores.Count;
 		}
 
 		public sealed override void SetupContent()
 		{
-			AutoStaticDefaults();
 			SetStaticDefaults();
-		}
-
-		public virtual void AutoStaticDefaults()
-		{
-			if (DisplayName.IsDefault())
-			{
-				DisplayName.SetDefault(Regex.Replace(Name, "([A-Z])", " $1").Trim());
-			}
-			if (BlessingMessage.IsDefault())
-			{
-				BlessingMessage.SetDefault(Language.GetTextValue("Mods.AltLibrary.BlessBase", Name));
-			}
 		}
 	}
 }

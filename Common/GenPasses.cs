@@ -6,6 +6,7 @@ using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Terraria.ModLoader;
 
 namespace AltLibrary.Common
 {
@@ -20,38 +21,38 @@ namespace AltLibrary.Common
 
 		internal static event ILContext.Manipulator HookGenPassReset
 		{
-			add => HookEndpointManager.Modify(ResetInfo, value);
-			remove => HookEndpointManager.Unmodify(ResetInfo, value);
+			add => MonoModHooks.Modify(ResetInfo, value);
+			remove { }
 		}
 
 		internal static event ILContext.Manipulator HookGenPassShinies
 		{
-			add => HookEndpointManager.Modify(ShiniesInfo, value);
-			remove => HookEndpointManager.Unmodify(ShiniesInfo, value);
+			add => MonoModHooks.Modify(ShiniesInfo, value);
+			remove { }
 		}
 
 		internal static event ILContext.Manipulator HookGenPassUnderworld
 		{
-			add => HookEndpointManager.Modify(UnderworldInfo, value);
-			remove => HookEndpointManager.Unmodify(UnderworldInfo, value);
+			add => MonoModHooks.Modify(UnderworldInfo, value);
+			remove { }
 		}
 
 		internal static event ILContext.Manipulator HookGenPassAltars
 		{
-			add => HookEndpointManager.Modify(AltarsInfo, value);
-			remove => HookEndpointManager.Unmodify(AltarsInfo, value);
+			add => MonoModHooks.Modify(AltarsInfo, value);
+			remove { }
 		}
 
 		internal static event ILContext.Manipulator HookGenPassMicroBiomes
 		{
-			add => HookEndpointManager.Modify(MicroBiomesInfo, value);
-			remove => HookEndpointManager.Unmodify(MicroBiomesInfo, value);
+			add => MonoModHooks.Modify(MicroBiomesInfo, value);
+			remove { }
 		}
 
 		internal static event ILContext.Manipulator HookGenPassHardmodeWalls
 		{
-			add => HookEndpointManager.Modify(HardmodeWallsInfo, value);
-			remove => HookEndpointManager.Unmodify(HardmodeWallsInfo, value);
+			add => MonoModHooks.Modify(HardmodeWallsInfo, value);
+			remove { }
 		}
 
 		internal static void ILGenerateWorld(ILContext il)
@@ -70,7 +71,7 @@ namespace AltLibrary.Common
 			}
 
 			c.Index++;
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				Console.WriteLine("World alts: Evil - {0} {1}, Tropic - {2} {3}, Underworld - {4} {5}, Good - {6} {7}", new object[]
 				{

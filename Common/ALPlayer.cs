@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿#if CONTENT
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -41,3 +42,4 @@ namespace AltLibrary.Common
 		}
 	}
 }
+#endif

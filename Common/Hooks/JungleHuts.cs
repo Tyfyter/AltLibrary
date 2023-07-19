@@ -13,12 +13,12 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.GameContent.Biomes.CaveHouse.HouseUtils.CreateBuilder += HouseUtils_CreateBuilder;
+			Terraria.GameContent.Biomes.CaveHouse.IL_HouseUtils.CreateBuilder += HouseUtils_CreateBuilder;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.GameContent.Biomes.CaveHouse.HouseUtils.CreateBuilder -= HouseUtils_CreateBuilder;
+			Terraria.GameContent.Biomes.CaveHouse.IL_HouseUtils.CreateBuilder -= HouseUtils_CreateBuilder;
 		}
 
 		private static void HouseUtils_CreateBuilder(ILContext il)
@@ -37,10 +37,10 @@ namespace AltLibrary.Common.Hooks
 
 			var label = il.DefineLabel();
 
-			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
+			c.EmitDelegate<Func<bool>>(() => WorldBiomeManager.WorldJungle == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 
-			c.EmitDelegate(() => HouseBuilder.Invalid);
+			c.EmitDelegate<Func<HouseBuilder>>(() => HouseBuilder.Invalid);
 			c.Emit(OpCodes.Ret);
 
 			c.MarkLabel(label);

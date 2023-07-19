@@ -22,6 +22,27 @@ namespace AltLibrary
 {
 	internal static class ALUtils
 	{
+		public static bool RemoveMatching(this ILCursor cursor, params Func<Instruction, bool>[] predicates) {
+			Instruction ins = cursor.Next;
+			for (int i = 0; i < predicates.Length; i++) {
+				if (predicates[i](ins)) {
+					return false;
+				}
+				ins = ins.Next;
+			}
+			cursor.RemoveRange(predicates.Length);
+			return true;
+		}
+		public static void RemoveMatchingThrow(this ILCursor cursor, Mod mod, ILContext il, params Func<Instruction, bool>[] predicates) {
+			Instruction ins = cursor.Next;
+			for (int i = 0; i < predicates.Length; i++) {
+				if (predicates[i](ins)) {
+					throw new ILPatchFailureException(mod, il, null);
+				}
+				ins = ins.Next;
+			}
+			cursor.RemoveRange(predicates.Length);
+		}
 		internal static ulong SteamID()
 		{
 			if (AltLibrary._steamId.HasValue)

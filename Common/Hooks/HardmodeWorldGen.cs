@@ -15,21 +15,17 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.WorldGen.smCallBack += GenPasses.ILSMCallBack;
-			IL.Terraria.WorldGen.GERunner += WorldGen_GERunner;
-			On.Terraria.WorldGen.GERunner += WorldGen_GERunner1;
+			Terraria.IL_WorldGen.smCallBack += GenPasses.ILSMCallBack;
+			Terraria.IL_WorldGen.GERunner += WorldGen_GERunner;
+			Terraria.On_WorldGen.GERunner += WorldGen_GERunner1;
 			GenPasses.HookGenPassHardmodeWalls += GenPasses_HookGenPassHardmodeWalls;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.WorldGen.smCallBack -= GenPasses.ILSMCallBack;
-			IL.Terraria.WorldGen.GERunner -= WorldGen_GERunner;
-			On.Terraria.WorldGen.GERunner -= WorldGen_GERunner1;
-			GenPasses.HookGenPassHardmodeWalls -= GenPasses_HookGenPassHardmodeWalls;
 		}
 
-		private static void WorldGen_GERunner1(On.Terraria.WorldGen.orig_GERunner orig, int i, int j, float speedX, float speedY, bool good)
+		private static void WorldGen_GERunner1(Terraria.On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good)
 		{
 			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1)
 			{
@@ -328,7 +324,7 @@ namespace AltLibrary.Common.Hooks
 					c.Index++;
 					c.Emit(OpCodes.Ldloc, 15);
 					c.Emit(OpCodes.Ldloc, 16);
-					c.EmitDelegate(GetWallOnStateHallow);
+					c.EmitDelegate<Func<int, int, int, int>>(GetWallOnStateHallow);
 				}
 			}
 			void goodTile(int id)
@@ -339,7 +335,7 @@ namespace AltLibrary.Common.Hooks
 					c.Index++;
 					c.Emit(OpCodes.Ldloc, 15);
 					c.Emit(OpCodes.Ldloc, 16);
-					c.EmitDelegate(GetTileOnStateHallow);
+					c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateHallow);
 				}
 			}
 			void evilWall(int id)
@@ -350,7 +346,7 @@ namespace AltLibrary.Common.Hooks
 					c.Index++;
 					c.Emit(OpCodes.Ldloc, 15);
 					c.Emit(OpCodes.Ldloc, 16);
-					c.EmitDelegate(GetWallOnStateEvil);
+					c.EmitDelegate<Func<int, int, int, int>>(GetWallOnStateEvil);
 				}
 			}
 			void evilTile(int id)
@@ -363,7 +359,7 @@ namespace AltLibrary.Common.Hooks
 						c.Index++;
 						c.Emit(OpCodes.Ldloc, 15);
 						c.Emit(OpCodes.Ldloc, 16);
-						c.EmitDelegate(GetTileOnStateEvil);
+						c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateEvil);
 					}
 				}
 				else
@@ -374,7 +370,7 @@ namespace AltLibrary.Common.Hooks
 						c.Index += 2;
 						c.Emit(OpCodes.Ldloc, 15);
 						c.Emit(OpCodes.Ldloc, 16);
-						c.EmitDelegate(GetTileOnStateEvil);
+						c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateEvil);
 					}
 				}
 			}

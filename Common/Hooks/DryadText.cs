@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using MonoMod.Cil;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -10,21 +11,22 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			On.Terraria.Lang.GetDryadWorldStatusDialog += Lang_GetDryadWorldStatusDialog;
-			IL.Terraria.WorldGen.AddUpAlignmentCounts += WorldGen_AddUpAlignmentCounts;
+			Terraria.On_Lang.GetDryadWorldStatusDialog += Lang_GetDryadWorldStatusDialog;
+			Terraria.IL_WorldGen.AddUpAlignmentCounts += WorldGen_AddUpAlignmentCounts;
 		}
 
 		public static void Unload()
 		{
-			On.Terraria.Lang.GetDryadWorldStatusDialog -= Lang_GetDryadWorldStatusDialog;
-			IL.Terraria.WorldGen.AddUpAlignmentCounts -= WorldGen_AddUpAlignmentCounts;
+			Terraria.On_Lang.GetDryadWorldStatusDialog -= Lang_GetDryadWorldStatusDialog;
+			Terraria.IL_WorldGen.AddUpAlignmentCounts -= WorldGen_AddUpAlignmentCounts;
 		}
 
-		private static string Lang_GetDryadWorldStatusDialog(On.Terraria.Lang.orig_GetDryadWorldStatusDialog orig)
+		private static string Lang_GetDryadWorldStatusDialog(Terraria.On_Lang.orig_GetDryadWorldStatusDialog orig, out bool worldIsEntirelyPure)
 		{
 			string text2;
 			int tGood = WorldGen.tGood;
 			int tEvil = WorldGen.tEvil + WorldGen.tBlood;
+			worldIsEntirelyPure = tEvil == 0 && tGood == 0;
 			if (tGood > 0 && tEvil > 0)
 			{
 				text2 = Language.GetTextValue("Mods.AltLibrary.DryadSpecialText.WorldStatusGoodEvil", Main.worldName, tGood, tEvil);
@@ -70,7 +72,7 @@ namespace AltLibrary.Common.Hooks
 			}
 
 			c.Index++;
-			c.EmitDelegate(() =>
+			c.EmitDelegate<Action>(() =>
 			{
 				WorldGen.totalGood2 += WorldGen.tileCounts[TileID.HallowHardenedSand] + WorldGen.tileCounts[TileID.HallowSandstone];
 				WorldGen.totalEvil2 += WorldGen.tileCounts[TileID.CorruptHardenedSand] + WorldGen.tileCounts[TileID.CorruptSandstone];

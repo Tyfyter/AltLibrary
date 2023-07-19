@@ -14,14 +14,14 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			IL.Terraria.WorldGen.ConvertSkyIslands += WorldGen_ConvertSkyIslands;
-			IL.Terraria.WorldGen.IslandHouse += WorldGen_IslandHouse;
+			Terraria.IL_WorldGen.ConvertSkyIslands += WorldGen_ConvertSkyIslands;
+			Terraria.IL_WorldGen.IslandHouse += WorldGen_IslandHouse;
 		}
 
 		public static void Unload()
 		{
-			IL.Terraria.WorldGen.ConvertSkyIslands -= WorldGen_ConvertSkyIslands;
-			IL.Terraria.WorldGen.IslandHouse -= WorldGen_IslandHouse;
+			Terraria.IL_WorldGen.ConvertSkyIslands -= WorldGen_ConvertSkyIslands;
+			Terraria.IL_WorldGen.IslandHouse -= WorldGen_IslandHouse;
 		}
 
 		private static void WorldGen_IslandHouse(ILContext il)
@@ -90,7 +90,7 @@ namespace AltLibrary.Common.Hooks
 			ILLabel label = il.DefineLabel();
 
 			c.Remove();
-			c.EmitDelegate(() => WorldGen.tenthAnniversaryWorldGen ? WorldBiomeManager.WorldHallow : "");
+			c.EmitDelegate<Func<string>>(() => WorldGen.tenthAnniversaryWorldGen ? WorldBiomeManager.WorldHallow : "");
 			c.Emit(OpCodes.Ldstr, "");
 			c.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
 			c.Emit(OpCodes.Brfalse_S, label);

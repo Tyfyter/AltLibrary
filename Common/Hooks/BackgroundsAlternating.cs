@@ -42,43 +42,25 @@ namespace AltLibrary.Common
 			private static double _backgroundTopMagicNumberCache;
 			private static int _pushBGTopHackCache;
 
-			private static MethodInfo SBSL_DMT = null;
-			private static MethodInfo SBSL_DFT = null;
-			private static MethodInfo SBSL_DCB = null;
-
-			private static event ILContext.Manipulator ModifySBSL_DMT
-			{
-				add => HookEndpointManager.Modify(SBSL_DMT, value);
-				remove => HookEndpointManager.Unmodify(SBSL_DMT, value);
-			}
-
-			private static event ILContext.Manipulator ModifySBSL_DFT
-			{
-				add => HookEndpointManager.Modify(SBSL_DFT, value);
-				remove => HookEndpointManager.Unmodify(SBSL_DFT, value);
-			}
-
-			private static event ILContext.Manipulator ModifySBSL_DCB
-			{
-				add => HookEndpointManager.Modify(SBSL_DCB, value);
-				remove => HookEndpointManager.Unmodify(SBSL_DCB, value);
-			}
+			private static MethodInfo SBSL_DrawMiddleTexture = null;
+			private static MethodInfo SBSL_DrawFarTexture = null;
+			private static MethodInfo SBSL_DrawCloseBackground = null;
 
 			internal static void Inject()
 			{
-				On.Terraria.GameContent.BackgroundChangeFlashInfo.UpdateCache += FlashUpdateCache;
-				On.Terraria.WorldGen.RandomizeBackgroundBasedOnPlayer += FlashRandomizeOnPlayer;
+				Terraria.GameContent.On_BackgroundChangeFlashInfo.UpdateCache += FlashUpdateCache;
+				Terraria.On_WorldGen.RandomizeBackgroundBasedOnPlayer += FlashRandomizeOnPlayer;
 
-				On.Terraria.Main.DrawSurfaceBG_BackMountainsStep1 += GetMagicNums;
+				Terraria.On_Main.DrawSurfaceBG_BackMountainsStep1 += GetMagicNums;
 
 				var UIMods = ReflectionDictionary.GetClass("Terraria.ModLoader.SurfaceBackgroundStylesLoader");
-				SBSL_DCB = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawCloseBackground));
-				SBSL_DMT = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawMiddleTexture));
-				SBSL_DFT = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawFarTexture));
+				SBSL_DrawCloseBackground = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawCloseBackground));
+				SBSL_DrawMiddleTexture = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawMiddleTexture));
+				SBSL_DrawFarTexture = UIMods.GetMethod(nameof(SurfaceBackgroundStylesLoader.DrawFarTexture));
 
-				ModifySBSL_DCB += MSBSL_DCB;
-				ModifySBSL_DMT += MSBSL_DMT;
-				ModifySBSL_DFT += MSBSL_DFT;
+				MonoModHooks.Modify(SBSL_DrawCloseBackground, SurfaceBackgroundStylesLoader_DrawCloseBackground);
+				MonoModHooks.Modify(SBSL_DrawMiddleTexture, SurfaceBackgroundStylesLoader_DrawMiddleTexture);
+				MonoModHooks.Modify(SBSL_DrawFarTexture, SurfaceBackgroundStylesLoader_DrawFarTexture);
 			}
 
 			internal static void Init()
@@ -130,24 +112,17 @@ namespace AltLibrary.Common
 				_cacheIndexes = null;
 				_cacheIndexByName = null;
 
-				On.Terraria.GameContent.BackgroundChangeFlashInfo.UpdateCache -= FlashUpdateCache;
-				On.Terraria.WorldGen.RandomizeBackgroundBasedOnPlayer -= FlashRandomizeOnPlayer;
+				Terraria.GameContent.On_BackgroundChangeFlashInfo.UpdateCache -= FlashUpdateCache;
+				Terraria.On_WorldGen.RandomizeBackgroundBasedOnPlayer -= FlashRandomizeOnPlayer;
 
-				On.Terraria.Main.DrawSurfaceBG_BackMountainsStep1 -= GetMagicNums;
+				Terraria.On_Main.DrawSurfaceBG_BackMountainsStep1 -= GetMagicNums;
 
-				if (SBSL_DCB != null)
-					ModifySBSL_DCB -= MSBSL_DCB;
-				if (SBSL_DMT != null)
-					ModifySBSL_DMT -= MSBSL_DMT;
-				if (SBSL_DFT != null)
-					ModifySBSL_DFT -= MSBSL_DFT;
-
-				SBSL_DCB = null;
-				SBSL_DMT = null;
-				SBSL_DFT = null;
+				SBSL_DrawCloseBackground = null;
+				SBSL_DrawMiddleTexture = null;
+				SBSL_DrawFarTexture = null;
 			}
 
-			private static void MSBSL_DCB(ILContext il)
+			private static void SurfaceBackgroundStylesLoader_DrawCloseBackground(ILContext il)
 			{
 				ILCursor c = new(il);
 				try
@@ -208,7 +183,7 @@ namespace AltLibrary.Common
 				}
 			}
 
-			private static void MSBSL_DMT(ILContext il)
+			private static void SurfaceBackgroundStylesLoader_DrawMiddleTexture(ILContext il)
 			{
 				ILCursor c = new(il);
 				try
@@ -264,7 +239,7 @@ namespace AltLibrary.Common
 				}
 			}
 
-			private static void MSBSL_DFT(ILContext il)
+			private static void SurfaceBackgroundStylesLoader_DrawFarTexture(ILContext il)
 			{
 				ILCursor c = new(il);
 				try
@@ -357,14 +332,14 @@ namespace AltLibrary.Common
 				}
 			}
 
-			private static void GetMagicNums(On.Terraria.Main.orig_DrawSurfaceBG_BackMountainsStep1 orig, Main self, double backgroundTopMagicNumber, float bgGlobalScaleMultiplier, int pushBGTopHack)
+			private static void GetMagicNums(Terraria.On_Main.orig_DrawSurfaceBG_BackMountainsStep1 orig, Main self, double backgroundTopMagicNumber, float bgGlobalScaleMultiplier, int pushBGTopHack)
 			{
 				_backgroundTopMagicNumberCache = backgroundTopMagicNumber;
 				_pushBGTopHackCache = pushBGTopHack;
 				orig(self, backgroundTopMagicNumber, bgGlobalScaleMultiplier, pushBGTopHack);
 			}
 
-			private static void FlashUpdateCache(On.Terraria.GameContent.BackgroundChangeFlashInfo.orig_UpdateCache orig, BackgroundChangeFlashInfo self)
+			private static void FlashUpdateCache(Terraria.GameContent.On_BackgroundChangeFlashInfo.orig_UpdateCache orig, BackgroundChangeFlashInfo self)
 			{
 				orig(self);
 
@@ -377,7 +352,7 @@ namespace AltLibrary.Common
 				}
 			}
 
-			private static void FlashRandomizeOnPlayer(On.Terraria.WorldGen.orig_RandomizeBackgroundBasedOnPlayer orig, UnifiedRandom random, Player player)
+			private static void FlashRandomizeOnPlayer(Terraria.On_WorldGen.orig_RandomizeBackgroundBasedOnPlayer orig, UnifiedRandom random, Player player)
 			{
 				orig(random, player);
 

@@ -59,10 +59,10 @@ namespace AltLibrary.Core.UIs
 			button = new(ALTextureAssets.Empty);
 			oreIcon.Width.Set(0f, 1f);
 			oreIcon.Height.Set(0, 1f);
-			button.OnClick += _achievementIcon_OnClick;
+			button.OnLeftClick += _achievementIcon_OnClick;
 			button.SetVisibility(0f, 0f);
 			oreIcon.Append(button);
-			OnClick += _achievementIcon_OnClick;
+			OnLeftClick += _achievementIcon_OnClick;
 			_innerPanelTopTexture = Main.Assets.Request<Texture2D>("Images/UI/Achievement_InnerPanelTop");
 			if (_large)
 			{
@@ -243,7 +243,7 @@ namespace AltLibrary.Core.UIs
 			float num7 = innerDimensions.Width - dimensions.Width + 1f - num9 * 2;
 			Vector2 baseScale5 = new(0.85f);
 			Vector2 baseScale4 = new(0.92f);
-			string descValue = ore.Description != null ? ore.Description.GetTranslation(Language.ActiveCulture) : "";
+			string descValue = ore.Description?.Value ?? "";
 			if (descValue == null && ore.Description != null)
 			{
 				descValue = "";
@@ -284,7 +284,7 @@ namespace AltLibrary.Core.UIs
 			vector.X += 4f;
 			vector.X += 4f;
 			vector.X += 17f;
-			string displayNameValue = ore.DisplayName != null ? ore.DisplayName.GetTranslation(Language.ActiveCulture) : ore.Name;
+			string displayNameValue = ore.DisplayName?.Value ?? ore.Name;
 			if (ore.Mod == null)
 			{
 				switch (ore.Name)

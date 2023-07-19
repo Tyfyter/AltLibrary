@@ -1,4 +1,5 @@
-﻿using AltLibrary.Common.AltBiomes;
+﻿#if CONTENT
+using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
 using AltLibrary.Content.Items.AnalystItems;
 using System;
@@ -53,11 +54,6 @@ namespace AltLibrary.Core.Baking
 		public int itemid;
 		public Func<bool> availability;
 
-		public AnalystItem()
-		{
-			throw new InvalidOperationException();
-		}
-
 		public AnalystItem(int itemid)
 		{
 			this.itemid = itemid;
@@ -103,3 +99,4 @@ namespace AltLibrary.Core.Baking
 		}
 	}
 }
+#endif
