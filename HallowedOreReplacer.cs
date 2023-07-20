@@ -14,8 +14,7 @@ namespace AltLibrary
 		{
 			if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallow == "")
 				return;
-			EntitySource_TileBreak tile = source as EntitySource_TileBreak;
-			if (tile != null && HallowedOreList.ContainsKey(Main.tile[tile.TileCoords].TileType))
+			if (source is EntitySource_TileBreak tile && HallowedOreList.ContainsKey(Main.tile[tile.TileCoords].TileType))
 			{
 				AltBiome biome = AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHallow);
 				if (biome.BiomeOre != null)
@@ -34,7 +33,6 @@ namespace AltLibrary
 
 			public void Unload()
 			{
-				Terraria.On_WorldGen.OreRunner -= OreRunner_ReplaceHallowedOre;
 				HallowedOreList = null;
 			}
 			private static void OreRunner_ReplaceHallowedOre(Terraria.On_WorldGen.orig_OreRunner orig, int i, int j, double strength, int steps, ushort type)

@@ -64,7 +64,7 @@ namespace AltLibrary.Core.Baking
 			{
 				List<ALDrawingStruct<AltBiome>> quene = new()
 				{
-#region Hallow
+					#region Hallow
                     new("Terraria/Hallow", (value) =>
 			{
 				return AltHallowBiomeChosenType >= 0
