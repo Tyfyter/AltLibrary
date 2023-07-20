@@ -8,8 +8,8 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common
 {
-	internal class BossDrops : GlobalNPC
-	{
+	internal class BossDrops : GlobalNPC {
+		//TODO: double check that this code makes sense to begin with
 		public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
 		{
 			List<AltBiome> HallowList = new();

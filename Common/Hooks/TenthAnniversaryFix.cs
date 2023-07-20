@@ -20,10 +20,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_WorldGen.ConvertSkyIslands -= WorldGen_ConvertSkyIslands;
-			Terraria.IL_WorldGen.IslandHouse -= WorldGen_IslandHouse;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_IslandHouse(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -111,6 +110,7 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_ConvertSkyIslands(ILContext il)
 		{
 			ILCursor c = new(il);

@@ -30,10 +30,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_WorldGen.GenerateWorld -= GenPasses.ILGenerateWorld;
-			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void MiningExplosivesBiome_Place(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -60,6 +59,7 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Stloc, 0);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassUnderworld(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -100,6 +100,7 @@ namespace AltLibrary.Common.Hooks
 			c.MarkLabel(label);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassMicroBiomes(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -134,6 +135,7 @@ namespace AltLibrary.Common.Hooks
 			c.MarkLabel(label);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		public static void ILGenPassAltars(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -173,6 +175,7 @@ namespace AltLibrary.Common.Hooks
 			c.MarkLabel(endNormalAltar);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassReset(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -307,6 +310,7 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassShinies(ILContext il)
 		{
 			ILCursor c = new(il);

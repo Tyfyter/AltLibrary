@@ -17,8 +17,6 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.On_Lang.GetDryadWorldStatusDialog -= Lang_GetDryadWorldStatusDialog;
-			Terraria.IL_WorldGen.AddUpAlignmentCounts -= WorldGen_AddUpAlignmentCounts;
 		}
 
 		private static string Lang_GetDryadWorldStatusDialog(Terraria.On_Lang.orig_GetDryadWorldStatusDialog orig, out bool worldIsEntirelyPure)
@@ -47,6 +45,7 @@ namespace AltLibrary.Common.Hooks
 			return text2 + " " + arg;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_AddUpAlignmentCounts(ILContext il)
 		{
 			ILCursor c = new(il);

@@ -15,15 +15,15 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			Terraria.IL_WorldGen.smCallBack += GenPasses.ILSMCallBack;
 			Terraria.IL_WorldGen.GERunner += WorldGen_GERunner;
 			Terraria.On_WorldGen.GERunner += WorldGen_GERunner1;
-			GenPasses.HookGenPassHardmodeWalls += GenPasses_HookGenPassHardmodeWalls;
+			IL_WorldGen.HardmodeWallsTask += GenPasses_HookGenPassHardmodeWalls;
 		}
 
 		public static void Unload()
 		{
 		}
+		//TODO: double check that this code makes sense to begin with
 
 		private static void WorldGen_GERunner1(Terraria.On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good)
 		{
@@ -62,6 +62,7 @@ namespace AltLibrary.Common.Hooks
 			orig(i, j, speedX, speedY, good);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassHardmodeWalls(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -153,6 +154,7 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Stloc, 7);
 			c.Emit(OpCodes.Ldloc, 4);
 		}
+		//TODO: double check that this code makes sense to begin with
 
 		private static int GetTileOnStateHallow(int tileID, int x, int y)
 		{
@@ -168,6 +170,7 @@ namespace AltLibrary.Common.Hooks
 			return rv;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static int GetTileOnStateEvil(int tileID, int x, int y)
 		{
 			int rv = ALConvertInheritanceData.GetConvertedTile_Vanilla(tileID, WorldBiomeGeneration.WofKilledTimes <= 1 ? (!WorldGen.crimson ? 1 : 4) : (WorldBiomeManager.drunkEvilGen == 0 ? 1 : 4), x, y);
@@ -182,6 +185,7 @@ namespace AltLibrary.Common.Hooks
 			return rv;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateHallow(int wallID, int x, int y)
 		{
 			if (WorldBiomeManager.drunkGoodGen > 0)
@@ -189,6 +193,7 @@ namespace AltLibrary.Common.Hooks
 			return ALConvertInheritanceData.GetConvertedWall_Vanilla(wallID, 2, x, y);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateEvil(int wallID, int x, int y)
 		{
 			if (WorldBiomeManager.drunkEvilGen > 0)
@@ -200,6 +205,7 @@ namespace AltLibrary.Common.Hooks
 
 		private static AltBiome Evil => AltLibrary.Biomes.Find(x => x.Type == WorldBiomeManager.drunkEvilGen);
 
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_GERunner(ILContext il)
 		{
 			ILCursor c = new(il);

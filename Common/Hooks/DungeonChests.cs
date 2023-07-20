@@ -24,10 +24,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_WorldGen.MakeDungeon -= WorldGen_MakeDungeon;
 			hellChestIndex = 0;
 		}
-
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_MakeDungeon(ILContext il)
 		{
 			ILCursor c = new(il);

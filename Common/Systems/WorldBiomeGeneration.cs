@@ -11,8 +11,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.WorldBuilding;
 
-namespace AltLibrary.Common.Systems
-{
+namespace AltLibrary.Common.Systems {
+	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeGeneration : ModSystem
 	{
 		public static int DungeonSide { get; internal set; } = 0;

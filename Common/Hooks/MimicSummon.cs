@@ -28,7 +28,6 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.On_NPC.BigMimicSummonCheck -= NPC_BigMimicSummonCheck;
 			MimicPairs = null;
 		}
 
@@ -79,6 +78,8 @@ namespace AltLibrary.Common.Hooks
 			int chestIndex = Chest.FindChest(x, y);
 			if (chestIndex < 0)
 				return false;
+
+			//TODO: double check that this code makes sense to begin with
 
 			List<AltBiome> EvilHallow = new();
 			AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow || x.BiomeType == BiomeType.Evil)

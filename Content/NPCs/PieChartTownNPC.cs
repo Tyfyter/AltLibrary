@@ -117,7 +117,6 @@ namespace AltLibrary.Content.NPCs
 
 		public override void Unload()
 		{
-			Terraria.IL_Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
 			CurrentPage = 0;
 		}
 

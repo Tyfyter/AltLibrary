@@ -11,8 +11,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using PieData = AltLibrary.Core.UIs.ALUIPieChart.PieData;
 
-namespace AltLibrary.Common.Systems
-{
+namespace AltLibrary.Common.Systems {
+	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem
 	{
 		public static string WorldEvil { get; internal set; } = "";

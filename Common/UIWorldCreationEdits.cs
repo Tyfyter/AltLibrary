@@ -25,8 +25,9 @@ using Terraria.UI;
 namespace AltLibrary.Common
 {
 	[Autoload(Side = ModSide.Client)]
-	internal class UIWorldCreationEdits
-	{
+	internal class UIWorldCreationEdits {
+		//TODO: double check that this code makes sense to begin with
+		//TODO: then redo most of it anyways
 		internal static List<AltOre> AddInFinishedCreation;
 		internal static List<AltBiome> AddInFinishedCreation2;
 		internal static ALGroupOptionButton<CurrentAltOption>[] chosingOption;
@@ -85,14 +86,6 @@ namespace AltLibrary.Common
 			if (Main.netMode == NetmodeID.Server)
 				return;
 
-			Terraria.GameContent.UI.States.IL_UIWorldCreation.MakeInfoMenu -= ILMakeInfoMenu;
-			Terraria.GameContent.UI.States.On_UIWorldCreation.AddWorldEvilOptions -= OnAddWorldEvilOptions;
-			Terraria.GameContent.UI.States.On_UIWorldCreation.SetDefaultOptions -= UIWorldCreation_SetDefaultOptions;
-			Terraria.GameContent.UI.States.On_UIWorldCreation.BuildPage -= UIWorldCreation_BuildPage;
-			Terraria.GameContent.UI.States.IL_UIWorldCreation.Draw -= UIWorldCreation_Draw;
-			Terraria.GameContent.UI.States.IL_UIWorldCreation.FinishCreatingWorld -= UIWorldCreation_FinishCreatingWorld;
-			Terraria.GameContent.UI.Elements.IL_UIWorldCreationPreview.DrawSelf -= UIWorldCreationPreview_DrawSelf1;
-			Terraria.GameContent.UI.Elements.On_UIWorldListItem.PlayGame -= MakesWorldsUnplayable;
 			chosingOption = null;
 			chosenOption = CurrentAltOption.Biome;
 			AltEvilBiomeChosenType = 0;

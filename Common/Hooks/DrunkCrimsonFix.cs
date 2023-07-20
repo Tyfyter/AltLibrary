@@ -17,7 +17,6 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_Main.UpdateTime_StartDay -= Main_UpdateTime_StartDay;
 		}
 
 		private static void Main_UpdateTime_StartDay(ILContext il)

@@ -6,7 +6,10 @@ using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Terraria;
+using Terraria.GameContent.Generation;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common
 {
@@ -17,7 +20,8 @@ namespace AltLibrary.Common
 		private static MethodBase UnderworldInfo;
 		private static MethodBase AltarsInfo;
 		private static MethodBase MicroBiomesInfo;
-		private static MethodBase HardmodeWallsInfo;
+		static FieldInfo _vanillaGenPassesField;
+		static FieldInfo _method;
 
 		internal static event ILContext.Manipulator HookGenPassReset
 		{
@@ -49,19 +53,16 @@ namespace AltLibrary.Common
 			remove { }
 		}
 
-		internal static event ILContext.Manipulator HookGenPassHardmodeWalls
-		{
-			add => MonoModHooks.Modify(HardmodeWallsInfo, value);
-			remove { }
-		}
-
 		internal static void ILGenerateWorld(ILContext il)
 		{
-			ResetInfo = GetGenPassInfo(il, "Reset");
-			ShiniesInfo = GetGenPassInfo(il, "Shinies");
-			UnderworldInfo = GetGenPassInfo(il, "Underworld");
-			AltarsInfo = GetGenPassInfo(il, "Altars");
-			MicroBiomesInfo = GetGenPassInfo(il, "Micro Biomes");
+			_vanillaGenPassesField = typeof(WorldGen).GetField("_vanillaGenPasses", BindingFlags.NonPublic | BindingFlags.Static);
+			Dictionary<string, GenPass> _vanillaGenPasses = (Dictionary<string, GenPass>)_vanillaGenPassesField.GetValue(null);
+			_method = typeof(PassLegacy).GetField("_method", BindingFlags.NonPublic | BindingFlags.Instance);
+			ResetInfo = GetGenPassInfo(_vanillaGenPasses, "Reset");
+			ShiniesInfo = GetGenPassInfo(_vanillaGenPasses, "Shinies");
+			UnderworldInfo = GetGenPassInfo(_vanillaGenPasses, "Underworld");
+			AltarsInfo = GetGenPassInfo(_vanillaGenPasses, "Altars");
+			MicroBiomesInfo = GetGenPassInfo(_vanillaGenPasses, "Micro Biomes");
 
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchCall(typeof(Console).GetMethod(nameof(Console.WriteLine), BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(object[]) }))))
@@ -86,9 +87,6 @@ namespace AltLibrary.Common
 				});
 			});
 		}
-
-		internal static void ILSMCallBack(ILContext il) => HardmodeWallsInfo = GetGenPassInfo(il, "Hardmode Walls");
-
 		public static void Unload()
 		{
 			ResetInfo = null;
@@ -96,22 +94,18 @@ namespace AltLibrary.Common
 			UnderworldInfo = null;
 			AltarsInfo = null;
 			MicroBiomesInfo = null;
-			HardmodeWallsInfo = null;
 		}
 
-		private static MethodBase GetGenPassInfo(ILContext il, string name)
+		private static MethodBase GetGenPassInfo(Dictionary<string, GenPass> _vanillaGenPasses, string name)
 		{
-			try
-			{
-				var c = new ILCursor(il);
-				MethodReference methodReference = null;
-				c.GotoNext(i => i.MatchLdstr(name));
-				c.GotoNext(i => i.MatchLdftn(out methodReference));
-				return methodReference.ResolveReflection();
+			try {
+				return (_method.GetValue(_vanillaGenPasses[name] as PassLegacy) as Delegate).GetMethodInfo();
 			}
-			catch (KeyNotFoundException e)
-			{
+			catch (KeyNotFoundException e) {
 				AltLibrary.Instance.Logger.Error($"Could not find GenPass with name {name}", e);
+				return null;
+			} catch (NullReferenceException e) {
+				AltLibrary.Instance.Logger.Error($"GenPass {name} is not a legacy pass", e);
 				return null;
 			}
 		}

@@ -14,7 +14,7 @@ namespace AltLibrary.Common.Hooks
 
 		internal static void Load()
 		{
-			Terraria.On_NPC.AI_001_Slimes_GenerateItemInsideBody += NPC_AI_001_Slimes_GenerateItemInsideBody;
+			On_NPC.AI_001_Slimes_GenerateItemInsideBody += NPC_AI_001_Slimes_GenerateItemInsideBody;
 			Terraria.GameContent.ItemDropRules.IL_SlimeBodyItemDropRule.CanDrop += SlimeBodyItemDropRule_CanDrop;
 		}
 
@@ -31,7 +31,8 @@ namespace AltLibrary.Common.Hooks
 			}
 			catch (Exception e)
 			{
-				AltLibrary.Instance.Logger.Error($"[Slime Body Modification]\n{e.Message}\n{e.StackTrace}");
+				//AltLibrary.Instance.Logger.Error($"[Slime Body Modification]\n{e.Message}\n{e.StackTrace}");
+				throw new ILPatchFailureException(AltLibrary.Instance, il, e);
 			}
 		}
 

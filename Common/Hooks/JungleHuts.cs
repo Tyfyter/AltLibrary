@@ -18,9 +18,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.GameContent.Biomes.CaveHouse.IL_HouseUtils.CreateBuilder -= HouseUtils_CreateBuilder;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void HouseUtils_CreateBuilder(ILContext il)
 		{
 			ILCursor c = new(il);

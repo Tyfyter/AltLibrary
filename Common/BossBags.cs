@@ -8,8 +8,8 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common
 {
-	internal class BossBags : GlobalItem
-	{
+	internal class BossBags : GlobalItem {
+		//TODO: double check that this code makes sense to begin with
 		public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
 		{
 			List<AltBiome> HallowList = new();

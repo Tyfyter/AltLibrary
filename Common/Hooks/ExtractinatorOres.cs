@@ -66,7 +66,6 @@ namespace AltLibrary.Common.Hooks {
 
 		internal static void Unload()
 		{
-			IL_Player.ExtractinatorUse -= Player_ExtractinatorUse;
 
 			Gems = null;
 			Ores = null;

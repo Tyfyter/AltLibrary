@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Systems
 {
-	internal class RecipeChanges : ModSystem
-	{
+	internal class RecipeChanges : ModSystem {
+		//already double checked that this code makes sense
 		public override void PostAddRecipes()
 		{
 			for (int i = 0; i < Recipe.numRecipes; i++)

@@ -4,8 +4,8 @@ using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Systems
-{
+namespace AltLibrary.Common.Systems {
+	//TODO: double check that this code makes sense to begin with
 	internal class RewriterSystem : ModSystem
 	{
 		public override void OnWorldLoad()

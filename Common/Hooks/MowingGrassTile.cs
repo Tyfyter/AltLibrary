@@ -15,9 +15,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_Player.MowGrassTile -= Player_MowGrassTile;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void Player_MowGrassTile(ILContext il)
 		{
 			ILCursor c = new(il);

@@ -22,14 +22,9 @@ namespace AltLibrary.Common.Hooks
 
 		internal static void Unload()
 		{
-			Terraria.IL_NPC.AttemptToConvertNPCToEvil -= NPC_AttemptToConvertNPCToEvil;
-			Terraria.IL_NPC.CreateBrickBoxForWallOfFlesh -= NPC_CreateBrickBoxForWallOfFlesh;
-			Terraria.On_WorldGen.nearbyChlorophyte -= GoodDetourChloro;
-			Terraria.IL_WorldGen.GrowUndergroundTree -= WorldGen_GrowUndergroundTree;
-			Terraria.GameContent.Biomes.Desert.IL_DesertDescription.RowHasInvalidTiles -= DesertDescription_RowHasInvalidTiles;
-			Terraria.IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort -= WorldGen_AddBuriedChest_int_int_int_bool_int_bool_ushort;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static bool GoodDetourChloro(Terraria.On_WorldGen.orig_nearbyChlorophyte orig, int i, int j)
 		{
 			bool ch = orig(i, j);
@@ -65,6 +60,7 @@ namespace AltLibrary.Common.Hooks
 			return ch;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void NPC_AttemptToConvertNPCToEvil(ILContext il)
 		{
 			ALUtils.ReplaceIDs(il,
@@ -81,6 +77,7 @@ namespace AltLibrary.Common.Hooks
 				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodPenguin.HasValue);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void NPC_CreateBrickBoxForWallOfFlesh(ILContext il)
 		{
 			ALUtils.ReplaceIDs(il,
@@ -89,6 +86,7 @@ namespace AltLibrary.Common.Hooks
 				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOreBrick.HasValue);
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_AddBuriedChest_int_int_int_bool_int_bool_ushort(ILContext il)
 		{
 			ALUtils.ReplaceIDs<int>(il,
@@ -96,12 +94,14 @@ namespace AltLibrary.Common.Hooks
 				(orig) => Find<AltBiome>(WorldBiomeManager.WorldHell).ShadowKeyAlt ?? orig,
 				(orig) => WorldBiomeManager.WorldHell != "" && Find<AltBiome>(WorldBiomeManager.WorldHell).ShadowKeyAlt.HasValue);
 		}
+		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_GrowUndergroundTree(ILContext il)
 		{
 			ALUtils.ReplaceIDs<int>(il, TileID.JungleGrass,
 				(orig) => Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass ?? orig,
 				(orig) => WorldBiomeManager.WorldJungle != "" && Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass.HasValue);
 		}
+		//TODO: double check that this code makes sense to begin with
 		private static void DesertDescription_RowHasInvalidTiles(ILContext il)
 		{
 			ALUtils.ReplaceIDs<int>(il, TileID.JungleGrass,

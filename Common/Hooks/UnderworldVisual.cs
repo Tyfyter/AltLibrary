@@ -18,9 +18,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_Main.DrawUnderworldBackgroudLayer -= Main_DrawUnderworldBackgroudLayer;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void Main_DrawUnderworldBackgroudLayer(ILContext il)
 		{
 			var c = new ILCursor(il);

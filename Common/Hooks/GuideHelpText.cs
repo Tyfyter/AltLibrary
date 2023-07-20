@@ -16,9 +16,9 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Unload()
 		{
-			Terraria.IL_Main.HelpText -= Main_HelpText;
 		}
 
+		//TODO: double check that this code makes sense to begin with
 		private static void Main_HelpText(ILContext il)
 		{
 			ILCursor c = new(il);
