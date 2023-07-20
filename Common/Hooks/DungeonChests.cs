@@ -3,8 +3,11 @@ using AltLibrary.Common.Systems;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.Hooks
 {
@@ -26,129 +29,92 @@ namespace AltLibrary.Common.Hooks
 		{
 			hellChestIndex = 0;
 		}
-		//TODO: double check that this code makes sense to begin with
+		static void MakeDungeonChests() {
+			List<(int chestTileType, int contain, int style2)> biomeChests = new();
+			static bool GetBiomeChest(AltBiome biome, out (int chestTileType, int contain, int style2) chestData) {
+				if (biome.BiomeChestTile.HasValue && biome.BiomeChestItem.HasValue) {
+					chestData = (biome.BiomeChestTile.Value, biome.BiomeChestItem.Value, biome.BiomeChestTileStyle.GetValueOrDefault());
+					return true;
+				}
+				chestData = (0, 0, 0);
+				return false;
+			}
+			if (ModContent.TryFind(WorldBiomeManager.WorldJungle, out AltBiome altJungle) && GetBiomeChest(altJungle, out var chestData)) {
+				biomeChests.Add(chestData);
+			} else {
+				biomeChests.Add((TileID.Containers, ItemID.PiranhaGun, 23));
+			}
+
+			if (ModContent.TryFind(WorldBiomeManager.WorldEvil, out AltBiome altEvil) && GetBiomeChest(altEvil, out chestData)) {
+				biomeChests.Add(chestData);
+			} else {
+				biomeChests.Add(WorldGen.crimson ? (TileID.Containers, ItemID.VampireKnives, 25) : (TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
+			}
+
+			if (ModContent.TryFind(WorldBiomeManager.WorldHallow, out AltBiome altHallow) && GetBiomeChest(altHallow, out chestData)) {
+				biomeChests.Add(chestData);
+			} else {
+				biomeChests.Add((TileID.Containers, ItemID.RainbowGun, 26));
+			}
+
+			biomeChests.Add((TileID.Containers, ItemID.StaffoftheFrostHydra, 27));
+			biomeChests.Add((TileID.Containers2, ItemID.StormTigerStaff, 13));
+
+			if (WorldGen.drunkWorldGen) {
+				if (altEvil is null) {
+					biomeChests.Add(!WorldGen.crimson ? (TileID.Containers, ItemID.VampireKnives, 25) : (TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
+				} else {
+					biomeChests.Add((TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
+					biomeChests.Add((TileID.Containers, ItemID.VampireKnives, 25));
+				}
+				for (int i = 0; i < AltLibrary.Biomes.Count; i++) {
+					AltBiome currentDrunkBiome = AltLibrary.Biomes[i];
+					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome != altEvil && GetBiomeChest(currentDrunkBiome, out chestData)) {
+						biomeChests.Add(chestData);
+					}
+				}
+			}
+			for (int i = 0; i < biomeChests.Count; i++) {
+				bool placed = false;
+				while (!placed) {
+					int x = WorldGen.genRand.Next(GenVars.dMinX, GenVars.dMaxX);
+					int y = WorldGen.genRand.Next((int)Main.worldSurface, GenVars.dMaxY);
+					if (!Main.wallDungeon[Main.tile[x, y].WallType] || Main.tile[x, y].HasTile) {
+						continue;
+					}
+					(int chestTileType, int contain, int style2) = biomeChests[i];
+					placed = WorldGen.AddBuriedChest(x, y, contain, notNearOtherChests: false, style2, trySlope: false, (ushort)chestTileType);
+				}
+			}
+		}
 		private static void WorldGen_MakeDungeon(ILContext il)
 		{
+			//IL_213b: ldc.i4.5
+			//IL_213c: stloc.s 15
+			// if (drunkWorldGen)
+			//IL_213e: ldsfld bool Terraria.WorldGen::drunkWorldGen
+			//IL_2143: brfalse.s IL_2148
+
+			// num79 = 6;
+			//IL_2145: ldc.i4.6
+			//IL_2146: stloc.s 15
+
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.AddBuriedChest))))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 1");
-				return;
+
+			int biomeChestCount = -1;
+			if (c.TryGotoNext(MoveType.Before,
+				i => i.MatchLdcI4(5),
+				i => i.MatchStloc(out biomeChestCount),
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out _),
+				i => i.MatchLdcI4(6),
+				i => i.MatchStloc(biomeChestCount)
+			)) {
+				c.RemoveRange(6);
+				c.EmitDelegate<Action>(MakeDungeonChests);
+				c.Emit(OpCodes.Ldc_I4_0);
+				c.Emit(OpCodes.Stloc, biomeChestCount);
 			}
-			if (!c.TryGotoPrev(i => i.MatchStloc(15)))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 2");
-				return;
-			}
-
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 15);
-			c.EmitDelegate<Func<int, int>>((orig) =>
-			{
-				hellChestIndex = -1;
-				if (WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestTile.HasValue)
-				{
-					hellChestIndex = orig + 1;
-					return orig + 1;
-				}
-				return orig;
-			});
-			c.Emit(OpCodes.Stloc, 15);
-
-			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.AddBuriedChest))))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 3");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdloc(98)))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 4");
-				return;
-			}
-
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 93);
-			c.Emit(OpCodes.Ldc_I4, hellChestIndex);
-			c.EmitDelegate<Func<int, int, int, int>>((contain, chests, hellChestIndex) =>
-			{
-				if (chests == 0 && WorldBiomeManager.WorldJungle != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestItem.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestItem.Value;
-				}
-				if (chests == 2 && WorldBiomeManager.WorldHallow != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestItem.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestItem.Value;
-				}
-				if ((chests == 1 || chests == 5) && WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestItem.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestItem.Value;
-				}
-				if (chests == hellChestIndex && WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestItem.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestItem.Value;
-				}
-				return contain;
-			});
-
-			if (!c.TryGotoNext(i => i.MatchLdloc(99)))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 5");
-				return;
-			}
-
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 93);
-			c.Emit(OpCodes.Ldc_I4, hellChestIndex);
-			c.EmitDelegate<Func<int, int, int, int>>((style, chests, hellChestIndex) =>
-			{
-				if (chests == 0 && WorldBiomeManager.WorldJungle != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestTileStyle.HasValue)
-				{
-					style = ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestTileStyle.Value;
-				}
-				if (chests == 2 && WorldBiomeManager.WorldHallow != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestTileStyle.HasValue)
-				{
-					style = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestTileStyle.Value;
-				}
-				if ((chests == 1 || chests == 5) && WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestTileStyle.HasValue)
-				{
-					style = ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestTileStyle.Value;
-				}
-				if (chests == hellChestIndex && WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestTileStyle.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestTileStyle.Value;
-				}
-				return style;
-			});
-
-			if (!c.TryGotoNext(i => i.MatchLdloc(97)))
-			{
-				AltLibrary.Instance.Logger.Info("b $ 6");
-				return;
-			}
-
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 93);
-			c.Emit(OpCodes.Ldc_I4, hellChestIndex);
-			c.EmitDelegate<Func<int, int, int, int>>((chestTileType, chests, hellChestIndex) =>
-			{
-				if (chests == 0 && WorldBiomeManager.WorldJungle != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestTile.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeChestTile.Value;
-				}
-				if (chests == 2 && WorldBiomeManager.WorldHallow != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestTile.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeChestTile.Value;
-				}
-				if ((chests == 1 || chests == 5) && WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestTile.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeChestTile.Value;
-				}
-				if (chests == hellChestIndex && WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestTile.HasValue)
-				{
-					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeChestTile.Value;
-				}
-				return chestTileType;
-			});
 		}
 	}
 }

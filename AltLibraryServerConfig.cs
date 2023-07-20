@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-namespace AltLibrary
-{
+namespace AltLibrary {
 #pragma warning disable CS0649
 	internal class AltLibraryServerConfig : ModConfig
 	{
@@ -17,10 +16,6 @@ namespace AltLibrary
 
 		[Header("$Mods.AltLibrary.Config.Randomization")]
 
-		[Label("$Mods.AltLibrary.Config.SmashingAltarsSpreadsRandom.Label")]
-		[Tooltip("$Mods.AltLibrary.Config.SmashingAltarsSpreadsRandom.Tooltip")]
-		[DefaultValue(false)]
-		public bool SmashingAltarsSpreadsRandom;
 		[Label("$Mods.AltLibrary.Config.HardmodeGenRandom.Label")]
 		[Tooltip("$Mods.AltLibrary.Config.HardmodeGenRandom.Tooltip")]
 		[DefaultValue(false)]
