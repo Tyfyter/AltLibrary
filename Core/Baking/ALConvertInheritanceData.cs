@@ -2,6 +2,7 @@ using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,15 +12,15 @@ namespace AltLibrary.Core.Baking
 	internal abstract class BlockParentageData
 	{
 		//tiles
-		public Dictionary<int, int> Parent = new();
+		public Dictionary<int, (int, AltBiome)> Parent = new();
 
-		public Dictionary<int, int> ForestConversion = new();
+		public Dictionary<int, int> Deconversion => new(Parent.Where(i => !NoDeconversion.Contains(i.Key)).Select(i => new KeyValuePair<int, int>(i.Key, i.Value.Item1)));
+		public HashSet<int> NoDeconversion = new();
 		public Dictionary<int, int> HallowConversion = new();
 		public Dictionary<int, int> CorruptionConversion = new();
 		public Dictionary<int, int> CrimsonConversion = new();
 		public Dictionary<int, int> MushroomConversion = new();
 
-		public Dictionary<int, BitsByte> ForceDeconversion = new();
 		public Dictionary<int, BitsByte> BreakIfConversionFail = new();
 
 		public abstract int GetConverted_Vanilla(int baseTile, int ConversionType, int x, int y);
@@ -41,18 +42,12 @@ namespace AltLibrary.Core.Baking
 					if (bits[ConversionType])
 						ForcedConvertedTile = -2; //change this to make use of spraytype
 				}
-				if (!Parent.TryGetValue(baseTile, out test))
+				if (!Parent.TryGetValue(baseTile, out (int test, AltBiome biome) value))
 					return ForcedConvertedTile;
-				if (ForceDeconversion.TryGetValue(baseTile, out bits))
-				{
-					if (bits[ConversionType])
-						ForcedConvertedTile = test; //change this to make use of spraytype
-				}
-				baseTile = test;
+				baseTile = value.test;
 			}
 		}
 	}
-
 	internal class TileParentageData : BlockParentageData
 	{
 		public override void Bake()
@@ -62,40 +57,33 @@ namespace AltLibrary.Core.Baking
 			for (int x = 0; x < TileLoader.TileCount; x++)
 			{
 				if (TileID.Sets.Conversion.GolfGrass[x] && x != TileID.GolfGrass)
-					Parent.TryAdd(x, TileID.GolfGrass);
+					Parent.TryAdd(x, (TileID.GolfGrass, null));
 				else if (TileID.Sets.Conversion.Grass[x] && x != TileID.Grass)
-					Parent.TryAdd(x, TileID.Grass);
+					Parent.TryAdd(x, (TileID.Grass, null));
+				else if (TileID.Sets.Conversion.JungleGrass[x] && x != TileID.JungleGrass)
+					Parent.TryAdd(x, (TileID.JungleGrass, null));
+				else if (TileID.Sets.Conversion.MushroomGrass[x] && x != TileID.MushroomGrass)
+					Parent.TryAdd(x, (TileID.MushroomGrass, null));
 				else if (Main.tileMoss[x] && x != TileID.Stone)
 				{
-					ForestConversion.TryAdd(x, x); //prevents deconversion of moss to stone
-					Parent.TryAdd(x, TileID.Stone);
+					NoDeconversion.Add(x); //prevents deconversion of moss to stone
+					Parent.TryAdd(x, (TileID.Stone, null));
 				}
 				else if (TileID.Sets.Conversion.Stone[x] && x != TileID.Stone)
-					Parent.TryAdd(x, TileID.Stone);
+					Parent.TryAdd(x, (TileID.Stone, null));
 				else if (TileID.Sets.Conversion.Ice[x] && x != TileID.IceBlock)
-					Parent.TryAdd(x, TileID.IceBlock);
+					Parent.TryAdd(x, (TileID.IceBlock, null));
 				else if (TileID.Sets.Conversion.Sandstone[x] && x != TileID.Sandstone)
-					Parent.TryAdd(x, TileID.Sandstone);
+					Parent.TryAdd(x, (TileID.Sandstone, null));
 				else if (TileID.Sets.Conversion.HardenedSand[x] && x != TileID.HardenedSand)
-					Parent.TryAdd(x, TileID.HardenedSand);
+					Parent.TryAdd(x, (TileID.HardenedSand, null));
 				else if (TileID.Sets.Conversion.Sand[x] && x != TileID.Sand)
-					Parent.TryAdd(x, TileID.Sand);
+					Parent.TryAdd(x, (TileID.Sand, null));
 			}
-
-			// Forest (this entire thing ensures that deconversion is possible
-
-			ForestConversion.TryAdd(TileID.Stone, TileID.Stone);
-			ForestConversion.TryAdd(TileID.Grass, TileID.Grass);
-			ForestConversion.TryAdd(TileID.GolfGrass, TileID.GolfGrass);
-			ForestConversion.TryAdd(TileID.IceBlock, TileID.IceBlock);
-			ForestConversion.TryAdd(TileID.Sand, TileID.Sand);
-			ForestConversion.TryAdd(TileID.HardenedSand, TileID.HardenedSand);
-			ForestConversion.TryAdd(TileID.Sandstone, TileID.Sandstone);
-			ForestConversion.TryAdd(TileID.JungleThorns, TileID.JungleThorns);
 
 			BreakIfConversionFail.TryAdd(TileID.JungleThorns, new(true, true, true, true));
 
-			Parent.TryAdd(TileID.JungleThorns, TileID.CorruptThorns); //hacky way to do jungle => corrupt one way conversion
+			Parent.TryAdd(TileID.JungleThorns, (TileID.CorruptThorns, null)); //hacky way to do jungle => corrupt one way conversion
 
 			// Hallowed
 
@@ -131,12 +119,12 @@ namespace AltLibrary.Core.Baking
 
 			BreakIfConversionFail.TryAdd(TileID.CrimsonThorns, new(true, true, true, true));
 
-			Parent.TryAdd(TileID.CrimsonThorns, TileID.CorruptThorns);
+			Parent.TryAdd(TileID.CrimsonThorns, (TileID.CorruptThorns, null));
 
 			// Mushroom
 
 			MushroomConversion.TryAdd(TileID.JungleGrass, TileID.MushroomGrass);
-			Parent.TryAdd(TileID.MushroomGrass, TileID.JungleGrass);
+			Parent.TryAdd(TileID.MushroomGrass, (TileID.JungleGrass, null));
 		}
 
 		public override int GetConverted_Modded(int baseTile, AltBiome biome, int x, int y)
@@ -187,7 +175,7 @@ namespace AltLibrary.Core.Baking
 							test = AltLibrary.Biomes.Find(x => x.FullName == worldJungle).GetAltBlock(i, x, y);
 						else if (i == TileID.JungleGrass)
 							test = TileID.JungleGrass;
-						else if (!ForestConversion.TryGetValue(i, out test))
+						else if (!NoDeconversion.TryGetValue(i, out test))
 							test = -1;
 						break;
 				}
@@ -210,27 +198,27 @@ namespace AltLibrary.Core.Baking
 						case WallID.CorruptGrassUnsafe:
 						case WallID.CrimsonGrassUnsafe:
 						case WallID.HallowedGrassUnsafe:
-							Parent.TryAdd(x, GRASS_UNSAFE_DIFFERENT);
+							Parent.TryAdd(x, (GRASS_UNSAFE_DIFFERENT, null));
 							break;
 						default:
-							Parent.TryAdd(x, WallID.Grass);
+							Parent.TryAdd(x, (WallID.Grass, null));
 							break;
 					}
 				}
 				else if (WallID.Sets.Conversion.Stone[x] && x != WallID.Stone)
-					Parent.TryAdd(x, WallID.Stone);
+					Parent.TryAdd(x, (WallID.Stone, null));
 				else if (WallID.Sets.Conversion.HardenedSand[x] && x != WallID.HardenedSand)
-					Parent.TryAdd(x, WallID.HardenedSand);
+					Parent.TryAdd(x, (WallID.HardenedSand, null));
 				else if (WallID.Sets.Conversion.Sandstone[x] && x != WallID.Sandstone)
-					Parent.TryAdd(x, WallID.Sandstone);
+					Parent.TryAdd(x, (WallID.Sandstone, null));
 				else if (WallID.Sets.Conversion.NewWall1[x] && x != WallID.RocksUnsafe1)
-					Parent.TryAdd(x, WallID.RocksUnsafe1);
+					Parent.TryAdd(x, (WallID.RocksUnsafe1, null));
 				else if (WallID.Sets.Conversion.NewWall2[x] && x != WallID.RocksUnsafe2)
-					Parent.TryAdd(x, WallID.RocksUnsafe2);
+					Parent.TryAdd(x, (WallID.RocksUnsafe2, null));
 				else if (WallID.Sets.Conversion.NewWall3[x] && x != WallID.RocksUnsafe3)
-					Parent.TryAdd(x, WallID.RocksUnsafe3);
+					Parent.TryAdd(x, (WallID.RocksUnsafe3, null));
 				else if (WallID.Sets.Conversion.NewWall4[x] && x != WallID.RocksUnsafe4)
-					Parent.TryAdd(x, WallID.RocksUnsafe4);
+					Parent.TryAdd(x, (WallID.RocksUnsafe4, null));
 
 				if (WallID.Sets.CanBeConvertedToGlowingMushroom[x])
 					MushroomConversion.TryAdd(x, WallID.MushroomUnsafe);
@@ -238,18 +226,7 @@ namespace AltLibrary.Core.Baking
 
 			//Manual Grass conversionating to ensure safe grass walls cannot become unsafe through green solution conversion
 
-			Parent.TryAdd(GRASS_UNSAFE_DIFFERENT, WallID.Grass);
-
-			// Forest (this entire thing ensures that deconversion is possible)
-
-			ForestConversion.TryAdd(WallID.GrassUnsafe, WallID.GrassUnsafe);
-			ForestConversion.TryAdd(WallID.Stone, WallID.Stone);
-			ForestConversion.TryAdd(WallID.HardenedSand, WallID.HardenedSand);
-			ForestConversion.TryAdd(WallID.Sandstone, WallID.Sandstone);
-			ForestConversion.TryAdd(WallID.RocksUnsafe1, WallID.RocksUnsafe1);
-			ForestConversion.TryAdd(WallID.RocksUnsafe2, WallID.RocksUnsafe2);
-			ForestConversion.TryAdd(WallID.RocksUnsafe3, WallID.RocksUnsafe3);
-			ForestConversion.TryAdd(WallID.RocksUnsafe4, WallID.RocksUnsafe4);
+			Parent.TryAdd(GRASS_UNSAFE_DIFFERENT, (WallID.Grass, null));
 
 			// Hallowed
 
@@ -337,7 +314,7 @@ namespace AltLibrary.Core.Baking
 							test = -1;
 						break;
 					default:
-						if (!ForestConversion.TryGetValue(i, out test))
+						if (!NoDeconversion.TryGetValue(i, out test))
 						{
 							//Hardcoded. You should be able to replicate this though in future iters
 							if (i == GRASS_UNSAFE_DIFFERENT)
@@ -430,44 +407,9 @@ namespace AltLibrary.Core.Baking
 		{
 			while (true)
 			{
-				if (!tileParentageData.Parent.TryGetValue(baseTile, out int test))
+				if (!tileParentageData.Parent.TryGetValue(baseTile, out (int tileType, AltBiome) test))
 					return baseTile;
-				baseTile = test;
-			}
-		}
-
-		public static Dictionary<int, int> GetTileParentDict()
-		{
-			return tileParentageData.Parent;
-		}
-		public static Dictionary<int, int> GetWallParentDict()
-		{
-			return wallParentageData.Parent;
-		}
-
-		public static void AddChildTile(int Block, int ParentBlock, BitsByte? ForceDeconvert = null, BitsByte? BreakIfConversionFail = null)
-		{
-			tileParentageData.Parent.Add(Block, ParentBlock);
-			if (ForceDeconvert != null)
-			{
-				tileParentageData.ForceDeconversion.Add(Block, ForceDeconvert.Value);
-			}
-			if (BreakIfConversionFail != null)
-			{
-				tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
-			}
-		}
-
-		public static void AddChildWall(int Wall, int ParentWall, BitsByte? ForceDeconvert = null, BitsByte? BreakIfConversionFail = null)
-		{
-			wallParentageData.Parent.Add(Wall, ParentWall);
-			if (ForceDeconvert != null)
-			{
-				wallParentageData.ForceDeconversion.Add(Wall, ForceDeconvert.Value);
-			}
-			if (BreakIfConversionFail != null)
-			{
-				wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
+				baseTile = test.tileType;
 			}
 		}
 	}

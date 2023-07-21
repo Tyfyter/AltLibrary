@@ -35,6 +35,8 @@ namespace AltLibrary
 		internal static List<int> jungleThorns = new() { TileID.JungleThorns };
 		internal static List<int> evilStoppingOres = new() { TileID.Chlorophyte, TileID.ChlorophyteBrick };
 
+		internal static Dictionary<int, int> baseTiles = new();
+
 		internal static int HallowBunnyCageRecipeIndex;
 		internal static int TimeHoveringOnIcon;
 		internal static bool HallowBunnyUnlocked;
@@ -122,44 +124,6 @@ namespace AltLibrary
 							Logger.Debug($"Registered custom preview! Seed: {seed} Path: {small} {medium} {large}");
 							return "Success";
 						}
-					case "conversionaddchildtile":
-						{
-							if (args.Length != 5)
-								throw new ArgumentException("Arguments cannot be less or more than 4 in length for AddChildTile");
-							if (args[1] is not int block)
-								throw new ArgumentException("Second argument (block) is not int!");
-							if (args[2] is not int parentBlock)
-								throw new ArgumentException("Third argument (parentBlock) is not int!");
-							if (args[3] is not BitsByte ForceDeconvert)
-								throw new ArgumentException("Fourth argument (ForceDeconvert) is not BitsByte!");
-							if (args[4] is not BitsByte BreakIfConversionFail)
-								throw new ArgumentException("Fifth argument (BreakIfConversionFail) is not BitsByte!");
-							ALConvertInheritanceData.AddChildTile(block, parentBlock, ForceDeconvert, BreakIfConversionFail);
-							return "Success";
-						}
-					case "conversionaddchildwall":
-						{
-							if (args.Length != 5)
-								throw new ArgumentException("Arguments cannot be less or more than 4 in length for AddChildWall");
-							if (args[1] is not int wall)
-								throw new ArgumentException("Second argument (wall) is not int!");
-							if (args[2] is not int parentWall)
-								throw new ArgumentException("Third argument (parentWall) is not int!");
-							if (args[3] is not BitsByte ForceDeconvert)
-								throw new ArgumentException("Fourth argument (ForceDeconvert) is not BitsByte!");
-							if (args[4] is not BitsByte BreakIfConversionFail)
-								throw new ArgumentException("Fifth argument (BreakIfConversionFail) is not BitsByte!");
-							ALConvertInheritanceData.AddChildWall(wall, parentWall, ForceDeconvert, BreakIfConversionFail);
-							return "Success";
-						}
-					case "conversiongettileparentdictionary":
-						if (args.Length != 1)
-							throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetTileParentDictionary");
-						return ALConvertInheritanceData.GetTileParentDict();
-					case "conversiongetwallparentdictionary":
-						if (args.Length != 1)
-							throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetWallParentDictionary");
-						return ALConvertInheritanceData.GetWallParentDict();
 					case "conversiongetultimateparent":
 						if (args.Length != 2)
 							throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetUltimateParent");
@@ -312,6 +276,7 @@ namespace AltLibrary
 			jungleGrass = null;
 			jungleThorns = null;
 			evilStoppingOres = null;
+			baseTiles = null;
 			ILHooks.Unload();
 			AltLibraryServerConfig.Config = null;
 			HallowBunnyCageRecipeIndex = 0;

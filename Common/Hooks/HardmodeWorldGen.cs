@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using AltLibrary.Core;
 using AltLibrary.Core.Baking;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -84,40 +85,14 @@ namespace AltLibrary.Common.Hooks
 			{
 				if (WorldBiomeGeneration.WofKilledTimes <= 1)
 				{
-					if (WorldBiomeManager.WorldHallow != "" &&
-						Find<AltBiome>(WorldBiomeManager.WorldHallow).HardmodeWalls.Count > 0 &&
-						((Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeStone.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeStone.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeSand.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeSand.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeIce.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeIce.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeHardenedSand.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeHardenedSand.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeSandstone.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeSandstone.Value))
-						// Vine here!
+					if (TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow) &&
+						worldHallow.HardmodeWalls.Count > 0 && worldHallow.TileConversions.ContainsValue(tile.TileType)
 						)
 					{
-						orig = WorldGen.genRand.Next(Find<AltBiome>(WorldBiomeManager.WorldHallow).HardmodeWalls);
+						orig = WorldGen.genRand.Next(worldHallow.HardmodeWalls);
 					}
-					if (WorldBiomeManager.WorldEvil != "" &&
-						Find<AltBiome>(WorldBiomeManager.WorldEvil).HardmodeWalls.Count > 0 &&
-						((Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeGrass.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeGrass.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeStone.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeStone.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeSand.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeSand.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeIce.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeIce.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeHardenedSand.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeHardenedSand.Value) ||
-						(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeSandstone.HasValue &&
-							tile.TileType == Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeSandstone.Value))
-						// Vine here!
+					if (TryFind(WorldBiomeManager.WorldEvil, out AltBiome worldEvil) &&
+						worldEvil.HardmodeWalls.Count > 0 && worldEvil.TileConversions.ContainsValue(tile.TileType)
 						)
 					{
 						orig = WorldGen.genRand.Next(Find<AltBiome>(WorldBiomeManager.WorldEvil).HardmodeWalls);
@@ -127,24 +102,10 @@ namespace AltLibrary.Common.Hooks
 				{
 					if (Main.drunkWorld)
 					{
-						if (Evil?.HardmodeWalls.Count > 0 &&
-							(tile.TileType == Evil?.BiomeGrass.GetValueOrDefault() ||
-							tile.TileType == Evil?.BiomeStone.GetValueOrDefault() ||
-							tile.TileType == Evil?.BiomeSand.GetValueOrDefault() ||
-							tile.TileType == Evil?.BiomeIce.GetValueOrDefault() ||
-							tile.TileType == Evil?.BiomeHardenedSand.GetValueOrDefault() ||
-							tile.TileType == Evil?.BiomeSandstone.GetValueOrDefault()))
-						{
+						if (Evil?.HardmodeWalls.Count > 0 && (Evil?.TileConversions?.ContainsValue(tile.TileType) ?? false)) {
 							orig = WorldGen.genRand.Next(Evil?.HardmodeWalls);
 						}
-						if (Good?.HardmodeWalls.Count > 0 &&
-							(tile.TileType == Good?.BiomeGrass.GetValueOrDefault() ||
-							tile.TileType == Good?.BiomeStone.GetValueOrDefault() ||
-							tile.TileType == Good?.BiomeSand.GetValueOrDefault() ||
-							tile.TileType == Good?.BiomeIce.GetValueOrDefault() ||
-							tile.TileType == Good?.BiomeHardenedSand.GetValueOrDefault() ||
-							tile.TileType == Good?.BiomeSandstone.GetValueOrDefault()))
-						{
+						if (Good?.HardmodeWalls.Count > 0 && (Good?.TileConversions?.ContainsValue(tile.TileType) ?? false)) {
 							orig = WorldGen.genRand.Next(Good?.HardmodeWalls);
 						}
 					}
@@ -242,21 +203,10 @@ namespace AltLibrary.Common.Hooks
 					Tile tile = Main.tile[m, l];
 					if (WorldBiomeGeneration.WofKilledTimes <= 1 && WorldBiomeManager.WorldEvil != "")
 					{
-						foreach (KeyValuePair<int, int> entry in Find<AltBiome>(WorldBiomeManager.WorldEvil).SpecialConversion)
-						{
-							if (tile.TileType == entry.Key)
-							{
-								tile = Main.tile[m, l];
-								tile.TileType = (ushort)entry.Value;
-								WorldGen.SquareTileFrame(m, l, true);
-							}
-						}
-						foreach (KeyValuePair<ushort, ushort> entry in Find<AltBiome>(WorldBiomeManager.WorldEvil).WallContext.wallsReplacement)
-						{
-							if (tile.WallType == entry.Key)
-							{
-								tile.WallType = entry.Value;
-							}
+						AltBiome evilBiome = Find<AltBiome>(WorldBiomeManager.WorldEvil);
+						ALConvert.ConvertTile(m, l, evilBiome, evilBiome.TileConversions, evilBiome.ConversionType, true);
+						if (evilBiome.WallContext.wallsReplacement.TryGetValue(tile.WallType, out ushort wallReplacement)) {
+							tile.WallType = wallReplacement;
 						}
 					}
 					if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1)

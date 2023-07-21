@@ -1,9 +1,11 @@
 using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core.Baking;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Core
 {
@@ -62,31 +64,6 @@ namespace AltLibrary.Core
 							WorldGen.SquareTileFrame(k, l, true);
 							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
 						}
-
-						//Hardcoded. Cannot eradicate.
-						int corruptGrass;
-						switch (conversionType)
-						{
-							case 1:
-								corruptGrass = TileID.CorruptGrass;
-								break;
-							case 2:
-								corruptGrass = TileID.HallowedGrass;
-								break;
-							case 4:
-								corruptGrass = TileID.CrimsonGrass;
-								break;
-							default:
-								corruptGrass = 0;
-								break;
-						}
-						if (corruptGrass != 0)
-							if (tile.TileType == 59 && (Main.tile[k - 1, l].TileType == corruptGrass || Main.tile[k + 1, l].TileType == corruptGrass || Main.tile[k, l - 1].TileType == corruptGrass || Main.tile[k, l + 1].TileType == corruptGrass))
-							{
-								Main.tile[k, l].TileType = 0;
-								WorldGen.SquareTileFrame(k, l, true);
-								NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
-							}
 					}
 				}
 			}
@@ -190,52 +167,82 @@ namespace AltLibrary.Core
 				{
 					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
 					{
-						Tile tile = Main.tile[k, l];
-						int newTile = ALConvertInheritanceData.GetConvertedTile_Modded(tile.TileType, biome, k, l);
-						if (newTile == -2)
-						{
-							WorldGen.KillTile(k, l, false, false, false);
-							if (Main.netMode == NetmodeID.MultiplayerClient)
-							{
-								NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, k, l, 0f, 0, 0, 0);
-							}
-						}
-						else if (newTile != -1 && newTile != tile.TileType)
-						{
-							tile.TileType = (ushort)newTile;
+						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
 
-							WorldGen.SquareTileFrame(k, l, true);
-							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
-						}
-
-						int newWall = ALConvertInheritanceData.GetConvertedWall_Modded(tile.WallType, biome, k, l);
-						if (newWall == -2)
-						{
-							WorldGen.KillWall(k, l, false);
-							if (Main.netMode == NetmodeID.MultiplayerClient)
-							{
-								NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, k, l, 0f, 0, 0, 0);
-							}
-						}
-						else if (newWall != -1 && newWall != tile.WallType)
-						{
-							tile.WallType = (ushort)newWall;
-
-							WorldGen.SquareTileFrame(k, l, true);
-							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
-						}
-
-						//Hardcoded. Cannot do anything about this.
-						if (biome.MudToDirt && tile.TileType == TileID.Mud && (Main.tile[k - 1, l].TileType == biome.BiomeGrass || Main.tile[k + 1, l].TileType == biome.BiomeGrass || Main.tile[k, l - 1].TileType == biome.BiomeGrass || Main.tile[k, l + 1].TileType == biome.BiomeGrass))
-						{
-							Main.tile[k, l].TileType = TileID.Dirt;
-							WorldGen.SquareTileFrame(k, l, true);
-							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
-						}
+						ConvertWall(k, l, biome, biome.WallContext.wallsReplacement, biome.ConversionType);
 					}
 				}
 			}
 			return;
+		}
+		public delegate void ConversionOverrideHack(int baseTile, ref int newTile);
+		public static void GetTileConversionState(int i, int j, AltBiome targetBiome) {
+
+		}
+		public static void ConvertTile(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, bool silent = false) {
+			Tile tile = Main.tile[i, j];
+			int newTile = -1;
+			if (targetBiome is not null) {
+				newTile = targetBiome.GetAltBlock(tile.TileType, i, j);
+			} else if (conversions.TryGetValue(tile.TileType, out int convertedTile)) {
+				newTile = convertedTile;
+			}
+			(int baseTile, AltBiome fromBiome) = ALConvertInheritanceData.tileParentageData.Parent[tile.TileType];
+			if (newTile == -1) {
+				if (targetBiome is not null) {
+					newTile = targetBiome.GetAltBlock(baseTile, i, j);
+				} else if (conversions.TryGetValue(baseTile, out int convertedTile)) {
+					newTile = convertedTile;
+				}
+			}
+
+			if (newTile == -1 && ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
+				if (bits[conversionType]) newTile = -2; //change this to make use of spraytype
+			}
+
+			if (newTile != -1 && newTile != tile.TileType && (fromBiome?.ConvertTileAway(i, j) ?? true)) {
+				if (newTile == -2) {
+					WorldGen.KillTile(i, j, false, false, false);
+					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
+						NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
+					}
+				} else if (newTile != tile.WallType) {
+					tile.TileType = (ushort)newTile;
+
+					WorldGen.SquareTileFrame(i, j, true);
+					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+				}
+			}
+		}
+		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<ushort, ushort> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
+			Tile tile = Main.tile[i, j];
+			(int baseWall, AltBiome fromBiome) = ALConvertInheritanceData.wallParentageData.Parent[tile.WallType];
+			int newWall = -1;
+			if (conversions.TryGetValue(tile.WallType, out ushort convertedWall)) {
+				newWall = convertedWall;
+			} else if (conversions.TryGetValue((ushort)baseWall, out convertedWall)) {
+				newWall = convertedWall;
+			}
+			if (conversionOverrideHack is not null) conversionOverrideHack(baseWall, ref newWall);
+
+
+			if (newWall == -1 && ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.TryGetValue(baseWall, out BitsByte bits)) {
+				if (bits[conversionType]) newWall = -2; //change this to make use of spraytype
+			}
+
+			if (newWall != -1 && (fromBiome?.ConvertWallAway(i, j) ?? true)) {
+				if (newWall == -2) {
+					WorldGen.KillWall(i, j, false);
+					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
+						NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
+					}
+				} else if (newWall != tile.WallType) {
+					tile.WallType = (ushort)newWall;
+
+					WorldGen.SquareTileFrame(i, j, true);
+					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+				}
+			}
 		}
 	}
 }

@@ -24,8 +24,13 @@ namespace AltLibrary.Common.AltBiomes
 		/// Tells the Library what biome this is an alternative to
 		/// </summary>
 		public BiomeType BiomeType { get; set; }
+		public int ConversionType => BiomeType switch {
+			BiomeType.Evil => 1,
+			BiomeType.Hallow => 2,
+			_ => 0,
+		};
 		public int Type { get; internal set; }
-		public string LocalizationCategory => "AltBiomes";
+		public virtual string LocalizationCategory => "AltBiomes";
 
 		/// <summary>
 		/// The name of this biome that will display on the biome selection screen.
@@ -108,35 +113,11 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public int? BiomeMowedGrass = null;
 
-		/// <summary>
-		/// For Evil and Hallow alts. The tile which convertable stone will be turned into.
-		/// </summary>
-		public int? BiomeStone = null;
-		/// <summary>
-		/// For Evil and Hallow alts. The tile which convertable sand will be turned into.
-		/// </summary>
-		public int? BiomeSand = null;
-		/// <summary>
-		/// For Evil and Hallow alts. The tile which convertable sandstone will be turned into.
-		/// </summary>
-		public int? BiomeSandstone = null;
-		/// <summary>
-		/// For Evil and Hallow alts. The tile which convertable hardened sand will be turned into.
-		/// </summary>
-		public int? BiomeHardenedSand = null;
-		/// <summary>
-		/// For Evil and Hallow alts. The tile which convertable ice will be turned into.
-		/// </summary>
-		public int? BiomeIce = null;
+		public Dictionary<int, int> TileConversions = new();
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>
 		public int? BiomeMud = null;
-
-		/// <summary>
-		/// For Evil alts. Whether or not this biome will turn mud into dirt, as the Corruption and Crimson do. Defaults to false.
-		/// </summary>
-		public virtual bool MudToDirt => false;
 		/// <summary>
 		/// For Evil and Hallow alts. The tile that this biome will convert jungle grass into. Leave null to not convert Jungle grass.
 		/// For Evil alts, this should be the same as biomeGrass.
@@ -187,7 +168,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public int? BossBulb = null;
 
-		public WallContext WallContext = new();
+		public WallContext WallContext;
 
 		public virtual List<int> HardmodeWalls => new();
 		#endregion
@@ -309,88 +290,45 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual AltMaterialContext MaterialContext => null;
 		public sealed override void SetupContent()
 		{
+			WallContext = new(this);
 			SetStaticDefaults();
-			BakeAllAltBlockData();
 		}
-
 		/// <summary>
-		/// This is a lazy way to add blocks which should inherit from other blocks (when converting). For example, Hallowed Grass inherits from Grass.
+		/// Called before a tile is converted to a different biome
+		/// Return false to prevent conversion
 		/// </summary>
-		public void BakeTileChild(int Block, int ParentBlock, BitsByte? ForceDeconvert = null, BitsByte? BreakIfConversionFail = null)
-		{
-			TileChild.Add(ParentBlock, Block);
-			ALConvertInheritanceData.tileParentageData.Parent.Add(Block, ParentBlock);
-			if (ForceDeconvert != null)
-			{
-				ALConvertInheritanceData.tileParentageData.ForceDeconversion.Add(Block, ForceDeconvert.Value);
-			}
-			if (BreakIfConversionFail != null)
-			{
-				ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
-			}
-		}
-
-		internal Dictionary<int, int> TileChild = new();
+		/// <returns></returns>
+		public virtual bool ConvertTileAway(int i, int j) => true;
+		/// <summary>
+		/// Called before a wall is converted to a different biome
+		/// Return false to prevent conversion
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool ConvertWallAway(int i, int j) => true;
 
 		/// <summary>
-		/// You have no reason to overwrite this. Just call BakeTileChild.
+		/// You have no reason to overwrite this unless you're doing some really weird stuff. Just call AddConversion.
 		/// For Clentaminator purposes. Gets the alt block of the base block. Override this function and call base(BaseBlock) if you want to add new functionality.
 		/// Returns -1 if it's an invalid conversion
 		/// </summary>
-		public virtual int GetAltBlock(int BaseBlock, int posX, int posY)
-		{
+		public virtual int GetAltBlock(int BaseBlock, int posX, int posY) {
+			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : -1;
 			switch (BaseBlock)
 			{
-				case TileID.Stone:
-					return BiomeStone ?? -1;
 				case TileID.Grass:
 					return BiomeGrass ?? -1;
 				case TileID.JungleGrass:
 					return BiomeJungleGrass ?? -1;
 				case TileID.GolfGrass:
 					return BiomeMowedGrass ?? -1;
-				case TileID.IceBlock:
-					return BiomeIce ?? -1;
-				case TileID.Sand:
-					return BiomeSand ?? -1;
-				case TileID.HardenedSand:
-					return BiomeHardenedSand ?? -1;
-				case TileID.Sandstone:
-					return BiomeSandstone ?? -1;
 				case TileID.CorruptThorns: //inherit all corrupt bushes from corrupt bush
 					return BiomeThornBush ?? -1;
 			}
-			if (TileChild.TryGetValue(BaseBlock, out int val))
-				return val;
-			return -1;
 		}
-
-		/// <summary>
-		/// You have no reason to overwrite this unless for some reason you don't want your tiles to be converted back.
-		/// </summary>
-		public virtual void BakeAllAltBlockData()
-		{
-			TileParentageData data = ALConvertInheritanceData.tileParentageData;
-			if (BiomeStone != null)
-				data.Parent.Add(BiomeStone.Value, TileID.Stone);
-			if (BiomeGrass != null)
-				data.Parent.Add(BiomeGrass.Value, TileID.Grass);
-			if (BiomeJungleGrass != null)
-				data.Parent.Add(BiomeJungleGrass.Value, TileID.JungleGrass);
-			if (BiomeMowedGrass != null)
-				data.Parent.Add(BiomeMowedGrass.Value, TileID.GolfGrass);
-			if (BiomeIce != null)
-				data.Parent.Add(BiomeIce.Value, TileID.IceBlock);
-			if (BiomeSand != null)
-				data.Parent.Add(BiomeSand.Value, TileID.Sand);
-			if (BiomeHardenedSand != null)
-				data.Parent.Add(BiomeHardenedSand.Value, TileID.HardenedSand);
-			if (BiomeSandstone != null)
-				data.Parent.Add(BiomeSandstone.Value, TileID.Sandstone);
-			if (BiomeThornBush != null)
-				data.Parent.Add(BiomeThornBush.Value, TileID.CorruptThorns);
+		public bool HasAllTileConversions(params int[] tiles) {
+			for (int i = 0; i < tiles.Length; i++) if(!TileConversions.ContainsKey(tiles[i])) return false;
+			return true;
 		}
-
 		protected sealed override void Register()
 		{
 			ModTypeLookup<AltBiome>.Register(this);
@@ -453,21 +391,43 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual void AddBiomeOnScreenIcon(List<ALDrawingStruct<AltBiome>> list)
 		{
 		}
+
+		public void AddConversion(int block, int parentBlock, bool spread = true) {
+			AddChildTile(block, parentBlock);
+			if (spread) {
+				SpreadingTiles.Add(block);
+			}
+		}
+
+		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
+			ALConvertInheritanceData.tileParentageData.Parent.Add(Block, (ParentBlock, this));
+			if (BreakIfConversionFail != null) {
+				ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
+			}
+		}
+
+		public void AddChildWall(int Wall, int ParentWall, BitsByte? BreakIfConversionFail = null) {
+			ALConvertInheritanceData.wallParentageData.Parent.Add(Wall, (ParentWall, this));
+			if (BreakIfConversionFail != null) {
+				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
+			}
+		}
 	}
 
 	public class WallContext
 	{
 		internal Dictionary<ushort, ushort> wallsReplacement;
+		public readonly AltBiome biome;
 
-		public WallContext()
-		{
+		public WallContext(AltBiome biome) {
+			this.biome = biome;
 			wallsReplacement = new Dictionary<ushort, ushort>();
 		}
 
 		public WallContext AddReplacement(ushort orig, ushort with)
 		{
 			wallsReplacement.TryAdd(orig, with);
-			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, orig);
+			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (orig, biome));
 			return this;
 		}
 

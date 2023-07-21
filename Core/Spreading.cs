@@ -224,10 +224,6 @@ namespace AltLibrary.Core
 						if (canSpread)
 						{
 							if (biome.SpecialConversion.ContainsKey(oldTileType)) newTileType = (ushort)biome.SpecialConversion[oldTileType];
-							else if (oldTileType == TileID.Mud)
-							{
-								if (biome.MudToDirt) newTileType = TileID.Dirt;
-							}
 							else if (AltLibrary.jungleGrass.Contains(oldTileType) && biome.BiomeJungleGrass != null)
 							{
 								newTileType = (ushort)biome.BiomeJungleGrass;
