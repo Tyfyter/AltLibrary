@@ -462,16 +462,18 @@ namespace AltLibrary.Common
 					Rectangle? rectangle = null;
 					if (rect() != null) rectangle = rect();
 					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, rectangle);
-					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(position.X + 96f, position.Y + 26f * x), color * 0.8f);
-					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(position.X + 99f, position.Y + 26f * x + 3f), valueTuple.Item2, color, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
+					bool hovered = false;
 					Vector2 vector2 = new(position.X + 96f, position.Y + 26f * x);
-					if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(7.5f, 7.5f), Utils.Size(new Rectangle(0, 0, 30, 30)))))
-					{
+					if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(7.5f, 7.5f), Utils.Size(new Rectangle(0, 0, 30, 30))))) {
 						string line1 = onHoverName();
 						string line2 = $"{Language.GetTextValue("Mods.AltLibrary.AddedBy")} {onHoverMod("Terraria")}";
 						string line = $"{line1}\n{line2}";
 						Main.instance.MouseText(line);
+						hovered = true;
 					}
+					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(position.X + 96f, position.Y + 26f * x), (color * (hovered ? 1 : 0.75f)) with { A = 255 });
+					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(position.X + 99f, position.Y + 26f * x + 3f), valueTuple.Item2, color, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
+					
 					x++;
 				}
 			}
@@ -484,16 +486,18 @@ namespace AltLibrary.Common
 					Rectangle? rectangle = null;
 					if (rect() != null) rectangle = rect();
 					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, rectangle);
-					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(position.X + 96f, position.Y + 26f * x), color * 0.8f);
-					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(position.X + 99f, position.Y + 26f * x + 3f), valueTuple.Item2, color, 0f, new Vector2(1f, 1f), 0.5f, SpriteEffects.None, 0f);
+					bool hovered = false;
 					Vector2 vector2 = new(position.X + 96f, position.Y + 26f * x);
-					if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(7.5f, 7.5f), Utils.Size(new Rectangle(0, 0, 30, 30)))))
-					{
+					if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(7.5f, 7.5f), Utils.Size(new Rectangle(0, 0, 30, 30))))) {
 						string line1 = onHoverName();
 						string line2 = $"{Language.GetTextValue("Mods.AltLibrary.AddedBy")} {onHoverMod("Terraria")}";
 						string line = $"{line1}\n{line2}";
 						Main.instance.MouseText(line);
+						hovered = true;
 					}
+
+					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(position.X + 96f, position.Y + 26f * x), (color * (hovered ? 1 : 0.75f)) with { A = 255 });
+					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(position.X + 99f, position.Y + 26f * x + 3f), valueTuple.Item2, color, 0f, new Vector2(1f, 1f), 0.5f, SpriteEffects.None, 0f);
 					x++;
 				}
 			}
