@@ -284,7 +284,7 @@ namespace AltLibrary.Core.UIs
 			vector.X += 4f;
 			vector.X += 4f;
 			vector.X += 17f;
-			string displayNameValue = ore.DisplayName?.Value ?? ore.Name;
+			string displayNameValue = ore.DisplayName.Value;
 			if (ore.Mod == null)
 			{
 				switch (ore.Name)
