@@ -21,6 +21,7 @@ using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
+using static Terraria.ModLoader.ModContent;
 
 namespace AltLibrary.Common
 {
@@ -188,74 +189,46 @@ namespace AltLibrary.Common
 			return QuenedDrawing2;
 		}
 
-		internal static List<AltBiome> MakeBiomeList()
+		internal static List<List<AltBiome>> MakeBiomeList()
 		{
-			List<AltBiome> list = new();
-			list.Clear();
-			list.Add(new RandomOptionBiome("RandomEvilBiome"));
-			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable).Any())
-			{
-				list.Add(new RandomOptionBiome("RandomHallowBiome"));
-			}
-			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable).Any())
-			{
-				list.Add(new RandomOptionBiome("RandomJungleBiome"));
-			}
-			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable).Any())
-			{
-				list.Add(new RandomOptionBiome("RandomUnderworldBiome"));
-			}
 
-			List<AltBiome> b = new();
-			b.Clear();
-			b.Add(new VanillaBiome("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false));
-			b.Add(new VanillaBiome("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true));
-			b.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil && x.Selectable));
-			bool bl = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist && AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable).Any();
-			if (!AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist)
-			{
-				bl = true;
-			}
-			if (bl)
-			{
-				b.Add(new VanillaBiome("HallowBiome", BiomeType.Hallow, -3, Color.HotPink));
-			}
-			b.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable));
-			bl = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist && AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable).Any();
-			if (!AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist)
-			{
-				bl = true;
-			}
-			if (bl)
-			{
-				b.Add(new VanillaBiome("JungleBiome", BiomeType.Jungle, -4, Color.SpringGreen));
-			}
-			b.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable));
-			bl = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist && AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable).Any();
-			if (!AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist)
-			{
-				bl = true;
-			}
-			if (bl)
-			{
-				b.Add(new VanillaBiome("UnderworldBiome", BiomeType.Hell, -5, Color.OrangeRed));
-			}
-			b.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable));
+			List<AltBiome> evils = new();
+			evils.Add(new RandomOptionBiome("RandomEvilBiome"));
+			evils.Add(GetInstance<CorruptionAltBiome>());
+			evils.Add(GetInstance<CrimsonAltBiome>());
+			evils.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil && x.Selectable));
 
-			foreach (AltBiome ore in AltLibrary.Biomes)
-			{
-				if (ore.BiomeType == BiomeType.None)
-				{
-					ore.CustomSelection(b);
-				}
+			List<AltBiome> hallows = new();
+			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable).Any()) {
+				hallows.Add(new RandomOptionBiome("RandomHallowBiome"));
 			}
+			hallows.Add(GetInstance<HallowAltBiome>());
+			hallows.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable));
 
-			list.AddRange(b);
+			List<AltBiome> jungles = new();
+			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable).Any()) {
+				jungles.Add(new RandomOptionBiome("RandomJungleBiome"));
+			}
+			jungles.Add(GetInstance<JungleAltBiome>());
+			jungles.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable));
+
+			List<AltBiome> hells = new();
+			if (AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable).Any()) {
+				hells.Add(new RandomOptionBiome("RandomUnderworldBiome"));
+			}
+			hells.Add(GetInstance<UnderworldAltBiome>());
+			hells.AddRange(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable));
+
+			List<List<AltBiome>> list = new();
+			list.Add(evils);
+			list.Add(hallows);
+			list.Add(jungles);
+			list.Add(hells);
 
 			return list;
 		}
 
-		public static void UIWorldCreation_BuildPage(Terraria.GameContent.UI.States.On_UIWorldCreation.orig_BuildPage orig, UIWorldCreation self)
+		public static void UIWorldCreation_BuildPage(On_UIWorldCreation.orig_BuildPage orig, UIWorldCreation self)
 		{
 			if (!initializedLists)
 			{
@@ -387,7 +360,12 @@ namespace AltLibrary.Common
 				closeIcon.OnLeftClick += CloseIcon_OnClick;
 				uIElement3.Append(closeIcon);
 
-				List<AltBiome> list = MakeBiomeList();
+				List<AltBiome> list = MakeBiomeList().Where(l => !AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist || l.Count > 1).SelectMany(l => l).ToList();
+				foreach (AltBiome biome in AltLibrary.Biomes) {
+					if (biome.BiomeType == BiomeType.None) {
+						biome.CustomSelection(list);
+					}
+				}
 				List<ALUIBiomeListItem> items = new();
 				list.ForEach(x => items.Add(new(x, false)));
 				_biomeList._items.AddRange(items);

@@ -74,18 +74,18 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Ldarg, 1);
 			c.EmitDelegate<Action<GenerationProgress>>((progress) =>
 			{
-				if (WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).GenPassName != null)
+				if (WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.GenPassName != null)
 				{
-					progress.Message = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).GenPassName.Value;
+					progress.Message = hell.GenPassName.Value;
 				}
 			});
 
 			ALUtils.ReplaceIDs(il, TileID.Ash,
-				(orig) => (ushort?)ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeStone ?? orig,
-				(orig) => WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeStone.HasValue);
+				(orig) => (ushort)WorldBiomeManager.GetWorldHell(false).TileConversions[TileID.Stone],
+				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.TileConversions.ContainsKey(TileID.Stone));
 			ALUtils.ReplaceIDs(il, TileID.Hellstone,
-				(orig) => (ushort?)ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeOre ?? orig,
-				(orig) => WorldBiomeManager.WorldHell != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).BiomeOre.HasValue);
+				(orig) => (ushort?)WorldBiomeManager.GetWorldHell(false).BiomeOre ?? orig,
+				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.BiomeOre.HasValue);
 
 			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.AddHellHouses))))
 			{

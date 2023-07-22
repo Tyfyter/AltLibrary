@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AltLibrary.Core;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltOres
@@ -10,8 +11,8 @@ namespace AltLibrary.Common.AltOres
 
 		private readonly string name;
 		private readonly string display;
-		public RandomOptionOre(string name, string overrideDisplay = "") : base()
-		{
+		public RandomOptionOre(string name, string overrideDisplay = "") : base() {
+			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
 			display = overrideDisplay;
 		}

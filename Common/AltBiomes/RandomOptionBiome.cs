@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AltLibrary.Core;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltBiomes
@@ -11,6 +12,7 @@ namespace AltLibrary.Common.AltBiomes
 		private readonly string name;
 		public RandomOptionBiome(string name) : base()
 		{
+			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
 		}
 

@@ -10,11 +10,40 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using PieData = AltLibrary.Core.UIs.ALUIPieChart.PieData;
+using static Terraria.ModLoader.ModContent;
 
 namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem
 	{
+		public static AltBiome GetWorldEvil(bool includeVanilla = false) {
+			if (TryFind(WorldEvil, out AltBiome worldEvil)) return worldEvil;
+			if (includeVanilla) {
+				return WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+			}
+			return null;
+		}
+		public static AltBiome GetWorldHallow(bool includeVanilla = false) {
+			if (TryFind(WorldHallow, out AltBiome worldHallow)) return worldHallow;
+			if (includeVanilla) {
+				return GetInstance<HallowAltBiome>();
+			}
+			return null;
+		}
+		public static AltBiome GetWorldHell(bool includeVanilla) {
+			if (TryFind(WorldHell, out AltBiome worldHell)) return worldHell;
+			if (includeVanilla) {
+				return GetInstance<UnderworldAltBiome>();
+			}
+			return null;
+		}
+		public static AltBiome GetWorldJungle(bool includeVanilla) {
+			if (TryFind(WorldJungle, out AltBiome worldJungle)) return worldJungle;
+			if (includeVanilla) {
+				return GetInstance<JungleAltBiome>();
+			}
+			return null;
+		}
 		public static string WorldEvil { get; internal set; } = "";
 		public static string WorldHallow { get; internal set; } = "";
 		public static string WorldHell { get; internal set; } = "";
@@ -90,7 +119,6 @@ namespace AltLibrary.Common.Systems {
 
 			static void text(object threadContext) => Main.npcChatText = Language.GetTextValue("Mods.AltLibrary.AnalysisDone", Main.LocalPlayer.name, Main.worldName) + AnalysisDoneSpaces;
 		}
-
 		private static void SmAtcb(object threadContext)
 		{
 			int solid = 0;
@@ -99,26 +127,15 @@ namespace AltLibrary.Common.Systems {
 			int evil = 0;
 			int crimson = 0;
 			int[] mods = new int[AltLibrary.Biomes.Count];
-			List<int>[] modTiles = new List<int>[AltLibrary.Biomes.Count];
+			HashSet<int>[] modTiles = new HashSet<int>[AltLibrary.Biomes.Count];
 			List<int> extraPureSolid = new();
 			foreach (AltBiome biome in AltLibrary.Biomes)
 			{
-				modTiles[biome.Type - 1] = new List<int>();
-				if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow)
-				{
-					if (biome.BiomeGrass.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeGrass.Value);
-					if (biome.BiomeStone.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeStone.Value);
-					if (biome.BiomeSand.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeSand.Value);
-					if (biome.BiomeIce.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeIce.Value);
-					if (biome.BiomeSandstone.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeSandstone.Value);
-					if (biome.BiomeHardenedSand.HasValue) modTiles[biome.Type - 1].Add(biome.BiomeHardenedSand.Value);
-					if (biome.SpecialConversion.Count > 0)
-					{
-						foreach (KeyValuePair<int, int> pair in biome.SpecialConversion)
-						{
-							extraPureSolid.Add(pair.Key);
-							modTiles[biome.Type - 1].Add(pair.Value);
-						}
+				modTiles[biome.Type - 1] = new HashSet<int>();
+				if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow) {
+					foreach (KeyValuePair<int, int> pair in biome.TileConversions) {
+						extraPureSolid.Add(pair.Key);
+						modTiles[biome.Type - 1].Add(pair.Value);
 					}
 				}
 			}

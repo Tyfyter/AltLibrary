@@ -72,37 +72,41 @@ namespace AltLibrary.Common.Hooks {
 		}
 		static void Player_ExtractinatorUse(ILContext il) {
 			ILCursor c = new(il);
-			ILLabel elseBlock = default;
 			try {
 				c.GotoNext(MoveType.After,
+					ins => !ins.MatchLdcI4(-1),
+					ins => !ins.MatchBeq(out _),
 					ins => ins.MatchLdarg(2),
 					ins => ins.MatchLdcI4(TileID.ChlorophyteExtractinator),
-					ins => ins.MatchBneUn(out elseBlock)
+					ins => ins.MatchBneUn(out _)
 				);
 				for (int i = 0; i < 2; i++) {
 					int randParam = -1;
 					Func<Instruction, bool>[] predicates = {
 						ins => ins.MatchCall<Main>("get_rand"),
 						ins => ins.MatchLdcI4(out _),
-						ins => ins.MatchCall<UnifiedRandom>("Next"),
+						ins => ins.MatchCallOrCallvirt<UnifiedRandom>("Next"),
 						ins => ins.MatchStloc(out randParam),
 						ins => ins.MatchLdloc(randParam),
 						ins => ins.MatchSwitch(out _),
 						ins => ins.MatchBr(out _)
 					};
 					c.GotoNext(MoveType.Before, predicates);
-					c.RemoveRange(predicates.Length);
+					ILLabel skipLabel = c.DefineLabel();
+					c.Emit(OpCodes.Br, skipLabel);
+					c.Index += predicates.Length;
 					int itemType = -1;
 					loop:
-					if (c.RemoveMatching(
+					if (c.SkipMatching(
 						ins => ins.MatchLdcI4(out _),
 						ins => ins.MatchStloc(out itemType),
 						ins => ins.MatchBr(out _)
 					)) goto loop;
-					c.RemoveMatchingThrow(AltLibrary.Instance, il,
+					c.SkipMatchingThrow(AltLibrary.Instance, il,
 						ins => ins.MatchLdcI4(out _),
 						ins => ins.MatchStloc(itemType)
 					);
+					c.MarkLabel(skipLabel);
 					c.Emit(OpCodes.Ldloca, itemType);
 					switch (i) {
 						case 0:

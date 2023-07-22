@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using AltLibrary.Core;
+using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltOres
 {
@@ -9,15 +10,14 @@ namespace AltLibrary.Common.AltOres
 
 		internal readonly string oreTexture;
 		private readonly string name;
-		private readonly string desc;
-		internal VanillaOre(string texture, string name, int type, int ore, int bar, OreType oreType, string desc = "")
-		{
+
+		internal VanillaOre(string texture, string name, int type, int ore, int bar, OreType oreType) {
+			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			oreTexture = texture;
 			Type = type;
 			this.name = name;
 			this.ore = ore;
 			this.bar = bar;
-			this.desc = desc;
 			OreType = oreType;
 		}
 

@@ -24,7 +24,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// Tells the Library what biome this is an alternative to
 		/// </summary>
 		public BiomeType BiomeType { get; set; }
-		public int ConversionType => BiomeType switch {
+		public virtual int ConversionType => BiomeType switch {
 			BiomeType.Evil => 1,
 			BiomeType.Hallow => 2,
 			_ => 0,
@@ -113,7 +113,8 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public int? BiomeMowedGrass = null;
 
-		public Dictionary<int, int> TileConversions = new();
+		private Dictionary<int, int> tileConversions = new();
+		public virtual Dictionary<int, int> TileConversions => tileConversions;
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>
@@ -332,7 +333,10 @@ namespace AltLibrary.Common.AltBiomes
 		protected sealed override void Register()
 		{
 			ModTypeLookup<AltBiome>.Register(this);
-
+			if (this is VanillaBiome) {
+				Type = -1;
+				return;
+			}
 			AltLibrary.Biomes.Add(this);
 			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);
 			if (BiomeType == BiomeType.Jungle)
@@ -370,10 +374,10 @@ namespace AltLibrary.Common.AltBiomes
 			}
 		}
 
-		/// <summary>
-		/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
-		/// </summary>
-		public virtual void OnInitialize()
+/// <summary>
+/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
+/// </summary>
+public virtual void OnInitialize()
 		{
 		}
 
@@ -392,8 +396,21 @@ namespace AltLibrary.Common.AltBiomes
 		{
 		}
 
-		public void AddConversion(int block, int parentBlock, bool spread = true) {
-			AddChildTile(block, parentBlock);
+		public void AddConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
+			if (!oneWay) AddChildTile(block, parentBlock);
+			TileConversions.Add(parentBlock, block);
+			if (extraFunctions) {
+				switch (parentBlock) {
+					case TileID.Grass:
+					BiomeGrass = block;
+					if (BiomeType == BiomeType.Evil) TileConversions.Add(TileID.GolfGrass, block);
+					break;
+
+					case TileID.GolfGrass:
+					BiomeMowedGrass = block;
+					break;
+				}
+			}
 			if (spread) {
 				SpreadingTiles.Add(block);
 			}
@@ -413,15 +430,18 @@ namespace AltLibrary.Common.AltBiomes
 			}
 		}
 	}
-
 	public class WallContext
 	{
-		internal Dictionary<ushort, ushort> wallsReplacement;
+		internal Dictionary<int, int> wallsReplacement;
 		public readonly AltBiome biome;
 
 		public WallContext(AltBiome biome) {
 			this.biome = biome;
-			wallsReplacement = new Dictionary<ushort, ushort>();
+			if (biome is VanillaBiome vBiome) {
+				wallsReplacement = vBiome.WallConversions;
+			} else {
+				wallsReplacement = new Dictionary<int, int>();
+			}
 		}
 
 		public WallContext AddReplacement(ushort orig, ushort with)

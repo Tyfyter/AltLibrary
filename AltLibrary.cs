@@ -55,8 +55,8 @@ namespace AltLibrary
 		internal static UserInterface userInterface;
 		internal ALPieChartState pieChartState;
 
-		public AltLibrary()
-		{
+		public AltLibrary() {
+			ALReflection.Init();
 			Instance = this;
 		}
 
@@ -66,7 +66,6 @@ namespace AltLibrary
 		public override void Load()
 		{
 			ALUtils.SteamID();
-			ALReflection.Init();
 			ALTextureAssets.Load();
 			ILHooks.OnInitialize();
 			AnimatedModIcon.Init();

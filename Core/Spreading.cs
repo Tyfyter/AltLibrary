@@ -223,46 +223,7 @@ namespace AltLibrary.Core
 						if (biome.BiomeType == BiomeType.Evil && WorldGen.CountNearBlocksTypes(targetX, targetY, 2, 1, TileID.Sunflower) > 0 && NearbyEvilSlowingOres(targetX, targetY)) continue;
 						if (canSpread)
 						{
-							if (biome.SpecialConversion.ContainsKey(oldTileType)) newTileType = (ushort)biome.SpecialConversion[oldTileType];
-							else if (AltLibrary.jungleGrass.Contains(oldTileType) && biome.BiomeJungleGrass != null)
-							{
-								newTileType = (ushort)biome.BiomeJungleGrass;
-							}
-							else if (AltLibrary.jungleThorns.Contains(oldTileType) && biome.BiomeThornBush != null)
-							{
-								newTileType = (ushort)biome.BiomeThornBush;
-							}
-							else
-							{
-								switch (oldTileType)
-								{
-									case TileID.IceBlock:
-										newTileType = biome.BiomeIce ?? -1;
-										break;
-									case TileID.HardenedSand:
-										newTileType = biome.BiomeHardenedSand ?? -1;
-										break;
-									case TileID.Sandstone:
-										newTileType = biome.BiomeSandstone ?? -1;
-										break;
-									case TileID.Sand:
-										newTileType = biome.BiomeSand ?? -1;
-										break;
-									case TileID.Stone:
-										newTileType = biome.BiomeStone ?? -1;
-										break;
-									case TileID.Grass:
-										newTileType = biome.BiomeGrass ?? -1;
-										break;
-									case TileID.GolfGrass:
-										if (biome.BiomeMowedGrass.HasValue) newTileType = (int)biome.BiomeMowedGrass;
-										else newTileType = biome.BiomeGrass ?? -1;
-										break;
-									default:
-										newTileType = -1;
-										break;
-								}
-							}
+							newTileType = biome.GetAltBlock(oldTileType, targetX, targetY);
 
 
 							if (newTileType != -1 && newTileType != oldTileType)

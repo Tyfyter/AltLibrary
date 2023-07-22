@@ -15,28 +15,9 @@ namespace AltLibrary.Common.Hooks
 		internal static void Load()
 		{
 			On_NPC.AI_001_Slimes_GenerateItemInsideBody += NPC_AI_001_Slimes_GenerateItemInsideBody;
-			Terraria.GameContent.ItemDropRules.IL_SlimeBodyItemDropRule.CanDrop += SlimeBodyItemDropRule_CanDrop;
 		}
 
-		private static void SlimeBodyItemDropRule_CanDrop(ILContext il)
-		{
-			ILCursor c = new(il);
-			try
-			{
-				c.GotoNext(MoveType.After,
-					i => i.MatchLdcR4(ItemID.Count));
-
-				c.Emit(OpCodes.Pop);
-				c.EmitDelegate<Func<float>>(() => ItemLoader.ItemCount);
-			}
-			catch (Exception e)
-			{
-				//AltLibrary.Instance.Logger.Error($"[Slime Body Modification]\n{e.Message}\n{e.StackTrace}");
-				throw new ILPatchFailureException(AltLibrary.Instance, il, e);
-			}
-		}
-
-		private static int NPC_AI_001_Slimes_GenerateItemInsideBody(Terraria.On_NPC.orig_AI_001_Slimes_GenerateItemInsideBody orig, bool isBallooned)
+		private static int NPC_AI_001_Slimes_GenerateItemInsideBody(On_NPC.orig_AI_001_Slimes_GenerateItemInsideBody orig, bool isBallooned)
 		{
 			int item = orig(isBallooned);
 			if (item >= ItemID.IronOre && item <= ItemID.SilverOre || item >= ItemID.TinOre && item <= ItemID.PlatinumOre)
@@ -47,8 +28,6 @@ namespace AltLibrary.Common.Hooks
 
 		internal static void Unload()
 		{
-			Terraria.On_NPC.AI_001_Slimes_GenerateItemInsideBody -= NPC_AI_001_Slimes_GenerateItemInsideBody;
-			Terraria.GameContent.ItemDropRules.IL_SlimeBodyItemDropRule.CanDrop -= SlimeBodyItemDropRule_CanDrop;
 		}
 	}
 }

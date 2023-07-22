@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace AltLibrary.Common.Hooks
@@ -119,11 +120,15 @@ namespace AltLibrary.Common.Hooks
 
 		private static int GetTileOnStateHallow(int tileID, int x, int y)
 		{
-			int rv = ALConvertInheritanceData.GetConvertedTile_Vanilla(tileID, 2, x, y);
-			if (WorldBiomeManager.WorldHallow != "" && WorldBiomeGeneration.WofKilledTimes <= 1)
-				rv = ALConvertInheritanceData.GetConvertedTile_Modded(tileID, Find<AltBiome>(WorldBiomeManager.WorldHallow), x, y);
-			if (WorldBiomeManager.drunkGoodGen > 0)
-				rv = ALConvertInheritanceData.GetConvertedTile_Modded(tileID, Good, x, y);
+			AltBiome biome;
+			if (WorldBiomeManager.drunkGoodGen > 0) {
+				biome = Good;
+			} else if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
+				biome = WorldBiomeManager.GetWorldHallow();
+			} else {
+				biome = GetInstance<HallowAltBiome>();
+			}
+			int rv = biome.GetAltBlock(tileID, x, y);
 			if (rv == -1)
 				return tileID;
 			else if (rv == -2)
@@ -132,13 +137,18 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static int GetTileOnStateEvil(int tileID, int x, int y)
-		{
-			int rv = ALConvertInheritanceData.GetConvertedTile_Vanilla(tileID, WorldBiomeGeneration.WofKilledTimes <= 1 ? (!WorldGen.crimson ? 1 : 4) : (WorldBiomeManager.drunkEvilGen == 0 ? 1 : 4), x, y);
-			if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1)
-				rv = ALConvertInheritanceData.GetConvertedTile_Modded(tileID, Find<AltBiome>(WorldBiomeManager.WorldEvil), x, y);
-			if (WorldBiomeManager.drunkEvilGen > 0)
-				rv = ALConvertInheritanceData.GetConvertedTile_Modded(tileID, Evil, x, y);
+		private static int GetTileOnStateEvil(int tileID, int x, int y) {
+			AltBiome biome;
+			if (WorldBiomeManager.drunkEvilGen > 0) {
+				biome = Evil;
+			} else if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
+				biome = WorldBiomeManager.GetWorldEvil();
+			} else {
+				biome = WorldBiomeGeneration.WofKilledTimes <= 1 ?
+					(!WorldGen.crimson ? GetInstance<CorruptionAltBiome>() : GetInstance<CrimsonAltBiome>()) :
+					(WorldBiomeManager.drunkEvilGen == 0 ? GetInstance<CorruptionAltBiome>() : GetInstance<CrimsonAltBiome>());
+			}
+			int rv = biome.GetAltBlock(tileID, x, y);
 			if (rv == -1)
 				return tileID;
 			else if (rv == -2)
@@ -201,12 +211,11 @@ namespace AltLibrary.Common.Hooks
 				if (!good)
 				{
 					Tile tile = Main.tile[m, l];
-					if (WorldBiomeGeneration.WofKilledTimes <= 1 && WorldBiomeManager.WorldEvil != "")
+					if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldEvil, out AltBiome evilBiome))
 					{
-						AltBiome evilBiome = Find<AltBiome>(WorldBiomeManager.WorldEvil);
 						ALConvert.ConvertTile(m, l, evilBiome, evilBiome.TileConversions, evilBiome.ConversionType, true);
-						if (evilBiome.WallContext.wallsReplacement.TryGetValue(tile.WallType, out ushort wallReplacement)) {
-							tile.WallType = wallReplacement;
+						if (evilBiome.WallContext.wallsReplacement.TryGetValue(tile.WallType, out int wallReplacement)) {
+							tile.WallType = (ushort)wallReplacement;
 						}
 					}
 					if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1)
@@ -238,7 +247,7 @@ namespace AltLibrary.Common.Hooks
 			c.EmitDelegate<Action<int, int>>((m, l) =>
 			{
 				Tile tile = Main.tile[m, l];
-				if (WorldBiomeGeneration.WofKilledTimes <= 1 && WorldBiomeManager.WorldHallow != "")
+				if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow))
 				{
 					foreach (KeyValuePair<int, int> entry in Find<AltBiome>(WorldBiomeManager.WorldHallow).SpecialConversion)
 					{
@@ -248,12 +257,8 @@ namespace AltLibrary.Common.Hooks
 							WorldGen.SquareTileFrame(m, l, true);
 						}
 					}
-					foreach (KeyValuePair<ushort, ushort> entry in Find<AltBiome>(WorldBiomeManager.WorldHallow).WallContext.wallsReplacement)
-					{
-						if (tile.WallType == entry.Key)
-						{
-							tile.WallType = entry.Value;
-						}
+					if (worldHallow.WallContext.wallsReplacement.TryGetValue(tile.WallType, out int wallReplacement)) {
+						tile.WallType = (ushort)wallReplacement;
 					}
 				}
 				if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1)

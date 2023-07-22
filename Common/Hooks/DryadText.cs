@@ -88,56 +88,13 @@ namespace AltLibrary.Common.Hooks
 				{
 					if (biome.BiomeType == BiomeType.Hallow)
 					{
-						if (biome.BiomeIce.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeIce.Value];
-						}
-						if (biome.BiomeGrass.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeGrass.Value];
-						}
-						if (biome.BiomeStone.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeStone.Value];
-						}
-						if (biome.BiomeSand.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeSand.Value];
-						}
-						if (biome.BiomeHardenedSand.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeHardenedSand.Value];
-						}
-						if (biome.BiomeSandstone.HasValue)
-						{
-							hallow += WorldGen.tileCounts[biome.BiomeSandstone.Value];
+						foreach (var tile in biome.TileConversions.Values) {
+							hallow += WorldGen.tileCounts[tile];
 						}
 					}
-					if (biome.BiomeType == BiomeType.Evil)
-					{
-						if (biome.BiomeIce.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeIce.Value];
-						}
-						if (biome.BiomeGrass.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeGrass.Value];
-						}
-						if (biome.BiomeStone.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeStone.Value];
-						}
-						if (biome.BiomeSand.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeSand.Value];
-						}
-						if (biome.BiomeHardenedSand.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeHardenedSand.Value];
-						}
-						if (biome.BiomeSandstone.HasValue)
-						{
-							evil += WorldGen.tileCounts[biome.BiomeSandstone.Value];
+					if (biome.BiomeType == BiomeType.Evil) {
+						foreach (var tile in biome.TileConversions.Values) {
+							evil += WorldGen.tileCounts[tile];
 						}
 					}
 				}

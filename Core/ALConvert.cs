@@ -18,7 +18,6 @@ namespace AltLibrary.Core
 
 		internal static void Unload()
 		{
-			Terraria.On_WorldGen.Convert -= WorldGen_Convert;
 		}
 
 		private static void WorldGen_Convert(Terraria.On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
@@ -176,10 +175,7 @@ namespace AltLibrary.Core
 			return;
 		}
 		public delegate void ConversionOverrideHack(int baseTile, ref int newTile);
-		public static void GetTileConversionState(int i, int j, AltBiome targetBiome) {
-
-		}
-		public static void ConvertTile(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, bool silent = false) {
+		public static (int newTile, AltBiome fromBiome) GetTileConversionState(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType) {
 			Tile tile = Main.tile[i, j];
 			int newTile = -1;
 			if (targetBiome is not null) {
@@ -199,6 +195,11 @@ namespace AltLibrary.Core
 			if (newTile == -1 && ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
 				if (bits[conversionType]) newTile = -2; //change this to make use of spraytype
 			}
+			return (newTile, fromBiome);
+		}
+		public static void ConvertTile(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, bool silent = false) {
+			Tile tile = Main.tile[i, j];
+			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome, conversions, conversionType);
 
 			if (newTile != -1 && newTile != tile.TileType && (fromBiome?.ConvertTileAway(i, j) ?? true)) {
 				if (newTile == -2) {
@@ -214,11 +215,11 @@ namespace AltLibrary.Core
 				}
 			}
 		}
-		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<ushort, ushort> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
+		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
 			Tile tile = Main.tile[i, j];
 			(int baseWall, AltBiome fromBiome) = ALConvertInheritanceData.wallParentageData.Parent[tile.WallType];
 			int newWall = -1;
-			if (conversions.TryGetValue(tile.WallType, out ushort convertedWall)) {
+			if (conversions.TryGetValue(tile.WallType, out int convertedWall)) {
 				newWall = convertedWall;
 			} else if (conversions.TryGetValue((ushort)baseWall, out convertedWall)) {
 				newWall = convertedWall;

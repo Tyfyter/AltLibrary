@@ -275,7 +275,7 @@ namespace AltLibrary.Core.Baking
 			};
 			return GetConverted(baseTile, i =>
 			{
-				if (biome.WallContext.wallsReplacement.TryGetValue((ushort)i, out ushort rv))
+				if (biome.WallContext.wallsReplacement.TryGetValue(i, out int rv))
 				{
 					return rv;
 				}
