@@ -291,5 +291,7 @@ Mods: {
 				}
 			}
 		}
+
+		// AltBiomes.1273.DisplayName: "1273"
 	}
 }

@@ -34,14 +34,6 @@ namespace AltLibrary
 		[OptionStrings(new string[] { "None", "Hallow only", "Jungle only", "Both" })]
 		[DefaultValue("Hallow only")]
 		public string PreviewVisible;
-		[Label("$Mods.AltLibrary.Config.BiomeIconsVisibleOutsideBiomeUI.Label")]
-		[Tooltip("$Mods.AltLibrary.Config.BiomeIconsVisibleOutsideBiomeUI.Tooltip")]
-		[DefaultValue(true)]
-		public bool BiomeIconsVisibleOutsideBiomeUI;
-		[Label("$Mods.AltLibrary.Config.OreIconsVisibleOutsideOreUI.Label")]
-		[Tooltip("$Mods.AltLibrary.Config.OreIconsVisibleOutsideOreUI.Tooltip")]
-		[DefaultValue(true)]
-		public bool OreIconsVisibleOutsideOreUI;
 
 #pragma warning restore CS0649
 

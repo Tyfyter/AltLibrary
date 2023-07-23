@@ -62,158 +62,117 @@ namespace AltLibrary.Core.Baking
 
 			public override void Initialize()
 			{
-				List<ALDrawingStruct<AltBiome>> quene = new()
+				List<ALDrawingStruct<AltBiome>> quene = new();
+				#region Evil
+				quene.Add(new("Terraria/Evil", (int)BiomeType.Evil, (value) =>
 				{
-					#region Hallow
-                    new("Terraria/Hallow", (value) =>
-			{
-				return AltHallowBiomeChosenType >= 0
-					? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHallowBiomeChosenType].IconSmall
-													?? "AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.ImmediateLoad)
-					: value;
-			},
-			() =>
-			{
-				return AltHallowBiomeChosenType switch
+					return AltEvilBiomeChosenType >= 0
+						? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltEvilBiomeChosenType].IconSmall
+														?? "AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.ImmediateLoad)
+						: value;
+				}, () =>
 				{
-					< 0 => new(30, 30, 30, 30),
-					_ => null
-				};
-			},
-			() =>
-			{
-				return AltHallowBiomeChosenType < 0
-					? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.HallowBiome")
-					: AltLibrary.Biomes[AltHallowBiomeChosenType].Name;
-			},
-			(mod) =>
-			{
-				return AltHallowBiomeChosenType switch
+					return AltEvilBiomeChosenType switch {
+						> -666 and <= -333 => new(210, 0, 30, 30),
+						<= -666 => new(360, 0, 30, 30),
+						_ => null
+					};
+				}, () =>
 				{
-					>= 0 => AltLibrary.Biomes[AltHallowBiomeChosenType].Mod.Name,
-					_ => mod
-				};
-			},
-			() =>
-			{
-				bool isAlt = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == true;
-				if (isAlt) isAlt &= AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow && x.Selectable).Any();
-				if (AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == false)
+					if (AltEvilBiomeChosenType == -333) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CorruptBiome");
+					if (AltEvilBiomeChosenType == -666) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CrimsonBiome");
+					return AltLibrary.Biomes[AltEvilBiomeChosenType].Name;
+				}, (mod) =>
 				{
-					isAlt = true;
-				}
-				return (chosenOption == CurrentAltOption.Biome || AltLibraryConfig.Config.BiomeIconsVisibleOutsideBiomeUI) && isAlt;
-			}),
-                    #endregion
-                    #region Evil
-                    new("Terraria/Evil", (value) =>
-			{
-				return AltEvilBiomeChosenType >= 0
-					? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltEvilBiomeChosenType].IconSmall
-													?? "AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.ImmediateLoad)
-					: value;
-			}, () =>
-			{
-				return AltEvilBiomeChosenType switch
-				{
-					> -666 and <= -333 => new(210, 0, 30, 30),
-					<= -666 => new(360, 0, 30, 30),
-					_ => null
-				};
-			}, () =>
-			{
-				if (AltEvilBiomeChosenType == -333) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CorruptBiome");
-				if (AltEvilBiomeChosenType == -666) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CrimsonBiome");
-				return AltLibrary.Biomes[AltEvilBiomeChosenType].Name;
-			}, (mod) =>
-			{
-				return AltEvilBiomeChosenType switch
-				{
-					>= 0 => AltLibrary.Biomes[AltEvilBiomeChosenType].Mod.Name,
-					_ => mod
-				};
-			},
-			() => chosenOption == CurrentAltOption.Biome || AltLibraryConfig.Config.BiomeIconsVisibleOutsideBiomeUI),
-                    #endregion
-                    #region Underworld
-                    new("Terraria/Underworld",
+					return AltEvilBiomeChosenType switch {
+						>= 0 => AltLibrary.Biomes[AltEvilBiomeChosenType].Mod.Name,
+						_ => mod
+					};
+				}));
+				#endregion Evil
+				#region Hallow
+				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Hallow && x.Selectable))
+					quene.Add(new("Terraria/Hallow", (int)BiomeType.Hallow, (value) =>
+					{
+						return AltHallowBiomeChosenType >= 0
+							? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHallowBiomeChosenType].IconSmall
+															?? "AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.ImmediateLoad)
+							: value;
+					},
+					() => {
+						return AltHallowBiomeChosenType switch {
+							< 0 => new(30, 30, 30, 30),
+							_ => null
+						};
+					},
+					() => {
+						return AltHallowBiomeChosenType < 0
+							? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.HallowBiome")
+							: AltLibrary.Biomes[AltHallowBiomeChosenType].Name;
+					},
+					(mod) => {
+						return AltHallowBiomeChosenType switch {
+							>= 0 => AltLibrary.Biomes[AltHallowBiomeChosenType].Mod.Name,
+							_ => mod
+						};
+					}));
+				#endregion
+				#region Jungle
+				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Jungle && x.Selectable))
+					quene.Add(new("Terraria/Jungle", (int)BiomeType.Jungle,
 					(value) =>
-			{
-				return AltHellBiomeChosenType >= 0
-					? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHellBiomeChosenType].IconSmall
-													?? "AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.ImmediateLoad)
-					: value;
-			}, () =>
-			{
-				return AltHellBiomeChosenType switch
-				{
-					< 0 => new(30, 60, 30, 30),
-					_ => null
-				};
-			}, () =>
-			{
-				return AltHellBiomeChosenType < 0
-					? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.UnderworldBiome")
-					: AltLibrary.Biomes[AltHellBiomeChosenType].Name;
-			}, (mod) =>
-			{
-				return AltHellBiomeChosenType switch
-				{
-					>= 0 => AltLibrary.Biomes[AltHellBiomeChosenType].Mod.Name,
-					_ => mod
-				};
-			},
-			() =>
-			{
-				bool isAlt = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == true;
-				if (isAlt) isAlt &= AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell && x.Selectable).Any();
-				if (AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == false)
-				{
-					isAlt = true;
-				}
-				return (chosenOption == CurrentAltOption.Biome || AltLibraryConfig.Config.BiomeIconsVisibleOutsideBiomeUI) && isAlt;
-			}),
-                    #endregion
-                    #region Jungle
-                    new("Terraria/Jungle",
+					{
+						return AltJungleBiomeChosenType >= 0
+								? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltJungleBiomeChosenType].IconSmall
+																?? "AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.ImmediateLoad)
+								: value;
+					}, () =>
+					{
+						return AltJungleBiomeChosenType switch {
+							< 0 => new(180, 30, 30, 30),
+							_ => null
+						};
+					}, () =>
+					{
+						return AltJungleBiomeChosenType < 0
+								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.JungleBiome")
+								: AltLibrary.Biomes[AltJungleBiomeChosenType].Name;
+					}, (mod) =>
+					{
+						return AltJungleBiomeChosenType switch {
+							>= 0 => AltLibrary.Biomes[AltJungleBiomeChosenType].Mod.Name,
+							_ => mod
+						};
+					}));
+				#endregion
+				#region Underworld
+				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Hell && x.Selectable))
+					quene.Add(new("Terraria/Underworld", (int)BiomeType.Hell,
 					(value) =>
-			{
-				return AltJungleBiomeChosenType >= 0
-					? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltJungleBiomeChosenType].IconSmall
-													?? "AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.ImmediateLoad)
-					: value;
-			}, () =>
-			{
-				return AltJungleBiomeChosenType switch
-				{
-					< 0 => new(180, 30, 30, 30),
-					_ => null
-				};
-			}, () =>
-			{
-				return AltJungleBiomeChosenType < 0
-					? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.JungleBiome")
-					: AltLibrary.Biomes[AltJungleBiomeChosenType].Name;
-			}, (mod) =>
-			{
-				return AltJungleBiomeChosenType switch
-				{
-					>= 0 => AltLibrary.Biomes[AltJungleBiomeChosenType].Mod.Name,
-					_ => mod
-				};
-			},
-					() =>
-			{
-				bool isAlt = AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == true;
-				if (isAlt) isAlt &= AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Jungle && x.Selectable).Any();
-				if (AltLibraryConfig.Config.VanillaShowUpIfOnlyAltVarExist == false)
-				{
-					isAlt = true;
-				}
-				return (chosenOption == CurrentAltOption.Biome || AltLibraryConfig.Config.BiomeIconsVisibleOutsideBiomeUI) && isAlt;
-			}),
-#endregion
-                };
+					{
+						return AltHellBiomeChosenType >= 0
+								? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHellBiomeChosenType].IconSmall
+																?? "AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.ImmediateLoad)
+								: value;
+					}, () =>
+					{
+						return AltHellBiomeChosenType switch {
+							< 0 => new(30, 60, 30, 30),
+							_ => null
+						};
+					}, () =>
+					{
+						return AltHellBiomeChosenType < 0
+								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.UnderworldBiome")
+								: AltLibrary.Biomes[AltHellBiomeChosenType].Name;
+					}, (mod) =>
+					{
+						return AltHellBiomeChosenType switch {
+							>= 0 => AltLibrary.Biomes[AltHellBiomeChosenType].Mod.Name,
+							_ => mod
+						};
+					}));
+                #endregion
 				foreach (AltBiome ore in AltLibrary.Biomes)
 				{
 					ore.AddBiomeOnScreenIcon(quene);
@@ -255,7 +214,7 @@ namespace AltLibrary.Core.Baking
 			{
                 #region Pre-HM Ores
 #region Copper
-                new("Terraria/Copper", (value) =>
+                new("Terraria/Copper", (int)OreType.Copper, (value) =>
 			{
 				return Copper switch
 				{
@@ -288,7 +247,7 @@ namespace AltLibrary.Core.Baking
 			}),
                 #endregion
 #region Iron
-                new("Terraria/Iron",
+                new("Terraria/Iron", (int)OreType.Iron,
 				(value) =>
 				{
 return Iron switch
@@ -322,7 +281,7 @@ _ => mod
 				}),
                 #endregion
 #region Silver
-                new("Terraria/Silver",
+                new("Terraria/Silver", (int)OreType.Silver,
 				(value) =>
 				{
 					return Silver switch
@@ -356,7 +315,7 @@ _ => mod
 				}),
                 #endregion
 #region Gold
-                new("Terraria/Gold",
+                new("Terraria/Gold", (int)OreType.Gold,
 				(value) =>
 				{
 					return Gold switch
@@ -392,7 +351,7 @@ _ => mod
                 #endregion
                 #region HM Ores
 #region Cobalt
-                new("Terraria/Cobalt",
+                new("Terraria/Cobalt", (int)OreType.Cobalt,
 				(value) =>
 				{
 					return Cobalt switch
@@ -426,7 +385,7 @@ _ => mod
 				}),
                 #endregion
 #region Mythril
-                new("Terraria/Mythril",
+                new("Terraria/Mythril", (int)OreType.Mythril,
 				(value) =>
 				{
 					return Mythril switch
@@ -460,7 +419,7 @@ _ => mod
 				}),
                 #endregion
 #region Adamantite
-                new("Terraria/Adamantite",
+                new("Terraria/Adamantite", (int)OreType.Adamantite,
 				(value) =>
 				{
 					return Adamantite switch

@@ -17,6 +17,8 @@ namespace AltLibrary.Core.UIs
 {
 	internal class ALUIOreListItem : UIPanel
 	{
+		public readonly OreType oreType;
+
 		private readonly AltOre ore;
 
 		private readonly UIImageFramed oreIcon;
@@ -31,6 +33,7 @@ namespace AltLibrary.Core.UIs
 
 		public ALUIOreListItem(AltOre ore, bool largeForOtherLanguages)
 		{
+			oreType = ore.OreType;
 			_large = largeForOtherLanguages;
 			BackgroundColor = new Color(26, 40, 89) * 0.8f;
 			BorderColor = new Color(13, 20, 44) * 0.8f;

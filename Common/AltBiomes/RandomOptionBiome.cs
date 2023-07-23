@@ -10,10 +10,11 @@ namespace AltLibrary.Common.AltBiomes
 		public override Color NameColor => Color.Yellow;
 
 		private readonly string name;
-		public RandomOptionBiome(string name) : base()
+		public RandomOptionBiome(string name, BiomeType biomeType) : base()
 		{
 			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
+			BiomeType = biomeType;
 		}
 
 		public override string IconSmall => "Terraria/Images/UI/Bestiary/Icon_Tags_Shadow";

@@ -15,8 +15,8 @@ using Terraria.UI.Chat;
 
 namespace AltLibrary.Core.UIs
 {
-	internal class ALUIBiomeListItem : UIPanel
-	{
+	internal class ALUIBiomeListItem : UIPanel {
+		public readonly BiomeType biomeType;
 		private readonly AltBiome biome;
 
 		private readonly UIImageFramed biomeIcon;
@@ -31,6 +31,7 @@ namespace AltLibrary.Core.UIs
 
 		public ALUIBiomeListItem(AltBiome biome, bool largeForOtherLanguages)
 		{
+			biomeType = biome.BiomeType;
 			_large = !largeForOtherLanguages;
 			BackgroundColor = new Color(26, 40, 89) * 0.8f;
 			BorderColor = new Color(13, 20, 44) * 0.8f;
