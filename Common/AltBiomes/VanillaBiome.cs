@@ -62,4 +62,10 @@ namespace AltLibrary.Common.AltBiomes
 	internal class UnderworldAltBiome : VanillaBiome {
 		public UnderworldAltBiome() : base("UnderworldBiome", BiomeType.Hell, -5, Color.OrangeRed) { }
 	}
+	public class HHHHHAltBiome : AltBiome {
+		public override string IconSmall => null;
+		public override void SetStaticDefaults() {
+			BiomeType = BiomeType.Hallow;
+		}// && AltLibraryConfig.Config.BiomeIconsVisibleOutside
+	}
 }

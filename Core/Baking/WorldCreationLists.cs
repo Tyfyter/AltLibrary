@@ -66,24 +66,27 @@ namespace AltLibrary.Core.Baking
 				#region Evil
 				quene.Add(new("Terraria/Evil", (int)BiomeType.Evil, (value) =>
 				{
-					return AltEvilBiomeChosenType >= 0
-						? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltEvilBiomeChosenType].IconSmall
-														?? "AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.ImmediateLoad)
-						: value;
+					if (AltEvilBiomeChosenType >= 0 && AltLibraryConfig.Config.BiomeIconsVisible) {
+						return ModContent.Request<Texture2D>(AltLibrary.Biomes[AltEvilBiomeChosenType].IconSmall
+							?? "AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.ImmediateLoad);
+					}
+					return value;
 				}, () =>
 				{
+					if (!AltLibraryConfig.Config.BiomeIconsVisible) return new(210, 0, 30, 30);
 					return AltEvilBiomeChosenType switch {
-						> -666 and <= -333 => new(210, 0, 30, 30),
-						<= -666 => new(360, 0, 30, 30),
+						-333 => new(210, 0, 30, 30),
+						-666 => new(360, 0, 30, 30),
 						_ => null
 					};
 				}, () =>
 				{
+					if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomEvilBiome");
 					if (AltEvilBiomeChosenType == -333) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CorruptBiome");
 					if (AltEvilBiomeChosenType == -666) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CrimsonBiome");
 					return AltLibrary.Biomes[AltEvilBiomeChosenType].Name;
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return AltEvilBiomeChosenType switch {
 						>= 0 => AltLibrary.Biomes[AltEvilBiomeChosenType].Mod.Name,
 						_ => mod
@@ -92,25 +95,28 @@ namespace AltLibrary.Core.Baking
 				#endregion Evil
 				#region Hallow
 				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Hallow && x.Selectable))
-					quene.Add(new("Terraria/Hallow", (int)BiomeType.Hallow, (value) =>
-					{
-						return AltHallowBiomeChosenType >= 0
-							? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHallowBiomeChosenType].IconSmall
-															?? "AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.ImmediateLoad)
-							: value;
+					quene.Add(new("Terraria/Hallow", (int)BiomeType.Hallow, (value) => {
+						if (AltEvilBiomeChosenType >= 0 && AltLibraryConfig.Config.BiomeIconsVisible) {
+							return ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHallowBiomeChosenType].IconSmall
+								?? "AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.ImmediateLoad);
+						}
+						return value;
 					},
 					() => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return new(30, 30, 30, 30);
 						return AltHallowBiomeChosenType switch {
 							< 0 => new(30, 30, 30, 30),
 							_ => null
 						};
 					},
 					() => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomHallowBiome");
 						return AltHallowBiomeChosenType < 0
 							? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.HallowBiome")
 							: AltLibrary.Biomes[AltHallowBiomeChosenType].Name;
 					},
 					(mod) => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return AltHallowBiomeChosenType switch {
 							>= 0 => AltLibrary.Biomes[AltHallowBiomeChosenType].Mod.Name,
 							_ => mod
@@ -120,25 +126,25 @@ namespace AltLibrary.Core.Baking
 				#region Jungle
 				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Jungle && x.Selectable))
 					quene.Add(new("Terraria/Jungle", (int)BiomeType.Jungle,
-					(value) =>
-					{
-						return AltJungleBiomeChosenType >= 0
-								? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltJungleBiomeChosenType].IconSmall
-																?? "AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.ImmediateLoad)
-								: value;
-					}, () =>
-					{
+					(value) => {
+						if (AltEvilBiomeChosenType >= 0 && AltLibraryConfig.Config.BiomeIconsVisible) {
+							return ModContent.Request<Texture2D>(AltLibrary.Biomes[AltJungleBiomeChosenType].IconSmall
+								?? "AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.ImmediateLoad);
+						}
+						return value;
+					}, () => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return new(180, 30, 30, 30);
 						return AltJungleBiomeChosenType switch {
 							< 0 => new(180, 30, 30, 30),
 							_ => null
 						};
-					}, () =>
-					{
+					}, () => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomJungleBiome");
 						return AltJungleBiomeChosenType < 0
 								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.JungleBiome")
 								: AltLibrary.Biomes[AltJungleBiomeChosenType].Name;
-					}, (mod) =>
-					{
+					}, (mod) => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return AltJungleBiomeChosenType switch {
 							>= 0 => AltLibrary.Biomes[AltJungleBiomeChosenType].Mod.Name,
 							_ => mod
@@ -148,25 +154,25 @@ namespace AltLibrary.Core.Baking
 				#region Underworld
 				if (AltLibrary.Biomes.Any(x => x.BiomeType == BiomeType.Hell && x.Selectable))
 					quene.Add(new("Terraria/Underworld", (int)BiomeType.Hell,
-					(value) =>
-					{
-						return AltHellBiomeChosenType >= 0
-								? ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHellBiomeChosenType].IconSmall
-																?? "AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.ImmediateLoad)
-								: value;
-					}, () =>
-					{
+					(value) => {
+						if (AltEvilBiomeChosenType >= 0 && AltLibraryConfig.Config.BiomeIconsVisible) {
+							return ModContent.Request<Texture2D>(AltLibrary.Biomes[AltHellBiomeChosenType].IconSmall
+								?? "AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.ImmediateLoad);
+						}
+						return value;
+					}, () => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return new(30, 60, 30, 30);
 						return AltHellBiomeChosenType switch {
 							< 0 => new(30, 60, 30, 30),
 							_ => null
 						};
-					}, () =>
-					{
+					}, () => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomUnderworldBiome");
 						return AltHellBiomeChosenType < 0
 								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.UnderworldBiome")
 								: AltLibrary.Biomes[AltHellBiomeChosenType].Name;
-					}, (mod) =>
-					{
+					}, (mod) => {
+						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return AltHellBiomeChosenType switch {
 							>= 0 => AltLibrary.Biomes[AltHellBiomeChosenType].Mod.Name,
 							_ => mod
@@ -215,8 +221,9 @@ namespace AltLibrary.Core.Baking
                 #region Pre-HM Ores
 #region Copper
                 new("Terraria/Copper", (int)OreType.Copper, (value) =>
-			{
-				return Copper switch
+				{
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
+					return Copper switch
 				{
 					>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Copper - 1].Texture),
 					_ => value
@@ -237,8 +244,8 @@ namespace AltLibrary.Core.Baking
 					-2 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Tin"),
 					_ => AltLibrary.Ores[Copper - 1].Name
 				};
-			}, (mod) =>
-			{
+			}, (mod) => {
+				if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 				return Copper switch
 				{
 					>= 0 => AltLibrary.Ores[Copper - 1].Mod.Name,
@@ -248,9 +255,9 @@ namespace AltLibrary.Core.Baking
                 #endregion
 #region Iron
                 new("Terraria/Iron", (int)OreType.Iron,
-				(value) =>
-				{
-return Iron switch
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
+					return Iron switch
 {
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Iron - 1].Texture),
 						_ => value
@@ -271,8 +278,8 @@ return Iron switch
 						-4 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Lead"),
 _ => AltLibrary.Ores[Iron - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Iron switch
 {
 						>= 0 => AltLibrary.Ores[Iron - 1].Mod.Name,
@@ -282,8 +289,8 @@ _ => mod
                 #endregion
 #region Silver
                 new("Terraria/Silver", (int)OreType.Silver,
-				(value) =>
-				{
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
 					return Silver switch
 					{
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Silver - 1].Texture),
@@ -305,8 +312,8 @@ _ => mod
 						-6 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Tungsten"),
 						_ => AltLibrary.Ores[Silver - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Silver switch
 					{
 						>= 0 => AltLibrary.Ores[Silver - 1].Mod.Name,
@@ -316,8 +323,8 @@ _ => mod
                 #endregion
 #region Gold
                 new("Terraria/Gold", (int)OreType.Gold,
-				(value) =>
-				{
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
 					return Gold switch
 					{
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Gold - 1].Texture),
@@ -339,8 +346,8 @@ _ => mod
 						-8 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Platinum"),
 						_ => AltLibrary.Ores[Gold - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Gold switch
 					{
 						>= 0 => AltLibrary.Ores[Gold - 1].Mod.Name,
@@ -352,8 +359,8 @@ _ => mod
                 #region HM Ores
 #region Cobalt
                 new("Terraria/Cobalt", (int)OreType.Cobalt,
-				(value) =>
-				{
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
 					return Cobalt switch
 					{
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Cobalt - 1].Texture),
@@ -375,8 +382,8 @@ _ => mod
 						-10 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Palladium"),
 						_ => AltLibrary.Ores[Cobalt - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Cobalt switch
 					{
 						>= 0 => AltLibrary.Ores[Cobalt - 1].Mod.Name,
@@ -386,8 +393,8 @@ _ => mod
                 #endregion
 #region Mythril
                 new("Terraria/Mythril", (int)OreType.Mythril,
-				(value) =>
-				{
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
 					return Mythril switch
 					{
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Mythril - 1].Texture),
@@ -409,8 +416,8 @@ _ => mod
 						-12 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Orichalcum"),
 						_ => AltLibrary.Ores[Mythril - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Mythril switch
 					{
 						>= 0 => AltLibrary.Ores[Mythril - 1].Mod.Name,
@@ -420,8 +427,8 @@ _ => mod
                 #endregion
 #region Adamantite
                 new("Terraria/Adamantite", (int)OreType.Adamantite,
-				(value) =>
-				{
+				(value) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return value;
 					return Adamantite switch
 					{
 						>= 0 => ModContent.Request<Texture2D>(AltLibrary.Ores[Adamantite - 1].Texture),
@@ -443,8 +450,8 @@ _ => mod
 						-14 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Titanium"),
 						_ => AltLibrary.Ores[Adamantite - 1].Name
 					};
-				}, (mod) =>
-				{
+				}, (mod) => {
+					if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return Adamantite switch
 					{
 						>= 0 => AltLibrary.Ores[Adamantite - 1].Mod.Name,

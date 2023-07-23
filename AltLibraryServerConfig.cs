@@ -8,16 +8,12 @@ namespace AltLibrary {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public static AltLibraryServerConfig Config;
 
-		[Label("$Mods.AltLibrary.Config.SecretFeatures.Label")]
-		[Tooltip("$Mods.AltLibrary.Config.SecretFeatures.Tooltip")]
 		[ReloadRequired]
 		[DefaultValue(true)]
 		public bool SecretFeatures;
 
 		[Header("$Mods.AltLibrary.Config.Randomization")]
 
-		[Label("$Mods.AltLibrary.Config.HardmodeGenRandom.Label")]
-		[Tooltip("$Mods.AltLibrary.Config.HardmodeGenRandom.Tooltip")]
 		[DefaultValue(false)]
 		public bool HardmodeGenRandom;
 #pragma warning restore CS0649
