@@ -5,6 +5,7 @@ Mods: {
 		// AnalysisNext: Next Page
 		// AnalysisPage: (Page #{0})
 		// AnalysisDone: Hey {0}, I've been running some data on {1}. Take a look!
+		// BiomeOrOreModSecret: It's a secret to everybody
 
 		Analyser: {
 			Dialog: {
@@ -61,11 +62,6 @@ Mods: {
 			SpecialSeedWorldPreview: {
 				Label: Превью специальных сидов
 				Tooltip: Когда включено, иконка мира будет изменяться в зависимости от того, в каком секретном сиде вы находитесь
-			}
-
-			SmashingAltarsSpreadsRandom: {
-				Label: Случайное заражение алтарей
-				Tooltip: Когда включено, заражаемые блоки, созданные при разрушении демонических алтарей могут быть в любом установленном биоме
 			}
 
 			VanillaShowUpIfOnlyAltVarExist: {
@@ -252,38 +248,28 @@ Mods: {
 				// DisplayName: Alt Library Config
 
 				VanillaShowUpIfOnlyAltVarExist: {
-					// Label: "{$Mods.AltLibrary.Config.VanillaShowUpIfOnlyAltVarExist.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.VanillaShowUpIfOnlyAltVarExist.Tooltip}"
+					// Label: Biomes show up only if have alternative
+					// Tooltip: When true, you won't be able to see some vanilla biomes if they don't have Alternative Biome
 				}
 
 				SpecialSeedWorldPreview: {
-					// Label: "{$Mods.AltLibrary.Config.SpecialSeedWorldPreview.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.SpecialSeedWorldPreview.Tooltip}"
+					// Label: Special seed previews
+					// Tooltip: When true, the world preview image will change depending on any secret seed you enter
 				}
 
 				PreviewVisible: {
-					// Label: "{$Mods.AltLibrary.Config.PreviewVisible.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.PreviewVisible.Tooltip}"
+					// Label: World Creation Preview
+					// Tooltip: Which layers should be rendered on World Creation Preview
 				}
 
-				BiomeIconsVisibleOutsideBiomeUI: {
-					// Label: "{$Mods.AltLibrary.Config.BiomeIconsVisibleOutsideBiomeUI.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.BiomeIconsVisibleOutsideBiomeUI.Tooltip}"
+				BiomeIconsVisible: {
+					// Label: Biome Icons visible
+					// Tooltip: When disabled, biome selection icons will use the "base" version of the biome
 				}
 
-				BiomeIconsVisibleOutside: {
-					// Label: "{$Mods.AltLibrary.Config.BiomeIconsVisible.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.BiomeIconsVisible.Tooltip}"
-				}
-
-				OreIconsVisibleOutsideOreUI: {
-					// Label: "{$Mods.AltLibrary.Config.OreIconsVisibleOutsideOreUI.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.OreIconsVisibleOutsideOreUI.Tooltip}"
-				}
-
-				OreIconsVisibleOutside: {
-					// Label: "{$Mods.AltLibrary.Config.OreIconsVisible.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.OreIconsVisible.Tooltip}"
+				OreIconsVisible: {
+					// Label: Ore Icons visible
+					// Tooltip: When disabled, ore selection icons will use the "base" version of the ore
 				}
 			}
 
@@ -291,13 +277,13 @@ Mods: {
 				// DisplayName: Alt Library Server Config
 
 				SecretFeatures: {
-					// Label: "{$Mods.AltLibrary.Config.SecretFeatures.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.SecretFeatures.Tooltip}"
+					// Label: Secret Features
+					// Tooltip: When false, no secret features will be loaded
 				}
 
 				HardmodeGenRandom: {
-					// Label: "{$Mods.AltLibrary.Config.HardmodeGenRandom.Label}"
-					// Tooltip: "{$Mods.AltLibrary.Config.HardmodeGenRandom.Tooltip}"
+					// Label: Generates random biomes on Hardmode generation in Drunk Worlds
+					// Tooltip: When true, there will be a chance for hallow be replaced with random jungle alt and for evil to be replaced with random underworld alt
 				}
 			}
 		}

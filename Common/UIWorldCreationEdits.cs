@@ -35,8 +35,6 @@ namespace AltLibrary.Common
 		//TODO: then redo most of it anyways
 		internal static List<AltOre> AddInFinishedCreation;
 		internal static List<AltBiome> AddInFinishedCreation2;
-		internal static ALGroupOptionButton<CurrentAltOption>[] chosingOption;
-		internal static CurrentAltOption chosenOption;
 		internal static bool panelActive = false;
 		internal static int AltEvilBiomeChosenType;
 		internal static int AltHallowBiomeChosenType;
@@ -133,8 +131,6 @@ namespace AltLibrary.Common
 			if (Main.netMode == NetmodeID.Server)
 				return;
 
-			chosingOption = null;
-			chosenOption = CurrentAltOption.Biome;
 			panelActive = false;
 			AltEvilBiomeChosenType = 0;
 			AltHallowBiomeChosenType = 0;
@@ -281,7 +277,7 @@ namespace AltLibrary.Common
 				ALWorldCreationLists.FillData();
 				initializedLists = true;
 			}
-			chosenOption = (CurrentAltOption)(-1);
+			panelActive = false;
 			MakeQuenedDrawingList();
 			MakeQuenedDrawingList2();
 
@@ -463,7 +459,7 @@ namespace AltLibrary.Common
 					hovered = true;
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
 						_altList.SetFilter(el => el is ALUIBiomeListItem biome && biome.biomeType == biomeType);
-						chosenOption = CurrentAltOption.Ore;
+						panelActive = true;
 					}
 				}
 				spriteBatch.Draw(ALTextureAssets.Button.Value, topLeft, (color * (hovered ? 1 : 0.75f)) with { A = 255 });
@@ -491,7 +487,7 @@ namespace AltLibrary.Common
 					hovered = true;
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
 						_altList.SetFilter(el => el is ALUIOreListItem ore && ore.oreType == oreType);
-						chosenOption = CurrentAltOption.Ore;
+						panelActive = true;
 					}
 				}
 
@@ -667,12 +663,7 @@ namespace AltLibrary.Common
 
 		private static void CloseIcon_OnClick(UIMouseEvent evt, UIElement listeningElement)
 		{
-			chosenOption = (CurrentAltOption)(-1);
-			ALGroupOptionButton<CurrentAltOption>[] evilButtons = chosingOption;
-			for (int i = 0; i < evilButtons.Length; i++)
-			{
-				evilButtons[i].SetCurrentOption((CurrentAltOption)(-1));
-			}
+			panelActive = false;
 		}
 
 		public static void OnAddWorldEvilOptions(
@@ -686,67 +677,6 @@ namespace AltLibrary.Common
 			var ctors = _evilButtons.FieldType.GetConstructors();
 			var inst = ctors[0].Invoke(new object[] { 0 });
 			_evilButtons.SetValue(self, inst);
-			return;
-			orig(self, container, accumualtedHeight, clickEvent, tagGroup, usableWidthPercent);
-			CurrentAltOption[] array11 = new CurrentAltOption[2]
-			{
-				CurrentAltOption.Biome,
-				CurrentAltOption.Ore,
-			};
-			LocalizedText[] array10 = new LocalizedText[2]
-			{
-				Language.GetText("Mods.AltLibrary.ChooseBiome"),
-				Language.GetText("Mods.AltLibrary.ChooseOre")
-			};
-			Color[] array8 = new Color[2]
-			{
-				new Color(130, 183, 108),
-				new Color(143, 183, 183)
-			};
-			string[] array7 = new string[2]
-			{
-				"Terraria/Images/UI/Bestiary/Icon_Tags_Shadow",
-				"Terraria/Images/UI/Bestiary/Icon_Tags_Shadow"
-			};
-			Rectangle[] array9 = new Rectangle[2]
-			{
-				new Rectangle(0, 0, 30, 30),
-				new Rectangle(60, 0, 30, 30)
-			};
-			UIElement[] tempArray = container.Children.ToArray();
-			for (int i = tempArray.Length - 1; i > tempArray.Length - 4; i--)
-			{
-				tempArray[i].Remove();
-			}
-			ALGroupOptionButton<CurrentAltOption>[] array6 = new ALGroupOptionButton<CurrentAltOption>[array11.Length];
-			for (int i = 0; i < array6.Length; i++)
-			{
-				ALGroupOptionButton<CurrentAltOption> groupOptionButton = new(array11[i], array10[i], null, array8[i], array7[i], array9[i], 1f, 1f, 16f)
-				{
-					Width = StyleDimension.FromPixelsAndPercent(4 * (array6.Length - 3), 1f / array6.Length * usableWidthPercent),
-					Left = StyleDimension.FromPercent(1f - usableWidthPercent),
-					HAlign = (float)i / (array6.Length - 1)
-				};
-				groupOptionButton.Top.Set(accumualtedHeight, 0f);
-				groupOptionButton.OnLeftMouseDown += ClickEvilOption;
-				groupOptionButton.OnMouseOver += self.ShowOptionDescription;
-				groupOptionButton.OnMouseOut += self.ClearOptionDescription;
-				groupOptionButton.SetSnapPoint(tagGroup, i, null, null);
-				container.Append(groupOptionButton);
-				array6[i] = groupOptionButton;
-			}
-			chosingOption = array6;
-		}
-
-		private static void ClickEvilOption(UIMouseEvent evt, UIElement listeningElement)
-		{
-			ALGroupOptionButton<CurrentAltOption> groupOptionButton = (ALGroupOptionButton<CurrentAltOption>)listeningElement;
-			chosenOption = groupOptionButton.OptionValue;
-			ALGroupOptionButton<CurrentAltOption>[] evilButtons = chosingOption;
-			for (int i = 0; i < evilButtons.Length; i++)
-			{
-				evilButtons[i].SetCurrentOption(groupOptionButton.OptionValue);
-			}
 		}
 		#endregion
 
@@ -755,7 +685,7 @@ namespace AltLibrary.Common
 		private static void M2oreList_OnUpdate(UIElement affectedElement)
 		{
 			UIList element = affectedElement as UIList;
-			if (chosenOption == CurrentAltOption.Ore)
+			if (panelActive)
 			{
 				element.Width.Set(25f, 1f);
 				element.Height.Set(-50f, 1f);
@@ -772,7 +702,7 @@ namespace AltLibrary.Common
 		private static void GUIScrollbar_OnUpdate(UIElement affectedElement)
 		{
 			UIScrollbar scrollbar = affectedElement as UIScrollbar;
-			if (chosenOption == CurrentAltOption.Ore)
+			if (panelActive)
 			{
 				scrollbar.Left = StyleDimension.FromPixels(-25f);
 				scrollbar.Height.Set(-250f, 1f);
@@ -789,7 +719,7 @@ namespace AltLibrary.Common
 		private static void JUIPanel_OnUpdate(UIElement affectedElement)
 		{
 			UIPanel element = affectedElement as UIPanel;
-			if (chosenOption == CurrentAltOption.Ore)
+			if (panelActive)
 			{
 				element.Width.Set(0f, 1f);
 				element.Height.Set(-110f, 1f);
@@ -804,7 +734,7 @@ namespace AltLibrary.Common
 		private static void RUIElement3_OnUpdate(UIElement affectedElement)
 		{
 			UIElement element = affectedElement;
-			if (chosenOption == CurrentAltOption.Ore)
+			if (panelActive)
 			{
 				element.Left = StyleDimension.FromPixels(-50f);
 				element.Width.Set(0f, 0.8f);
