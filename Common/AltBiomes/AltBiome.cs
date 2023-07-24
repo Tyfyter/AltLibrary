@@ -76,6 +76,10 @@ namespace AltLibrary.Common.AltBiomes
 		public int? ShadowKeyAlt = null;
 
 		/// <summary>
+		/// For Any alts with a biome key, not used by AltLibrary, just here so other mods can use it (for example, making a boss have a chance of dropping the world evil's key)
+		/// </summary>
+		public int? BiomeKeyItem = null;
+		/// <summary>
 		/// For Jungle, Evil, and Hallow alts. The ItemID for the rare item that will be found inside this biome's dungeon chest.
 		/// </summary>
 		public int? BiomeChestItem = null;
