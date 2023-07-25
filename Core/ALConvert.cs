@@ -13,6 +13,7 @@ namespace AltLibrary.Core
 	{
 		internal static void Load()
 		{
+			On_WorldGen.orig_Convert vvv = WorldGen.Convert;
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
 		}
 
@@ -28,41 +29,43 @@ namespace AltLibrary.Core
 				{
 					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
 					{
-						Tile tile = Main.tile[k, l];
-						int newTile = ALConvertInheritanceData.GetConvertedTile_Vanilla(tile.TileType, conversionType, k, l);
-						if (newTile == -2)
-						{
-							WorldGen.KillTile(k, l, false, false, false);
-							if (Main.netMode == NetmodeID.MultiplayerClient)
-							{
-								NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, k, l, 0f, 0, 0, 0);
-							}
-						}
-						else if (newTile != -1 && newTile != tile.TileType)
-						{
-							tile.TileType = (ushort)newTile;
+						AltBiome biome;
+						switch (conversionType) {
+							case 1:
+							biome = ModContent.GetInstance<CorruptionAltBiome>();
+							break;
+							case 4:
+							biome = ModContent.GetInstance<CrimsonAltBiome>();
+							break;
 
-							WorldGen.SquareTileFrame(k, l, true);
-							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
-						}
+							case 2:
+							biome = ModContent.GetInstance<HallowAltBiome>();
+							break;
 
-						int newWall = ALConvertInheritanceData.GetConvertedWall_Vanilla(tile.WallType, conversionType, k, l);
+							case 3:
+							biome = ModContent.GetInstance<MushroomAltBiome>();
+							break;
 
-						if (newWall == -2)
-						{
-							WorldGen.KillWall(k, l, false);
-							if (Main.netMode == NetmodeID.MultiplayerClient)
-							{
-								NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, k, l, 0f, 0, 0, 0);
-							}
-						}
-						else if (newWall != -1 && newWall != tile.WallType)
-						{
-							tile.WallType = (ushort)newWall;
+							case 5:
+							biome = ModContent.GetInstance<DesertAltBiome>();
+							break;
 
-							WorldGen.SquareTileFrame(k, l, true);
-							NetMessage.SendTileSquare(-1, k, l, TileChangeType.None);
+							case 6:
+							biome = ModContent.GetInstance<SnowAltBiome>();
+							break;
+
+							case 7:
+							biome = ModContent.GetInstance<ForestAltBiome>();
+							break;
+
+							default:
+							biome = ModContent.GetInstance<DeconvertAltBiome>();
+							break;
 						}
+						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
+
+						ConvertWall(k, l, biome, biome.WallContext.wallsReplacement, biome.ConversionType);
+						continue;
 					}
 				}
 			}
@@ -183,7 +186,11 @@ namespace AltLibrary.Core
 			} else if (conversions.TryGetValue(tile.TileType, out int convertedTile)) {
 				newTile = convertedTile;
 			}
-			(int baseTile, AltBiome fromBiome) = ALConvertInheritanceData.tileParentageData.Parent[tile.TileType];
+			int baseTile = tile.TileType;
+			AltBiome fromBiome = null;
+			if (ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
+				(baseTile, fromBiome) = parent;
+			}
 			if (newTile == -1) {
 				if (targetBiome is not null) {
 					newTile = targetBiome.GetAltBlock(baseTile, i, j);
@@ -201,7 +208,8 @@ namespace AltLibrary.Core
 			Tile tile = Main.tile[i, j];
 			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome, conversions, conversionType);
 
-			if (newTile != -1 && newTile != tile.TileType && (fromBiome?.ConvertTileAway(i, j) ?? true)) {
+			if (newTile != -1 && newTile != tile.TileType && GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j)) {
+				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
 				if (newTile == -2) {
 					WorldGen.KillTile(i, j, false, false, false);
 					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
@@ -213,11 +221,16 @@ namespace AltLibrary.Core
 					WorldGen.SquareTileFrame(i, j, true);
 					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
 				}
+				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
 			}
 		}
 		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
 			Tile tile = Main.tile[i, j];
-			(int baseWall, AltBiome fromBiome) = ALConvertInheritanceData.wallParentageData.Parent[tile.WallType];
+			int baseWall = tile.WallType;
+			AltBiome fromBiome = null;
+			if (ALConvertInheritanceData.wallParentageData.Parent.TryGetValue(tile.WallType, out (int baseTile, AltBiome fromBiome) parent)) {
+				(baseWall, fromBiome) = parent;
+			}
 			int newWall = -1;
 			if (conversions.TryGetValue(tile.WallType, out int convertedWall)) {
 				newWall = convertedWall;
@@ -231,7 +244,7 @@ namespace AltLibrary.Core
 				if (bits[conversionType]) newWall = -2; //change this to make use of spraytype
 			}
 
-			if (newWall != -1 && (fromBiome?.ConvertWallAway(i, j) ?? true)) {
+			if (newWall != -1 && newWall != tile.WallType && GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j)) {
 				if (newWall == -2) {
 					WorldGen.KillWall(i, j, false);
 					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
@@ -243,6 +256,7 @@ namespace AltLibrary.Core
 					WorldGen.SquareTileFrame(i, j, true);
 					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
 				}
+				GlobalBiomeHooks.PostConvertWall(fromBiome, targetBiome, i, j);
 			}
 		}
 	}

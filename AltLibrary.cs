@@ -25,6 +25,8 @@ namespace AltLibrary
 
 		internal static List<AltOre> Ores = new();
 
+		internal static List<GlobalBiome> GlobalBiomes = new();
+
 		internal static List<ALBiomeTileCountModifier> ALBiomeTileCountModifiers = new();
 
 		internal static List<CustomPreviews> PreviewWorldIcons = new();
@@ -271,6 +273,7 @@ namespace AltLibrary
 			}
 			Biomes = null;
 			Ores = null;
+			GlobalBiomes = null;
 			planteraBulbs = null;
 			jungleGrass = null;
 			jungleThorns = null;

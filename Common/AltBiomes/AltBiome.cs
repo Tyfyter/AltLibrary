@@ -117,8 +117,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public int? BiomeMowedGrass = null;
 
-		private Dictionary<int, int> tileConversions = new();
-		public virtual Dictionary<int, int> TileConversions => tileConversions;
+		public Dictionary<int, int> TileConversions = new();
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>
@@ -318,17 +317,6 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public virtual int GetAltBlock(int BaseBlock, int posX, int posY) {
 			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : -1;
-			switch (BaseBlock)
-			{
-				case TileID.Grass:
-					return BiomeGrass ?? -1;
-				case TileID.JungleGrass:
-					return BiomeJungleGrass ?? -1;
-				case TileID.GolfGrass:
-					return BiomeMowedGrass ?? -1;
-				case TileID.CorruptThorns: //inherit all corrupt bushes from corrupt bush
-					return BiomeThornBush ?? -1;
-			}
 		}
 		public bool HasAllTileConversions(params int[] tiles) {
 			for (int i = 0; i < tiles.Length; i++) if(!TileConversions.ContainsKey(tiles[i])) return false;
@@ -378,10 +366,10 @@ namespace AltLibrary.Common.AltBiomes
 			}
 		}
 
-/// <summary>
-/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
-/// </summary>
-public virtual void OnInitialize()
+		/// <summary>
+		/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
+		/// </summary>
+		public virtual void OnInitialize()
 		{
 		}
 
@@ -407,7 +395,7 @@ public virtual void OnInitialize()
 				switch (parentBlock) {
 					case TileID.Grass:
 					BiomeGrass = block;
-					if (BiomeType == BiomeType.Evil) TileConversions.Add(TileID.GolfGrass, block);
+					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.GolfGrass, block);
 					break;
 
 					case TileID.GolfGrass:
@@ -421,14 +409,14 @@ public virtual void OnInitialize()
 		}
 
 		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.tileParentageData.Parent.Add(Block, (ParentBlock, this));
+			ALConvertInheritanceData.tileParentageData.Parent[Block] = (ParentBlock, this);
 			if (BreakIfConversionFail != null) {
 				ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
 			}
 		}
 
 		public void AddChildWall(int Wall, int ParentWall, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.wallParentageData.Parent.Add(Wall, (ParentWall, this));
+			ALConvertInheritanceData.wallParentageData.Parent[Wall] = (ParentWall, this);
 			if (BreakIfConversionFail != null) {
 				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
 			}
@@ -441,26 +429,31 @@ public virtual void OnInitialize()
 
 		public WallContext(AltBiome biome) {
 			this.biome = biome;
-			if (biome is VanillaBiome vBiome) {
-				wallsReplacement = vBiome.WallConversions;
-			} else {
-				wallsReplacement = new Dictionary<int, int>();
-			}
+			wallsReplacement = new Dictionary<int, int>();
 		}
 
-		public WallContext AddReplacement(ushort orig, ushort with)
+		public WallContext AddReplacement(int orig, int with)
 		{
 			wallsReplacement.TryAdd(orig, with);
 			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (orig, biome));
 			return this;
 		}
 
-		public WallContext AddReplacement<T>(params ushort[] orig) where T : ModWall
+		public WallContext AddReplacements(int with, params int[] orig) {
+			foreach (ushort original in orig) {
+				wallsReplacement.TryAdd(original, with);
+				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (original, biome));
+			}
+			return this;
+		}
+
+		public WallContext AddReplacement<T>(params int[] orig) where T : ModWall
 		{
 			ushort type = ContentInstance<T>.Instance.Type;
 			foreach (ushort original in orig)
 			{
 				AddReplacement(original, type);
+				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(type, (original, biome));
 			}
 			return this;
 		}

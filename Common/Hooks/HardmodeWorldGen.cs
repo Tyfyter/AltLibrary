@@ -159,17 +159,16 @@ namespace AltLibrary.Common.Hooks
 		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateHallow(int wallID, int x, int y)
 		{
-			if (WorldBiomeManager.drunkGoodGen > 0)
-				return ALConvertInheritanceData.GetConvertedWall_Modded(wallID, Good, x, y);
-			return ALConvertInheritanceData.GetConvertedWall_Vanilla(wallID, 2, x, y);
+			AltBiome biome = WorldBiomeManager.GetWorldHallow(true);
+			if (WorldBiomeManager.drunkGoodGen > 0) biome = Good;
+			return biome.WallContext.wallsReplacement.TryGetValue(wallID, out int newWall) ? newWall : wallID;
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static int GetWallOnStateEvil(int wallID, int x, int y)
-		{
-			if (WorldBiomeManager.drunkEvilGen > 0)
-				return ALConvertInheritanceData.GetConvertedWall_Modded(wallID, Evil, x, y);
-			return ALConvertInheritanceData.GetConvertedWall_Vanilla(wallID, WorldBiomeManager.drunkEvilGen == 0 ? (!WorldGen.crimson ? 1 : 4) : 4, x, y);
+		private static int GetWallOnStateEvil(int wallID, int x, int y) {
+			AltBiome biome = WorldBiomeManager.GetWorldEvil(true);
+			if (WorldBiomeManager.drunkGoodGen > 0) biome = Evil;
+			return biome.WallContext.wallsReplacement.TryGetValue(wallID, out int newWall) ? newWall : wallID;
 		}
 
 		private static AltBiome Good => AltLibrary.Biomes.Find(x => x.Type == WorldBiomeManager.drunkGoodGen);
