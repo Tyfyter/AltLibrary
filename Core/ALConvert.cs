@@ -64,7 +64,7 @@ namespace AltLibrary.Core
 						}
 						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
 
-						ConvertWall(k, l, biome, biome.WallContext.wallsReplacement, biome.ConversionType);
+						ConvertWall(k, l, biome, biome.WallConversions, biome.ConversionType);
 						continue;
 					}
 				}
@@ -171,7 +171,7 @@ namespace AltLibrary.Core
 					{
 						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
 
-						ConvertWall(k, l, biome, biome.WallContext.wallsReplacement, biome.ConversionType);
+						ConvertWall(k, l, biome, biome.WallConversions, biome.ConversionType);
 					}
 				}
 			}
@@ -200,7 +200,7 @@ namespace AltLibrary.Core
 			}
 
 			if (newTile == -1 && ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
-				if (bits[conversionType]) newTile = -2; //change this to make use of spraytype
+				if (bits[conversionType]) newTile = -2;
 			}
 			return (newTile, fromBiome);
 		}
@@ -223,6 +223,32 @@ namespace AltLibrary.Core
 				}
 				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
 			}
+		}
+		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType) {
+			Tile tile = Main.tile[i, j];
+			int newWall = -1;
+			if (targetBiome is not null) {
+				newWall = targetBiome.GetAltBlock(tile.WallType, i, j);
+			} else if (conversions.TryGetValue(tile.WallType, out int convertedWall)) {
+				newWall = convertedWall;
+			}
+			int baseWall = tile.WallType;
+			AltBiome fromBiome = null;
+			if (ALConvertInheritanceData.wallParentageData.Parent.TryGetValue(tile.WallType, out (int baseTile, AltBiome fromBiome) parent)) {
+				(baseWall, fromBiome) = parent;
+			}
+			if (newWall == -1) {
+				if (targetBiome is not null) {
+					newWall = targetBiome.GetAltBlock(baseWall, i, j);
+				} else if (conversions.TryGetValue(baseWall, out int convertedWall)) {
+					newWall = convertedWall;
+				}
+			}
+
+			if (newWall == -1 && ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.TryGetValue(baseWall, out BitsByte bits)) {
+				if (bits[conversionType]) newWall = -2;
+			}
+			return (newWall, fromBiome);
 		}
 		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
 			Tile tile = Main.tile[i, j];

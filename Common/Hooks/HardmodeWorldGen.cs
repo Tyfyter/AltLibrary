@@ -96,7 +96,7 @@ namespace AltLibrary.Common.Hooks
 						worldEvil.HardmodeWalls.Count > 0 && worldEvil.TileConversions.ContainsValue(tile.TileType)
 						)
 					{
-						orig = WorldGen.genRand.Next(Find<AltBiome>(WorldBiomeManager.WorldEvil).HardmodeWalls);
+						orig = WorldGen.genRand.Next(worldEvil.HardmodeWalls);
 					}
 				}
 				else
@@ -161,14 +161,14 @@ namespace AltLibrary.Common.Hooks
 		{
 			AltBiome biome = WorldBiomeManager.GetWorldHallow(true);
 			if (WorldBiomeManager.drunkGoodGen > 0) biome = Good;
-			return biome.WallContext.wallsReplacement.TryGetValue(wallID, out int newWall) ? newWall : wallID;
+			return biome.WallConversions.TryGetValue(wallID, out int newWall) ? newWall : wallID;
 		}
 
 		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateEvil(int wallID, int x, int y) {
 			AltBiome biome = WorldBiomeManager.GetWorldEvil(true);
 			if (WorldBiomeManager.drunkGoodGen > 0) biome = Evil;
-			return biome.WallContext.wallsReplacement.TryGetValue(wallID, out int newWall) ? newWall : wallID;
+			return biome.WallConversions.TryGetValue(wallID, out int newWall) ? newWall : wallID;
 		}
 
 		private static AltBiome Good => AltLibrary.Biomes.Find(x => x.Type == WorldBiomeManager.drunkGoodGen);
@@ -213,7 +213,7 @@ namespace AltLibrary.Common.Hooks
 					if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldEvil, out AltBiome evilBiome))
 					{
 						ALConvert.ConvertTile(m, l, evilBiome, evilBiome.TileConversions, evilBiome.ConversionType, true);
-						if (evilBiome.WallContext.wallsReplacement.TryGetValue(tile.WallType, out int wallReplacement)) {
+						if (evilBiome.WallConversions.TryGetValue(tile.WallType, out int wallReplacement)) {
 							tile.WallType = (ushort)wallReplacement;
 						}
 					}
@@ -256,7 +256,7 @@ namespace AltLibrary.Common.Hooks
 							WorldGen.SquareTileFrame(m, l, true);
 						}
 					}
-					if (worldHallow.WallContext.wallsReplacement.TryGetValue(tile.WallType, out int wallReplacement)) {
+					if (worldHallow.WallConversions.TryGetValue(tile.WallType, out int wallReplacement)) {
 						tile.WallType = (ushort)wallReplacement;
 					}
 				}

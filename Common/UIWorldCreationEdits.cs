@@ -31,8 +31,6 @@ namespace AltLibrary.Common
 {
 	[Autoload(Side = ModSide.Client)]
 	internal class UIWorldCreationEdits {
-		//TODO: double check that this code makes sense to begin with
-		//TODO: then redo most of it anyways
 		internal static List<AltOre> AddInFinishedCreation;
 		internal static List<AltBiome> AddInFinishedCreation2;
 		internal static bool panelActive = false;

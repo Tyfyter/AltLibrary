@@ -27,7 +27,6 @@ namespace AltLibrary.Common.Hooks
 			Terraria.GameContent.UI.Elements.IL_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf1;
 			Terraria.GameContent.UI.Elements.On_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf;
 			Terraria.GameContent.UI.Elements.On_AWorldListItem.GetIcon += UIWorldListItem_GetIcon;
-			UIWorldListItem v;
 			WarnUpdate = 0;
 		}
 

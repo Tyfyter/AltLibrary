@@ -11,10 +11,6 @@ using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.Hooks
 {
-	/// <summary>
-	/// TODO:
-	/// make hell chest alts actually gen...
-	/// </summary>
 	internal class DungeonChests
 	{
 		internal static int hellChestIndex;
@@ -32,7 +28,7 @@ namespace AltLibrary.Common.Hooks
 		static void MakeDungeonChests() {
 			List<(int chestTileType, int contain, int style2)> biomeChests = new();
 			static bool GetBiomeChest(AltBiome biome, out (int chestTileType, int contain, int style2) chestData) {
-				if (biome.BiomeChestTile.HasValue && biome.BiomeChestItem.HasValue) {
+				if (biome is not null && biome.BiomeChestTile.HasValue && biome.BiomeChestItem.HasValue) {
 					chestData = (biome.BiomeChestTile.Value, biome.BiomeChestItem.Value, biome.BiomeChestTileStyle.GetValueOrDefault());
 					return true;
 				}
@@ -59,6 +55,10 @@ namespace AltLibrary.Common.Hooks
 
 			biomeChests.Add((TileID.Containers, ItemID.StaffoftheFrostHydra, 27));
 			biomeChests.Add((TileID.Containers2, ItemID.StormTigerStaff, 13));
+
+			if (GetBiomeChest(WorldBiomeManager.GetWorldHell(true), out chestData)) {
+				biomeChests.Add(chestData);
+			}
 
 			if (WorldGen.drunkWorldGen) {
 				if (altEvil is null) {

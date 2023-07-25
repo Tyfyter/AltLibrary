@@ -13,6 +13,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
+using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Common.AltBiomes
 {
@@ -118,30 +119,23 @@ namespace AltLibrary.Common.AltBiomes
 		public int? BiomeMowedGrass = null;
 
 		public Dictionary<int, int> TileConversions = new();
+		public Dictionary<int, int> WallConversions = new();
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>
 		public int? BiomeMud = null;
 		/// <summary>
-		/// For Evil and Hallow alts. The tile that this biome will convert jungle grass into. Leave null to not convert Jungle grass.
-		/// For Evil alts, this should be the same as biomeGrass.
-		/// For Hallow alts, this should remain null.
-		/// DO NOT USE FOR JUNGLE ALTS.
+		/// For Jungle alts.
 		/// </summary>
 		public int? BiomeJungleGrass = null;
 		/// <summary>
-		/// For Evil and Hallow alts. The tile that this biome will convert thorn bushes into.
-		/// Leave as is if your Spreading biome does not have thorn bushes.
+		/// For Jungle alts.
 		/// </summary>
 		public int? BiomeThornBush = null;
 		/// <summary>
 		/// For Jungle alts. The wall that replaces mud walls.
 		/// </summary>
 		public int? BiomeMudWall = null;
-		/// <summary>
-		/// For Jungle alts. The wall that replaces flower walls in the underground jungle.
-		/// </summary>
-		public int? BiomeGrassWall = null;
 		/// <summary>
 		/// For Jungle alts. The shortgrass that grows on the grass tile.
 		/// </summary>
@@ -171,8 +165,6 @@ namespace AltLibrary.Common.AltBiomes
 		/// For Jungle alts, if you use a mechanic similar to Plantera's bulb, list the TileID of that tile here.
 		/// </summary>
 		public int? BossBulb = null;
-
-		public WallContext WallContext;
 
 		public virtual List<int> HardmodeWalls => new();
 		#endregion
@@ -294,7 +286,6 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual AltMaterialContext MaterialContext => null;
 		public sealed override void SetupContent()
 		{
-			WallContext = new(this);
 			SetStaticDefaults();
 		}
 		/// <summary>
@@ -311,12 +302,15 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual bool ConvertWallAway(int i, int j) => true;
 
 		/// <summary>
-		/// You have no reason to overwrite this unless you're doing some really weird stuff. Just call AddConversion.
+		/// You have no reason to overwrite this unless you need to make some conversions conditional or random
 		/// For Clentaminator purposes. Gets the alt block of the base block. Override this function and call base(BaseBlock) if you want to add new functionality.
 		/// Returns -1 if it's an invalid conversion
 		/// </summary>
 		public virtual int GetAltBlock(int BaseBlock, int posX, int posY) {
 			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : -1;
+		}
+		public virtual int GetAltWall(int BaseWall, int posX, int posY) {
+			return WallConversions.TryGetValue(BaseWall, out int val) ? val : -1;
 		}
 		public bool HasAllTileConversions(params int[] tiles) {
 			for (int i = 0; i < tiles.Length; i++) if(!TileConversions.ContainsKey(tiles[i])) return false;
@@ -388,7 +382,7 @@ namespace AltLibrary.Common.AltBiomes
 		{
 		}
 
-		public void AddConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
+		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);
 			TileConversions.Add(parentBlock, block);
 			if (extraFunctions) {
@@ -407,6 +401,40 @@ namespace AltLibrary.Common.AltBiomes
 				SpreadingTiles.Add(block);
 			}
 		}
+		public void AddWallConversions<T>(params int[] orig) where T : ModWall {
+			ushort type = ContentInstance<T>.Instance.Type;
+			AddWallConversions(type, orig);
+		}
+		public void AddWallConversions(int with, params int[] orig) {
+			foreach (ushort original in orig) {
+				WallConversions.TryAdd(original, with);
+				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (original, this));
+			}
+		}
+		public void AddWallConversions<T>(params bool[] set) where T : ModWall {
+			ushort type = ContentInstance<T>.Instance.Type;
+			AddWallConversions(type, set);
+		}
+		public void AddWallConversions(int with, params bool[] set) {
+			for (int i = 0; i < set.Length; i++) {
+				if (set[i]) {
+					WallConversions.TryAdd(i, with);
+					ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (i, this));
+				}
+			}
+		}
+		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
+		public void AddWallReplacement(int orig, int with) {
+			WallConversions.TryAdd(orig, with);
+			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (orig, this));
+		}
+		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
+		public void AddWallReplacement<T>(params int[] orig) where T : ModWall {
+			ushort type = ContentInstance<T>.Instance.Type;
+			foreach (ushort original in orig) {
+				AddWallReplacement(original, type);
+			}
+		}
 
 		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
 			ALConvertInheritanceData.tileParentageData.Parent[Block] = (ParentBlock, this);
@@ -420,42 +448,6 @@ namespace AltLibrary.Common.AltBiomes
 			if (BreakIfConversionFail != null) {
 				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
 			}
-		}
-	}
-	public class WallContext
-	{
-		internal Dictionary<int, int> wallsReplacement;
-		public readonly AltBiome biome;
-
-		public WallContext(AltBiome biome) {
-			this.biome = biome;
-			wallsReplacement = new Dictionary<int, int>();
-		}
-
-		public WallContext AddReplacement(int orig, int with)
-		{
-			wallsReplacement.TryAdd(orig, with);
-			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (orig, biome));
-			return this;
-		}
-
-		public WallContext AddReplacements(int with, params int[] orig) {
-			foreach (ushort original in orig) {
-				wallsReplacement.TryAdd(original, with);
-				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (original, biome));
-			}
-			return this;
-		}
-
-		public WallContext AddReplacement<T>(params int[] orig) where T : ModWall
-		{
-			ushort type = ContentInstance<T>.Instance.Type;
-			foreach (ushort original in orig)
-			{
-				AddReplacement(original, type);
-				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(type, (original, biome));
-			}
-			return this;
 		}
 	}
 }
