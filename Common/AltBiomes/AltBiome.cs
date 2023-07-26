@@ -307,7 +307,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// Returns -1 if it's an invalid conversion
 		/// </summary>
 		public virtual int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
-			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : (GERunner && TileConversions.TryGetValue(BaseBlock, out val) ? val : -1);
+			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : (GERunner && GERunnerConversion.TryGetValue(BaseBlock, out val) ? val : -1);
 		}
 		public virtual int GetAltWall(int BaseWall, int posX, int posY) {
 			return WallConversions.TryGetValue(BaseWall, out int val) ? val : -1;

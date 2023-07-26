@@ -1,5 +1,7 @@
 using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core.Baking;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -14,10 +16,45 @@ namespace AltLibrary.Core
 		internal static void Load()
 		{
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
+			IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
 		}
 
 		internal static void Unload()
 		{
+		}
+
+		private static void IL_Projectile_VanillaAI(ILContext il) {
+			ILCursor c = new(il);
+			ILLabel skip = default;
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdarg(0),
+				i => i.MatchLdfld<Projectile>("type"),
+				i => i.MatchLdcI4(10),
+				i => i.MatchBneUn(out skip)
+			);
+			int index = c.Index;
+
+			int xPos = -1;
+			int yPos = -1;
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdsflda<Main>("tile"),
+				i => i.MatchLdloc(out xPos),
+				i => i.MatchLdloc(out yPos),
+				i => i.MatchCall<Tilemap>("get_Item")
+			);
+			c.Index = index;
+			c.Emit(OpCodes.Ldloc, xPos);
+			c.Emit(OpCodes.Ldloc, yPos);
+			c.EmitDelegate<Action<int, int>>((x, y) => {
+				Tile tile = Main.tile[x, y];
+				if (tile.HasTile) {
+					ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent);
+					if (parent.fromBiome?.BiomeType == BiomeType.Evil) {
+						ConvertTile(x, y, ModContent.GetInstance<DeconvertAltBiome>());
+					}
+				}
+			});
+			c.Emit(OpCodes.Br, skip);
 		}
 
 		private static void WorldGen_Convert(Terraria.On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
@@ -61,9 +98,9 @@ namespace AltLibrary.Core
 							biome = ModContent.GetInstance<DeconvertAltBiome>();
 							break;
 						}
-						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
+						ConvertTile(k, l, biome);
 
-						ConvertWall(k, l, biome, biome.WallConversions, biome.ConversionType);
+						ConvertWall(k, l, biome);
 						continue;
 					}
 				}
@@ -168,22 +205,20 @@ namespace AltLibrary.Core
 				{
 					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
 					{
-						ConvertTile(k, l, biome, biome.TileConversions, biome.ConversionType);
+						ConvertTile(k, l, biome);
 
-						ConvertWall(k, l, biome, biome.WallConversions, biome.ConversionType);
+						ConvertWall(k, l, biome);
 					}
 				}
 			}
 			return;
 		}
 		public delegate void ConversionOverrideHack(int baseTile, ref int newTile);
-		public static (int newTile, AltBiome fromBiome) GetTileConversionState(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType) {
+		public static (int newTile, AltBiome fromBiome) GetTileConversionState(int i, int j, AltBiome targetBiome) {
 			Tile tile = Main.tile[i, j];
 			int newTile = -1;
 			if (targetBiome is not null) {
 				newTile = targetBiome.GetAltBlock(tile.TileType, i, j);
-			} else if (conversions.TryGetValue(tile.TileType, out int convertedTile)) {
-				newTile = convertedTile;
 			}
 			int baseTile = tile.TileType;
 			AltBiome fromBiome = null;
@@ -193,19 +228,17 @@ namespace AltLibrary.Core
 			if (newTile == -1) {
 				if (targetBiome is not null) {
 					newTile = targetBiome.GetAltBlock(baseTile, i, j);
-				} else if (conversions.TryGetValue(baseTile, out int convertedTile)) {
-					newTile = convertedTile;
 				}
 			}
 
 			if (newTile == -1 && ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
-				if (bits[conversionType]) newTile = -2;
+				if (bits[targetBiome.ConversionType]) newTile = -2;
 			}
 			return (newTile, fromBiome);
 		}
-		public static void ConvertTile(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, bool silent = false) {
+		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
-			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome, conversions, conversionType);
+			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome);
 
 			if (newTile != -1 && newTile != tile.TileType && GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j)) {
 				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
@@ -223,13 +256,11 @@ namespace AltLibrary.Core
 				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
 			}
 		}
-		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType) {
+		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) {
 			Tile tile = Main.tile[i, j];
 			int newWall = -1;
 			if (targetBiome is not null) {
-				newWall = targetBiome.GetAltBlock(tile.WallType, i, j);
-			} else if (conversions.TryGetValue(tile.WallType, out int convertedWall)) {
-				newWall = convertedWall;
+				newWall = targetBiome.GetAltWall(tile.WallType, i, j);
 			}
 			int baseWall = tile.WallType;
 			AltBiome fromBiome = null;
@@ -238,36 +269,18 @@ namespace AltLibrary.Core
 			}
 			if (newWall == -1) {
 				if (targetBiome is not null) {
-					newWall = targetBiome.GetAltBlock(baseWall, i, j);
-				} else if (conversions.TryGetValue(baseWall, out int convertedWall)) {
-					newWall = convertedWall;
+					newWall = targetBiome.GetAltWall(baseWall, i, j);
 				}
 			}
 
 			if (newWall == -1 && ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.TryGetValue(baseWall, out BitsByte bits)) {
-				if (bits[conversionType]) newWall = -2;
+				if (bits[targetBiome.ConversionType]) newWall = -2;
 			}
 			return (newWall, fromBiome);
 		}
-		public static void ConvertWall(int i, int j, AltBiome targetBiome, Dictionary<int, int> conversions, int conversionType, ConversionOverrideHack conversionOverrideHack = null, bool silent = false) {
+		public static void ConvertWall(int i, int j, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
-			int baseWall = tile.WallType;
-			AltBiome fromBiome = null;
-			if (ALConvertInheritanceData.wallParentageData.Parent.TryGetValue(tile.WallType, out (int baseTile, AltBiome fromBiome) parent)) {
-				(baseWall, fromBiome) = parent;
-			}
-			int newWall = -1;
-			if (conversions.TryGetValue(tile.WallType, out int convertedWall)) {
-				newWall = convertedWall;
-			} else if (conversions.TryGetValue((ushort)baseWall, out convertedWall)) {
-				newWall = convertedWall;
-			}
-			if (conversionOverrideHack is not null) conversionOverrideHack(baseWall, ref newWall);
-
-
-			if (newWall == -1 && ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.TryGetValue(baseWall, out BitsByte bits)) {
-				if (bits[conversionType]) newWall = -2; //change this to make use of spraytype
-			}
+			(int newWall, AltBiome fromBiome) = GetWallConversionState(i, j, targetBiome);
 
 			if (newWall != -1 && newWall != tile.WallType && GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j)) {
 				if (newWall == -2) {

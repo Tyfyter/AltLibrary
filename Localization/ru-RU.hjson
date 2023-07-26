@@ -195,7 +195,12 @@ Mods: {
 		}
 
 		DropRule.Base: Выпадает в мирах с {0}
-		// Condition.Base: In worlds with {0}
+
+		Condition: {
+			// Base: In worlds with {0}
+			// NotBase: In worlds without {0}
+		}
+
 		Common.DevTooltip: «Отлично подходит для подражания внешности разработчиков!»
 
 		ItemTooltip: {

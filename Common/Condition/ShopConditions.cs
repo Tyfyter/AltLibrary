@@ -33,5 +33,26 @@ namespace AltLibrary.Common.Conditions {
 			Language.GetOrRegister("Mods.AltLibrary.Condition.Base").WithFormatArgs(biome.DisplayName),
 			() => WorldBiomeManager.GetWorldHell(true) == biome
 		);
+
+		public static Condition NotWorldEvilCondition<T>() where T : AltBiome => NotWorldEvilCondition(GetInstance<T>());
+		public static Condition NotWorldEvilCondition(AltBiome biome) => new Condition(
+			Language.GetOrRegister("Mods.AltLibrary.Condition.NotBase").WithFormatArgs(biome.DisplayName),
+			() => WorldBiomeManager.GetWorldEvil(true) != biome
+		);
+		public static Condition NotWorldHallowCondition<T>() where T : AltBiome => NotWorldHallowCondition(GetInstance<T>());
+		public static Condition NotWorldHallowCondition(AltBiome biome) => new Condition(
+			Language.GetOrRegister("Mods.AltLibrary.Condition.NotBase").WithFormatArgs(biome.DisplayName),
+			() => WorldBiomeManager.GetWorldHallow(true) != biome
+		);
+		public static Condition NotWorldJungleCondition<T>() where T : AltBiome => NotWorldJungleCondition(GetInstance<T>());
+		public static Condition NotWorldJungleCondition(AltBiome biome) => new Condition(
+			Language.GetOrRegister("Mods.AltLibrary.Condition.NotBase").WithFormatArgs(biome.DisplayName),
+			() => WorldBiomeManager.GetWorldJungle(true) != biome
+		);
+		public static Condition NotWorldHellCondition<T>() where T : AltBiome => NotWorldHellCondition(GetInstance<T>());
+		public static Condition NotWorldHellCondition(AltBiome biome) => new Condition(
+			Language.GetOrRegister("Mods.AltLibrary.Condition.NotBase").WithFormatArgs(biome.DisplayName),
+			() => WorldBiomeManager.GetWorldHell(true) != biome
+		);
 	}
 }

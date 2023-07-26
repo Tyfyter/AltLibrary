@@ -17,9 +17,17 @@ namespace AltLibrary.Common.Hooks {
 				var conditions = ALReflection.ShopEntry_conditions.GetValue(entry);
 				for (int i = 0; i < conditions.Count; i++) {
 					if (conditions[i] == Condition.CorruptWorld) {
-						conditions[i] = ShopConditions.GetWorldEvilCondition<CorruptionAltBiome>();
+						if (entry.Item.type == ItemID.CrimsonSeeds) {
+							conditions[i] = ShopConditions.NotWorldEvilCondition<CrimsonAltBiome>();
+						} else {
+							conditions[i] = ShopConditions.GetWorldEvilCondition<CorruptionAltBiome>();
+						}
 					} else if (conditions[i] == Condition.CrimsonWorld) {
-						conditions[i] = ShopConditions.GetWorldEvilCondition<CrimsonAltBiome>();
+						if (entry.Item.type == ItemID.CorruptSeeds) {
+							conditions[i] = ShopConditions.NotWorldEvilCondition<CorruptionAltBiome>();
+						} else {
+							conditions[i] = ShopConditions.GetWorldEvilCondition<CrimsonAltBiome>();
+						}
 					}
 				}
 			}
