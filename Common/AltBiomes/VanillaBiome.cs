@@ -43,6 +43,10 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false) { }
 		public override void SetStaticDefaults() {
+			BiomeOreItem = ItemID.DemoniteOre;
+			SeedType = ItemID.CorruptSeeds;
+			ArrowType = ItemID.UnholyArrow;
+
 			BiomeChestItem = ItemID.ScourgeoftheCorruptor;
 			BiomeChestTile = TileID.Containers;
 			BiomeChestTileStyle = 24;
@@ -72,6 +76,9 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true) { }
 		public override void SetStaticDefaults() {
+			BiomeOreItem = ItemID.CrimtaneOre;
+			SeedType = ItemID.CrimsonSeeds;
+
 			BiomeChestItem = ItemID.VampireKnives;
 			BiomeChestTile = TileID.Containers;
 			BiomeChestTileStyle = 25;

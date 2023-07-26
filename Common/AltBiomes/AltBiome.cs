@@ -449,5 +449,23 @@ namespace AltLibrary.Common.AltBiomes
 				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
 			}
 		}
+		public static bool operator ==(AltBiome a, AltBiome b) {
+			if (a is null) return b is null;
+			if (b is null) return false;
+			return a.GetType() == b.GetType();
+		}
+		public static bool operator !=(AltBiome a, AltBiome b) {
+			if (a is null) return b is not null;
+			if (b is null) return true;
+			return a.GetType() != b.GetType();
+		}
+		public override bool Equals(object obj) {
+			return (obj is AltBiome other) && other == this;
+		}
+		public override int GetHashCode() {
+			unchecked {
+				return GetType().GetHashCode();
+			}
+		}
 	}
 }

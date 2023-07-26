@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Terraria;
@@ -16,6 +17,7 @@ namespace AltLibrary.Core
 		internal static FastFieldInfo<UIList, UIElement> UIList_innerList = null;
 		internal static FieldInfo UIWorldCreation__evilButtons = null;
 		internal static PropertyInfo ModType_Mod = null;
+		internal static FastFieldInfo<NPCShop.Entry, List<Condition>> ShopEntry_conditions = null;
 
 
 		internal delegate void WorldGenScanTileColumnAndRemoveClumps(int x);
@@ -27,13 +29,17 @@ namespace AltLibrary.Core
 			UIList_innerList = new("_innerList", BindingFlags.NonPublic);
 			ModType_Mod = typeof(ModType).GetProperty("Mod");
 			UIWorldCreation__evilButtons = typeof(UIWorldCreation).GetField("_evilButtons", BindingFlags.NonPublic | BindingFlags.Instance);
+			ShopEntry_conditions = new("conditions", BindingFlags.NonPublic);
 		}
 
 		internal static void Unload()
 		{
 			WorldGen_ScanTileColumnAndRemoveClumps = null;
 			UIList__innerList = null;
+			UIList_innerList = null;
 			ModType_Mod = null;
+			UIWorldCreation__evilButtons = null;
+			ShopEntry_conditions = null;
 		}
 	}
 	public class FastFieldInfo<TParent, T> {

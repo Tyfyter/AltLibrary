@@ -22,7 +22,10 @@ namespace AltLibrary.Core
 			{
 				if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow)
 				{
-					if (type == biome.BiomeGrass) isGrass = true;
+					if (type == biome.BiomeGrass) {
+						isGrass = true;
+						biomeToSpread = biome;
+					}
 					if (biome.SpreadingTiles.Contains(type))
 					{
 						isSpreadingTile = true;

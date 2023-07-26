@@ -13,7 +13,6 @@ namespace AltLibrary.Core
 	{
 		internal static void Load()
 		{
-			On_WorldGen.orig_Convert vvv = WorldGen.Convert;
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
 		}
 

@@ -16,28 +16,36 @@ namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem
 	{
-		public static AltBiome GetWorldEvil(bool includeVanilla = false) {
-			if (TryFind(WorldEvil, out AltBiome worldEvil)) return worldEvil;
+		public static AltBiome GetWorldEvil(bool includeVanilla = true) {
+			if (TryFind(Main.drunkWorld ? drunkEvil : WorldEvil, out AltBiome worldEvil)) return worldEvil;
 			if (includeVanilla) {
+				if (Main.drunkWorld) {
+					switch (drunkEvil) {
+						case "Terraria/Crimson":
+						return GetInstance<CrimsonAltBiome>();
+						default:
+						return GetInstance<CorruptionAltBiome>();
+					}
+				}
 				return WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
 			}
 			return null;
 		}
-		public static AltBiome GetWorldHallow(bool includeVanilla = false) {
+		public static AltBiome GetWorldHallow(bool includeVanilla = true) {
 			if (TryFind(WorldHallow, out AltBiome worldHallow)) return worldHallow;
 			if (includeVanilla) {
 				return GetInstance<HallowAltBiome>();
 			}
 			return null;
 		}
-		public static AltBiome GetWorldHell(bool includeVanilla) {
+		public static AltBiome GetWorldHell(bool includeVanilla = true) {
 			if (TryFind(WorldHell, out AltBiome worldHell)) return worldHell;
 			if (includeVanilla) {
 				return GetInstance<UnderworldAltBiome>();
 			}
 			return null;
 		}
-		public static AltBiome GetWorldJungle(bool includeVanilla) {
+		public static AltBiome GetWorldJungle(bool includeVanilla = true) {
 			if (TryFind(WorldJungle, out AltBiome worldJungle)) return worldJungle;
 			if (includeVanilla) {
 				return GetInstance<JungleAltBiome>();

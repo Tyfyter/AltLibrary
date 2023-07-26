@@ -290,8 +290,8 @@ Mods: {
 		}
 
 		AltBiomes: {
-			// 1273.DisplayName: "1273"
-			// HHHHHAltBiome.DisplayName: H H H H H Alt Biome
+			// CrimsonBiome.DisplayName: Crimson Biome
+			// CorruptBiome.DisplayName: Corrupt Biome
 		}
 	}
 }

@@ -15,16 +15,15 @@ namespace AltLibrary.Common.Conditions
 
 		public bool CanDrop(DropAttemptInfo info)
 		{
-			if (!info.IsInSimulation && BiomeType.FullName != null && BiomeType.FullName != "")
-			{
-				if (WorldBiomeManager.WorldEvil != "") return WorldBiomeManager.WorldEvil == BiomeType.FullName;
+			if (!info.IsInSimulation) {
+				return WorldBiomeManager.GetWorldEvil(true) == BiomeType;
 			}
 			return false;
 		}
 
 		public bool CanShowItemDropInUI()
 		{
-			return WorldBiomeManager.WorldEvil == BiomeType.FullName;
+			return WorldBiomeManager.GetWorldEvil(true) == BiomeType;
 		}
 
 		public string GetConditionDescription()

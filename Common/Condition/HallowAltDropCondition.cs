@@ -15,16 +15,16 @@ namespace AltLibrary.Common.Conditions
 
 		public bool CanDrop(DropAttemptInfo info)
 		{
-			if (!info.IsInSimulation && BiomeType.FullName != null && BiomeType.FullName != "")
+			if (!info.IsInSimulation)
 			{
-				if (WorldBiomeManager.WorldHallow == BiomeType.FullName) return WorldBiomeManager.WorldHallow == BiomeType.FullName;
+				return WorldBiomeManager.GetWorldHallow(true) == BiomeType;
 			}
 			return false;
 		}
 
 		public bool CanShowItemDropInUI()
 		{
-			return WorldBiomeManager.WorldHallow == BiomeType.FullName;
+			return WorldBiomeManager.GetWorldHallow(true) == BiomeType;
 		}
 
 		public string GetConditionDescription()
