@@ -206,10 +206,10 @@ namespace AltLibrary.Common.AltBiomes
 		public int HammerType = ItemID.Pwnhammer;
 
 		/// <summary>
-		/// For Evil and Hallow alts. You may list additional tiles that this biome can convert into its own blocks.
+		/// For Evil and Hallow alts. You may list additional tiles that this biome can convert into its own blocks during GERunner.
 		/// The first value is the pure tile, the second value is its infected counterpart.
 		/// </summary>
-		public virtual Dictionary<int, int> SpecialConversion => new();
+		public virtual Dictionary<int, int> GERunnerConversion => new();
 
 		/// <summary>
 		/// For Evil Alts. The ItemID of the seeds that Eye of Cthulhu will drop in worlds with this biome.
@@ -306,8 +306,8 @@ namespace AltLibrary.Common.AltBiomes
 		/// For Clentaminator purposes. Gets the alt block of the base block. Override this function and call base(BaseBlock) if you want to add new functionality.
 		/// Returns -1 if it's an invalid conversion
 		/// </summary>
-		public virtual int GetAltBlock(int BaseBlock, int posX, int posY) {
-			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : -1;
+		public virtual int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
+			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : (GERunner && TileConversions.TryGetValue(BaseBlock, out val) ? val : -1);
 		}
 		public virtual int GetAltWall(int BaseWall, int posX, int posY) {
 			return WallConversions.TryGetValue(BaseWall, out int val) ? val : -1;

@@ -118,7 +118,7 @@ namespace AltLibrary.Common.Hooks
 		}
 		//TODO: double check that this code makes sense to begin with
 
-		private static int GetTileOnStateHallow(int tileID, int x, int y)
+		private static int GetTileOnStateHallow(int tileID, int x, int y, bool GERunner = false)
 		{
 			AltBiome biome;
 			if (WorldBiomeManager.drunkGoodGen > 0) {
@@ -128,7 +128,7 @@ namespace AltLibrary.Common.Hooks
 			} else {
 				biome = GetInstance<HallowAltBiome>();
 			}
-			int rv = biome.GetAltBlock(tileID, x, y);
+			int rv = biome.GetAltBlock(tileID, x, y, GERunner);
 			if (rv == -1)
 				return tileID;
 			else if (rv == -2)
@@ -137,7 +137,7 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static int GetTileOnStateEvil(int tileID, int x, int y) {
+		private static int GetTileOnStateEvil(int tileID, int x, int y, bool GERunner = false) {
 			AltBiome biome;
 			if (WorldBiomeManager.drunkEvilGen > 0) {
 				biome = Evil;
@@ -148,7 +148,7 @@ namespace AltLibrary.Common.Hooks
 					(!WorldGen.crimson ? GetInstance<CorruptionAltBiome>() : GetInstance<CrimsonAltBiome>()) :
 					(WorldBiomeManager.drunkEvilGen == 0 ? GetInstance<CorruptionAltBiome>() : GetInstance<CrimsonAltBiome>());
 			}
-			int rv = biome.GetAltBlock(tileID, x, y);
+			int rv = biome.GetAltBlock(tileID, x, y, GERunner);
 			if (rv == -1)
 				return tileID;
 			else if (rv == -2)
@@ -210,9 +210,15 @@ namespace AltLibrary.Common.Hooks
 				if (!good)
 				{
 					Tile tile = Main.tile[m, l];
-					if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldEvil, out AltBiome evilBiome))
-					{
-						ALConvert.ConvertTile(m, l, evilBiome, evilBiome.TileConversions, evilBiome.ConversionType, true);
+					if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldEvil, out AltBiome evilBiome)) {
+						if (evilBiome.TileConversions.TryGetValue(tile.TileType, out int tileReplacement)) {
+							tile.TileType = (ushort)tileReplacement;
+							WorldGen.SquareTileFrame(m, l, true);
+						}
+						if (evilBiome.GERunnerConversion.TryGetValue(tile.TileType, out tileReplacement)) {
+							tile.TileType = (ushort)tileReplacement;
+							WorldGen.SquareTileFrame(m, l, true);
+						}
 						if (evilBiome.WallConversions.TryGetValue(tile.WallType, out int wallReplacement)) {
 							tile.WallType = (ushort)wallReplacement;
 						}
@@ -221,10 +227,12 @@ namespace AltLibrary.Common.Hooks
 					{
 						int type = tile.TileType;
 						int wall = tile.WallType;
-						if (WorldGen.InWorld(m, l) && type != -1 && GetTileOnStateEvil(type, m, l) != -1 && type != GetTileOnStateEvil(type, m, l))
-						{
-							tile.TileType = (ushort)GetTileOnStateEvil(type, m, l);
-							WorldGen.SquareTileFrame(m, l, true);
+						if (WorldGen.InWorld(m, l) && type != -1) {
+							int evilState = GetTileOnStateEvil(type, m, l, true);
+							if (evilState != -1 && type != evilState) {
+								type = (ushort)evilState;
+								WorldGen.SquareTileFrame(m, l, true);
+							}
 						}
 						if (WorldGen.InWorld(m, l) && wall != -1 && GetWallOnStateEvil(wall, m, l) != -1 && wall != GetWallOnStateEvil(wall, m, l))
 						{
@@ -246,15 +254,14 @@ namespace AltLibrary.Common.Hooks
 			c.EmitDelegate<Action<int, int>>((m, l) =>
 			{
 				Tile tile = Main.tile[m, l];
-				if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow))
-				{
-					foreach (KeyValuePair<int, int> entry in Find<AltBiome>(WorldBiomeManager.WorldHallow).SpecialConversion)
-					{
-						if (tile.TileType == entry.Key)
-						{
-							tile.TileType = (ushort)entry.Value;
-							WorldGen.SquareTileFrame(m, l, true);
-						}
+				if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow)) {
+					if (worldHallow.TileConversions.TryGetValue(tile.TileType, out int tileReplacement)) {
+						tile.TileType = (ushort)tileReplacement;
+						WorldGen.SquareTileFrame(m, l, true);
+					}
+					if (worldHallow.GERunnerConversion.TryGetValue(tile.TileType, out tileReplacement)) {
+						tile.TileType = (ushort)tileReplacement;
+						WorldGen.SquareTileFrame(m, l, true);
 					}
 					if (worldHallow.WallConversions.TryGetValue(tile.WallType, out int wallReplacement)) {
 						tile.WallType = (ushort)wallReplacement;
@@ -264,10 +271,12 @@ namespace AltLibrary.Common.Hooks
 				{
 					int type = tile.TileType;
 					int wall = tile.WallType;
-					if (WorldGen.InWorld(m, l) && type != -1 && GetTileOnStateHallow(type, m, l) != -1 && type != GetTileOnStateHallow(type, m, l))
-					{
-						type = (ushort)GetTileOnStateHallow(type, m, l);
-						WorldGen.SquareTileFrame(m, l, true);
+					if (WorldGen.InWorld(m, l) && type != -1) {
+						int hallowState = GetTileOnStateHallow(type, m, l, true);
+						if (hallowState != -1 && type != hallowState) {
+							type = (ushort)hallowState;
+							WorldGen.SquareTileFrame(m, l, true);
+						}
 					}
 					if (WorldGen.InWorld(m, l) && wall != -1 && GetWallOnStateHallow(wall, m, l) != -1 && wall != GetWallOnStateHallow(wall, m, l))
 					{
@@ -295,7 +304,8 @@ namespace AltLibrary.Common.Hooks
 					c.Index++;
 					c.Emit(OpCodes.Ldloc, 15);
 					c.Emit(OpCodes.Ldloc, 16);
-					c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateHallow);
+					c.Emit(OpCodes.Ldc_I4_1);
+					c.EmitDelegate<Func<int, int, int, bool, int>>(GetTileOnStateHallow);
 				}
 			}
 			void evilWall(int id)
@@ -319,7 +329,8 @@ namespace AltLibrary.Common.Hooks
 						c.Index++;
 						c.Emit(OpCodes.Ldloc, 15);
 						c.Emit(OpCodes.Ldloc, 16);
-						c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateEvil);
+						c.Emit(OpCodes.Ldc_I4_1);
+						c.EmitDelegate<Func<int, int, int, bool, int>>(GetTileOnStateEvil);
 					}
 				}
 				else
@@ -330,7 +341,8 @@ namespace AltLibrary.Common.Hooks
 						c.Index += 2;
 						c.Emit(OpCodes.Ldloc, 15);
 						c.Emit(OpCodes.Ldloc, 16);
-						c.EmitDelegate<Func<int, int, int, int>>(GetTileOnStateEvil);
+						c.Emit(OpCodes.Ldc_I4_1);
+						c.EmitDelegate<Func<int, int, int, bool, int>>(GetTileOnStateEvil);
 					}
 				}
 			}

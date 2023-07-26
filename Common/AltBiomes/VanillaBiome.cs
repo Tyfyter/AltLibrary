@@ -125,11 +125,11 @@ namespace AltLibrary.Common.AltBiomes
 			AddWallConversions(WallID.HallowUnsafe3, WallID.Sets.Conversion.NewWall3);
 			AddWallConversions(WallID.HallowUnsafe4, WallID.Sets.Conversion.NewWall4);
 		}
-		public override int GetAltBlock(int BaseBlock, int k, int l) {
+		public override int GetAltBlock(int BaseBlock, int k, int l, bool GERunner = false) {
 			if (BaseBlock == TileID.Mud && (Main.tile[k - 1, l].TileType == TileID.HallowedGrass || Main.tile[k + 1, l].TileType == TileID.HallowedGrass || Main.tile[k, l - 1].TileType == TileID.HallowedGrass || Main.tile[k, l + 1].TileType == TileID.HallowedGrass)) {
 				return TileID.Dirt;
 			}
-			return base.GetAltBlock(BaseBlock, k, l);
+			return base.GetAltBlock(BaseBlock, k, l, GERunner);
 		}
 	}
 	public class JungleAltBiome : VanillaBiome {
@@ -146,7 +146,7 @@ namespace AltLibrary.Common.AltBiomes
 	public class DeconvertAltBiome : VanillaBiome {
 		public override int ConversionType => 0;
 		public DeconvertAltBiome() : base("Deconvert", BiomeType.None, -1, Color.Green) {}
-		public override int GetAltBlock(int BaseBlock, int posX, int posY) {
+		public override int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
 			return ALConvertInheritanceData.tileParentageData.Deconversion.TryGetValue(BaseBlock, out int val) ? val : -1;
 		}
 	}
@@ -190,8 +190,8 @@ namespace AltLibrary.Common.AltBiomes
 				}
 			}
 		}
-		public override int GetAltBlock(int BaseBlock, int k, int l) {
-			int value = base.GetAltBlock(BaseBlock, k, l);
+		public override int GetAltBlock(int BaseBlock, int k, int l, bool GERunner = false) {
+			int value = base.GetAltBlock(BaseBlock, k, l, GERunner);
 			if (value == TileID.Sand) {
 				if (WorldGen.BlockBelowMakesSandConvertIntoHardenedSand(k, l)) {
 					value = TileID.HardenedSand;
@@ -251,8 +251,8 @@ namespace AltLibrary.Common.AltBiomes
 				}
 			}
 		}
-		public override int GetAltBlock(int BaseBlock, int k, int l) {
-			int value = base.GetAltBlock(BaseBlock, k, l);
+		public override int GetAltBlock(int BaseBlock, int k, int l, bool GERunner = false) {
+			int value = base.GetAltBlock(BaseBlock, k, l, GERunner);
 			if (value == TileID.Dirt) {
 				if (WorldGen.TileIsExposedToAir(k, l)) {
 					value = TileID.Grass;

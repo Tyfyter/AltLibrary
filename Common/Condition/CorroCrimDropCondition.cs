@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Localization;
 
-namespace AltLibrary.Common.Condition
+namespace AltLibrary.Common.Conditions
 {
 	internal class CorroCrimDropCondition : IItemDropRuleCondition
 	{

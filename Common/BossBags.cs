@@ -1,5 +1,5 @@
 ﻿using AltLibrary.Common.AltBiomes;
-using AltLibrary.Common.Condition;
+using AltLibrary.Common.Conditions;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -54,8 +54,8 @@ namespace AltLibrary.Common
 						}
 
 						var corroCrimCondition = new LeadingConditionRule(new CorroCrimDropCondition());
-						var corroCondition = new LeadingConditionRule(new Conditions.IsCorruptionAndNotExpert());
-						var crimCondition = new LeadingConditionRule(new Conditions.IsCrimsonAndNotExpert());
+						var corroCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.IsCorruptionAndNotExpert());
+						var crimCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.IsCrimsonAndNotExpert());
 
 						corroCrimCondition.OnSuccess(corroCondition);
 						corroCrimCondition.OnSuccess(crimCondition);
@@ -68,7 +68,7 @@ namespace AltLibrary.Common
 
 						itemLoot.Add(corroCrimCondition);
 
-						var expertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+						var expertCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.NotExpert());
 
 						foreach (AltBiome biome in EvilList)
 						{
@@ -91,7 +91,7 @@ namespace AltLibrary.Common
 								itemLoot.Remove(rule);
 							}
 						}
-						var expertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+						var expertCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.NotExpert());
 						var hallowBarCondition = new LeadingConditionRule(new HallowDropCondition());
 						expertCondition.OnSuccess(hallowBarCondition);
 						hallowBarCondition.OnSuccess(ItemDropRule.Common(ItemID.Pwnhammer));
@@ -116,7 +116,7 @@ namespace AltLibrary.Common
 								break;
 							}
 						}
-						var expertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+						var expertCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.NotExpert());
 						var hallowBarCondition = new LeadingConditionRule(new HallowDropCondition());
 						expertCondition.OnSuccess(hallowBarCondition);
 						hallowBarCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 15, 30));

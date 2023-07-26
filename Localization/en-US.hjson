@@ -195,6 +195,7 @@ Mods: {
 		}
 
 		DropRule.Base: Drops in worlds with {0}
+		Condition.Base: In worlds with {0}
 		Common.DevTooltip: Great for impersonating mod devs!
 
 		ItemTooltip: {

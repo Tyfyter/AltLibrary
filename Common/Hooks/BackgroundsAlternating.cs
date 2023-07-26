@@ -112,10 +112,10 @@ namespace AltLibrary.Common
 				_cacheIndexes = null;
 				_cacheIndexByName = null;
 
-				Terraria.GameContent.On_BackgroundChangeFlashInfo.UpdateCache -= FlashUpdateCache;
-				Terraria.On_WorldGen.RandomizeBackgroundBasedOnPlayer -= FlashRandomizeOnPlayer;
+				On_BackgroundChangeFlashInfo.UpdateCache -= FlashUpdateCache;
+				On_WorldGen.RandomizeBackgroundBasedOnPlayer -= FlashRandomizeOnPlayer;
 
-				Terraria.On_Main.DrawSurfaceBG_BackMountainsStep1 -= GetMagicNums;
+				On_Main.DrawSurfaceBG_BackMountainsStep1 -= GetMagicNums;
 
 				SBSL_DrawCloseBackground = null;
 				SBSL_DrawMiddleTexture = null;

@@ -1,5 +1,5 @@
 ﻿using AltLibrary.Common.AltBiomes;
-using AltLibrary.Common.Condition;
+using AltLibrary.Common.Conditions;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
