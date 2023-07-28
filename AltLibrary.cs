@@ -291,6 +291,8 @@ namespace AltLibrary
 			ReflectionDictionary.Unload();
 		}
 
+
+		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
 		public static AltBiome GetAltBiome(int type) => Biomes.Find(x => x.Type == type);
 
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
