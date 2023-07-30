@@ -50,23 +50,6 @@ namespace AltLibrary.Core.Generation
 						}
 					}
 				}
-				int num40 = (int)GenVars.worldSurfaceLow;
-				while (num40 < Main.worldSurface - 1.0)
-				{
-					if (Main.tile[n, num40].HasTile)
-					{
-						int num41 = num40 + WorldGen.genRand.Next(10, 14);
-						for (int num42 = num40; num42 < num41; num42++)
-						{
-							if ((Main.tile[n, num42].TileType == TileID.Mud || Main.tile[n, num42].TileType == TileID.JungleGrass) && n >= num34 + WorldGen.genRand.Next(5) && n < num35 - WorldGen.genRand.Next(5))
-							{
-								Main.tile[n, num42].TileType = 0;
-							}
-						}
-						break;
-					}
-					num40++;
-				}
 			}
 			double num43 = Main.worldSurface + 40.0;
 			for (int num44 = num34; num44 < num35; num44++)
@@ -91,10 +74,14 @@ namespace AltLibrary.Core.Generation
 						{
 							Main.tile[i2, num45].TileType = 112;
 						}
-						if (Main.tile[i2, num45].TileType == 0 && num45 < Main.worldSurface - 1.0 && !flag7)
-						{
-							WorldGen.grassSpread = 0;
-							WorldGen.SpreadGrass(i2, num45, 0, 23, true);
+						if (num45 < Main.worldSurface - 1.0 && !flag7) {
+							if (Main.tile[i2, num45].TileType == TileID.Dirt) {
+								WorldGen.grassSpread = 0;
+								WorldGen.SpreadGrass(i2, num45, TileID.Dirt, TileID.CorruptGrass, true);
+							} else if (Main.tile[i2, num45].TileType == TileID.Mud) {
+								WorldGen.grassSpread = 0;
+								WorldGen.SpreadGrass(i2, num45, TileID.Mud, TileID.CorruptJungleGrass);
+							}
 						}
 						flag7 = true;
 						if (Main.tile[i2, num45].TileType == 1 && i2 >= num34 + WorldGen.genRand.Next(5) && i2 <= num35 - WorldGen.genRand.Next(5))

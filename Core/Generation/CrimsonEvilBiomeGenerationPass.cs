@@ -11,26 +11,6 @@ namespace AltLibrary.Core.Generation
 		public override void GenerateEvil(int num15, int num16, int num17)
 		{
 			WorldGen.CrimStart(num15, (int)GenVars.worldSurfaceLow - 10);
-			for (int j = num16; j < num17; j++)
-			{
-				int num20 = (int)GenVars.worldSurfaceLow;
-				while (num20 < Main.worldSurface - 1.0)
-				{
-					if (Main.tile[j, num20].HasTile)
-					{
-						int num21 = num20 + WorldGen.genRand.Next(10, 14);
-						for (int k = num20; k < num21; k++)
-						{
-							if ((Main.tile[j, k].TileType == TileID.Mud || Main.tile[j, k].TileType == TileID.JungleGrass) && j >= num16 + WorldGen.genRand.Next(5) && j < num17 - WorldGen.genRand.Next(5))
-							{
-								Main.tile[j, k].TileType = 0;
-							}
-						}
-						break;
-					}
-					num20++;
-				}
-			}
 			double num22 = Main.worldSurface + 40.0;
 			for (int l = num16; l < num17; l++)
 			{
@@ -54,10 +34,14 @@ namespace AltLibrary.Core.Generation
 						{
 							Main.tile[i2, num23].TileType = 234;
 						}
-						if (Main.tile[i2, num23].TileType == 0 && num23 < Main.worldSurface - 1.0 && !flag4)
-						{
-							WorldGen.grassSpread = 0;
-							WorldGen.SpreadGrass(i2, num23, 0, 199, true);
+						if (num23 < Main.worldSurface - 1.0 && !flag4) {
+							if (Main.tile[i2, num23].TileType == TileID.Dirt) {
+								WorldGen.grassSpread = 0;
+								WorldGen.SpreadGrass(i2, num23, TileID.Dirt, TileID.CrimsonGrass, true);
+							} else if (Main.tile[i2, num23].TileType == TileID.Mud) {
+								WorldGen.grassSpread = 0;
+								WorldGen.SpreadGrass(i2, num23, TileID.Mud, TileID.CrimsonJungleGrass);
+							}
 						}
 						flag4 = true;
 						if (Main.tile[i2, num23].WallType == 216)
