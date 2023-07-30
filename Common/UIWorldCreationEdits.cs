@@ -452,7 +452,7 @@ namespace AltLibrary.Common
 				if (!ignoreMouse && mouseRectangle.Intersects(new Rectangle((int)topLeft.X, (int)topLeft.Y, buttonTexture.Width, buttonTexture.Height))) {
 					string line1 = onHoverName();
 					string line2 = $"{Language.GetTextValue("Mods.AltLibrary.AddedBy")} {onHoverMod("Terraria")}";
-					string line = $"{line1}\n{line2}";
+					string line = $"{line1}\n{line2}\n{Language.GetOrRegister("Mods.AltLibrary.ChooseBiome")}";
 					Main.instance.MouseText(line);
 					hovered = true;
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
@@ -480,7 +480,7 @@ namespace AltLibrary.Common
 				if (!ignoreMouse && mouseRectangle.Intersects(hitbox)) {
 					string line1 = onHoverName();
 					string line2 = $"{Language.GetTextValue("Mods.AltLibrary.AddedBy")} {onHoverMod("Terraria")}";
-					string line = $"{line1}\n{line2}";
+					string line = $"{line1}\n{line2}\n{Language.GetOrRegister("Mods.AltLibrary.ChooseOre")}";
 					Main.instance.MouseText(line);
 					hovered = true;
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
