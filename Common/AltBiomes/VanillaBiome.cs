@@ -165,7 +165,7 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(-2, TileID.JungleThorns);
 			for (int i = 0; i < WallLoader.WallCount; i++) {
 				if (WallID.Sets.CanBeConvertedToGlowingMushroom[i]) {
-					AddWallReplacement(i, WallID.MushroomUnsafe);
+					AddWallConversions(WallID.MushroomUnsafe, i);
 				}
 			}
 		}
@@ -191,15 +191,15 @@ namespace AltLibrary.Common.AltBiomes
 			
 			for (int i = 0; i < WallLoader.WallCount; i++) {
 				if ((WallID.Sets.Conversion.Stone[i] || WallID.Sets.Conversion.NewWall1[i] || WallID.Sets.Conversion.NewWall2[i] || WallID.Sets.Conversion.NewWall3[i] || WallID.Sets.Conversion.NewWall4[i] || WallID.Sets.Conversion.Ice[i] || WallID.Sets.Conversion.Sandstone[i])) {
-					AddWallReplacement(i, WallID.Sandstone);
+					AddWallConversions(WallID.Sandstone, i);
 				} else if ((WallID.Sets.Conversion.HardenedSand[i] || WallID.Sets.Conversion.Dirt[i] || WallID.Sets.Conversion.Snow[i])) {
-					AddWallReplacement(i, WallID.HardenedSand);
+					AddWallConversions(WallID.HardenedSand, i);
 				}
 			}
 		}
 		public override int GetAltBlock(int BaseBlock, int k, int l, bool GERunner = false) {
 			int value = base.GetAltBlock(BaseBlock, k, l, GERunner);
-			if (value == TileID.Sand) {
+			if (value == TileID.Sand && BaseBlock != TileID.Sand) {
 				if (WorldGen.BlockBelowMakesSandConvertIntoHardenedSand(k, l)) {
 					value = TileID.HardenedSand;
 				}
@@ -225,9 +225,9 @@ namespace AltLibrary.Common.AltBiomes
 
 			for (int i = 0; i < WallLoader.WallCount; i++) {
 				if ((WallID.Sets.Conversion.Stone[i] || WallID.Sets.Conversion.NewWall1[i] || WallID.Sets.Conversion.NewWall2[i] || WallID.Sets.Conversion.NewWall3[i] || WallID.Sets.Conversion.NewWall4[i] || WallID.Sets.Conversion.Ice[i] || WallID.Sets.Conversion.Sandstone[i])) {
-					AddWallReplacement(i, WallID.IceUnsafe);
+					AddWallConversions(WallID.IceUnsafe, i);
 				} else if ((WallID.Sets.Conversion.HardenedSand[i] || WallID.Sets.Conversion.Dirt[i] || WallID.Sets.Conversion.Snow[i])) {
-					AddWallReplacement(i, WallID.SnowWallUnsafe);
+					AddWallConversions(WallID.SnowWallUnsafe, i);
 				}
 			}
 		}
@@ -251,16 +251,24 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(-2, TileID.JungleThorns, spread: false, oneWay: true, extraFunctions: false);
 
 			for (int i = 0; i < WallLoader.WallCount; i++) {
-				if ((WallID.Sets.Conversion.Stone[i] || WallID.Sets.Conversion.NewWall1[i] || WallID.Sets.Conversion.NewWall2[i] || WallID.Sets.Conversion.NewWall3[i] || WallID.Sets.Conversion.NewWall4[i] || WallID.Sets.Conversion.Ice[i] || WallID.Sets.Conversion.Sandstone[i])) {
-					AddWallReplacement(i, WallID.Sandstone);
-				} else if ((WallID.Sets.Conversion.HardenedSand[i] || WallID.Sets.Conversion.Dirt[i] || WallID.Sets.Conversion.Snow[i])) {
-					AddWallReplacement(i, WallID.HardenedSand);
+				if (WallID.Sets.Conversion.Stone[i] || WallID.Sets.Conversion.Ice[i] || WallID.Sets.Conversion.Sandstone[i]) {
+					AddWallConversions(WallID.Stone, i);
+				} else if (WallID.Sets.Conversion.HardenedSand[i] || WallID.Sets.Conversion.Dirt[i] || WallID.Sets.Conversion.Snow[i]) {
+					AddWallConversions(WallID.DirtUnsafe, i);
+				} else if (WallID.Sets.Conversion.NewWall1[i]) {
+					AddWallConversions(WallID.DirtUnsafe1, i);
+				} else if (WallID.Sets.Conversion.NewWall2[i]) {
+					AddWallConversions(WallID.DirtUnsafe2, i);
+				} else if (WallID.Sets.Conversion.NewWall3[i]) {
+					AddWallConversions(WallID.DirtUnsafe3, i);
+				} else if (WallID.Sets.Conversion.NewWall4[i]) {
+					AddWallConversions(WallID.DirtUnsafe4, i);
 				}
 			}
 		}
 		public override int GetAltBlock(int BaseBlock, int k, int l, bool GERunner = false) {
 			int value = base.GetAltBlock(BaseBlock, k, l, GERunner);
-			if (value == TileID.Dirt) {
+			if (value == TileID.Dirt && BaseBlock != TileID.Dirt) {
 				if (WorldGen.TileIsExposedToAir(k, l)) {
 					value = TileID.Grass;
 				}
