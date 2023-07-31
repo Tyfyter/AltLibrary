@@ -1,4 +1,5 @@
 using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.Systems;
 using AltLibrary.Core.Baking;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -17,6 +18,7 @@ namespace AltLibrary.Core
 		{
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
 			IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
+			IL_WorldGen.smCallBack += IL_WorldGen_smCallBack;
 		}
 
 		internal static void Unload()
@@ -107,7 +109,48 @@ namespace AltLibrary.Core
 			}
 			return;
 		}
-
+		private static void IL_WorldGen_smCallBack(ILContext il) {
+			ILCursor c = new(il);
+			int count = 0;
+			while (c.TryGotoNext(MoveType.After,
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdcI4(2),
+				i => i.MatchLdcI4(1),
+				i => i.MatchCall<WorldGen>("Convert")
+			)) {
+				count++;
+				c.Index--;
+				c.Remove();
+				c.EmitDelegate<Action<int, int, int, int>>(RemixHardmodeConvert);
+				int tile = -1;
+				if (c.TryGotoPrev(MoveType.After,
+					i => i.MatchLdloca(out tile),
+					i => i.MatchCall<Tile>("get_type"),
+					i => i.MatchLdindU2(),
+					i => i.MatchLdelemU1(),
+					i => i.MatchBrfalse(out _)
+				)) {
+					c.Index--;
+					c.Emit(OpCodes.Ldloc, tile);
+					c.EmitDelegate<Func<bool, Tile, bool>>(CheckTileEvil);
+				}
+			}
+			if (count != 4) AltLibrary.Instance.Logger.Warn($"{count} Convert calls found in WorldGen_smCallBack, should be 4");
+		}
+		public static void RemixHardmodeConvert(int i, int j, int conversionType, int size = 4) {
+			if (conversionType != 2 || size != 1) {
+				WorldGen.Convert(i, j, conversionType, size);
+				return;
+			}
+			Convert(WorldBiomeManager.GetWorldHallow(true), i, j, 1);
+		}
+		static bool CheckTileEvil(bool evil, Tile tile) {
+			if (!evil
+				&& ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)
+				&& parent.fromBiome?.BiomeType == BiomeType.Evil) return true;
+			return evil;
+		}
 		/// <summary>
 		/// Makes throwing water converting effect.
 		/// </summary>

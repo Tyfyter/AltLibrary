@@ -234,6 +234,7 @@ namespace AltLibrary.Core.Generation
 						evilBiomePositionWestBound = Main.maxTilesX - 400;
 					}
 				}
+				if (Main.remixWorld) break;
 				//DIFFERENCE 2 END
 				if (evilBiomePosition > MapCenter - MapCenterGive && evilBiomePosition < MapCenter + MapCenterGive)
 				{

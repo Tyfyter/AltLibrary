@@ -1,4 +1,5 @@
 ﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil;
@@ -238,15 +239,13 @@ namespace AltLibrary.Common.Hooks
 			if ((WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) == null)
 				return;
 			ALUtils.GetWorldData(self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
-			UIImage _worldIcon = (UIImage)typeof(UIWorldListItem).GetField("_worldIcon", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self);
+			UIElement _worldIcon = ALReflection.UIWorldListItem__worldIcon.GetValue(self);
 			WorldFileData _data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self);
 			CalculatedStyle innerDimensions = self.GetInnerDimensions();
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();
 			float num7 = innerDimensions.X + innerDimensions.Width;
-			if (tempDict.ContainsKey(path2))
-			{
-				for (int i = 0; i < 4; i++)
-				{
+			if (tempDict.ContainsKey(path2)) {
+				for (int i = 0; i < 4; i++) {
 					Asset<Texture2D> asset = ALTextureAssets.BestiaryIcons;
 					if (i == 0 && tempDict[path2].worldHallow != "" && ModContent.TryFind(tempDict[path2].worldHallow, out AltBiome hallow)) asset = ModContent.Request<Texture2D>(hallow.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHallow");
 					if (i == 1 && tempDict[path2].worldEvil != "" && ModContent.TryFind(tempDict[path2].worldEvil, out AltBiome evil)) asset = ModContent.Request<Texture2D>(evil.IconSmall ?? "AltLibrary/Assets/Menu/ButtonCorrupt");
@@ -267,8 +266,7 @@ namespace AltLibrary.Common.Hooks
 				}
 			}
 
-			if (!ALUtils.IsWorldValid(self))
-			{
+			if (!ALUtils.IsWorldValid(self)) {
 				Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
 				Asset<Texture2D> asset = ALTextureAssets.ButtonWarn;
 				int num = WarnUpdate % 120;
@@ -276,8 +274,7 @@ namespace AltLibrary.Common.Hooks
 				Rectangle rectangle = new(num2 * 22, 0, 22, 22);
 				spriteBatch.Draw(asset.Value, new Vector2(num7 - 26f * 5, dimensions.Y - 2f), rectangle, Color.White);
 				Vector2 vector2 = new(num7 - 26f * 5, dimensions.Y - 2f);
-				if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(11f, 11f), Utils.Size(new Rectangle(0, 0, 22, 22)))))
-				{
+				if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(11f, 11f), Utils.Size(new Rectangle(0, 0, 22, 22))))) {
 					string line = Language.GetTextValue("Mods.AltLibrary.WorldBreak");
 					Main.instance.MouseText(line);
 				}
