@@ -16,10 +16,10 @@ namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem
 	{
-		public static AltBiome GetWorldEvil(bool includeVanilla = true) {
-			if (TryFind(Main.drunkWorld ? drunkEvil : WorldEvil, out AltBiome worldEvil)) return worldEvil;
+		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = true) {
+			if (TryFind((Main.drunkWorld && includeDrunk) ? drunkEvil : WorldEvil, out AltBiome worldEvil)) return worldEvil;
 			if (includeVanilla) {
-				if (Main.drunkWorld) {
+				if (Main.drunkWorld && includeDrunk) {
 					switch (drunkEvil) {
 						case "Terraria/Crimson":
 						return GetInstance<CrimsonAltBiome>();

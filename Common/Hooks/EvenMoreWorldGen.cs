@@ -1,5 +1,6 @@
 using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using AltLibrary.Core;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -26,6 +27,7 @@ namespace AltLibrary.Common.Hooks
 			GenPasses.HookGenPassAltars += ILGenPassAltars;
 			GenPasses.HookGenPassMicroBiomes += GenPasses_HookGenPassMicroBiomes;
 			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
+			IL_WorldGen.FinishRemixWorld += IL_WorldGen_FinishRemixWorld;
 		}
 
 		public static void Unload()
@@ -509,6 +511,52 @@ namespace AltLibrary.Common.Hooks
 			});
 			c.Emit(OpCodes.Ret);
 			c.MarkLabel(startCorruptionGen);
+		}
+
+		private static void IL_WorldGen_FinishRemixWorld(ILContext il) {
+			ILCursor c = new(il);
+			ILLabel skipLabel = default;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out skipLabel)
+			);
+			int x = -1;
+			int y = -1;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdloc(out x),
+				i => i.MatchLdloc(out y),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchCall<WorldGen>("Convert")
+			);
+			int index = c.Index;
+			c.GotoLabel(skipLabel, MoveType.Before);
+			c.Index--;
+			c.Next.MatchBr(out skipLabel);
+			c.Index = index;
+			c.Emit(OpCodes.Ldloc, x);
+			c.Emit(OpCodes.Ldloc, y);
+			c.EmitDelegate<Action<int, int>>((x, y) => {
+				AltBiome convertBiome;
+				if (WorldGen.drunkWorldGen) {
+					if (GenVars.crimsonLeft) {
+						if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
+							convertBiome = WorldBiomeManager.GetWorldEvil(true, true);
+						} else {
+							convertBiome = WorldBiomeManager.GetWorldEvil(true, false);
+						}
+					} else if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
+						convertBiome = WorldBiomeManager.GetWorldEvil(true, false);
+					} else {
+						convertBiome = WorldBiomeManager.GetWorldEvil(true, true);
+					}
+				} else {
+					convertBiome = WorldBiomeManager.GetWorldEvil(true);
+				}
+				ALConvert.ConvertTile(x, y, convertBiome);
+			});
+			c.Emit(OpCodes.Br, skipLabel);
+			MonoModHooks.DumpIL(AltLibrary.Instance, il);
 		}
 	}
 }

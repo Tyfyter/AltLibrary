@@ -263,6 +263,14 @@ namespace AltLibrary.Common.AltBiomes
 		#endregion
 
 		/// <summary>
+		/// For Evil alts. The TileID of the tile that will be used for floating islands in remix worlds
+		/// </summary>
+		public int? BiomeFlesh = null;
+		/// <summary>
+		/// For Evil alts. The WallID of the wall that will be used for floating islands in remix worlds
+		/// </summary>
+		public int? BiomeFleshWall = null;
+		/// <summary>
 		/// In CelebrationMk10 worlds, sky islands may generate as the world's Hallow biome, with a corresponding water fountain.
 		/// Set this field to the TileID of your biome's water fountain if you are making a Hallow alt.
 		/// </summary>

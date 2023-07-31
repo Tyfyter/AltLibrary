@@ -143,7 +143,10 @@ namespace AltLibrary.Core
 				WorldGen.Convert(i, j, conversionType, size);
 				return;
 			}
-			Convert(WorldBiomeManager.GetWorldHallow(true), i, j, 1);
+			AltBiome hallow = WorldBiomeManager.GetWorldHallow(true);
+			Convert(hallow, i, j, 1);
+			Tile tile = Framing.GetTileSafely(i, j);
+			if (hallow.GERunnerConversion.TryGetValue(tile.TileType, out int value)) tile.TileType = (ushort)value;
 		}
 		static bool CheckTileEvil(bool evil, Tile tile) {
 			if (!evil
