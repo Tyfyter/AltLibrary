@@ -520,6 +520,7 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
 				i => i.MatchBrfalse(out skipLabel)
 			);
+			int index = c.Index;
 			int x = -1;
 			int y = -1;
 			c.GotoNext(MoveType.Before,
@@ -529,7 +530,6 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchLdcI4(out _),
 				i => i.MatchCall<WorldGen>("Convert")
 			);
-			int index = c.Index;
 			c.GotoLabel(skipLabel, MoveType.Before);
 			c.Index--;
 			c.Next.MatchBr(out skipLabel);
