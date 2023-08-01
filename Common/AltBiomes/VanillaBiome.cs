@@ -36,6 +36,10 @@ namespace AltLibrary.Common.AltBiomes
 			Type = type;
 			this.nameColor = nameColor;
 			IsForCrimsonOrCorruptWorldUIFix = fix;
+			FleshDoorTile = TileID.ClosedDoor;
+			FleshChairTile = TileID.Chairs;
+			FleshTableTile = TileID.Tables;
+			FleshChestTile = TileID.Containers;
 		}
 	}
 	public class CorruptionAltBiome : VanillaBiome {
@@ -59,6 +63,14 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.CorruptHardenedSand, TileID.HardenedSand);
 			AddTileConversion(TileID.CorruptSandstone, TileID.Sandstone);
 			AddTileConversion(TileID.CorruptThorns, TileID.JungleThorns);
+
+			BiomeFlesh = TileID.LesionBlock;
+			BiomeFleshWall = WallID.LesionBlock;
+
+			FleshDoorTileStyle = 38;
+			FleshChairTileStyle = 38;
+			FleshTableTileStyle = 2;
+			FleshChestTileStyle = TileID.Containers;
 
 			AddWallConversions(WallID.CorruptGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.EbonstoneUnsafe, WallID.Sets.Conversion.Stone);
@@ -91,6 +103,16 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.CrimsonHardenedSand, TileID.HardenedSand);
 			AddTileConversion(TileID.CrimsonSandstone, TileID.Sandstone);
 			AddTileConversion(TileID.CrimsonThorns, TileID.JungleThorns);
+
+			BiomeFlesh = TileID.FleshBlock;
+			BiomeFleshWall = WallID.Flesh;
+
+			FleshDoorTileStyle = 5;
+			FleshChairTileStyle = 8;
+			FleshTableTile = TileID.Tables2;
+			FleshTableTileStyle = 5;
+			FleshChestTile = TileID.Containers2;
+			FleshChestTileStyle = TileID.Containers2;
 
 			AddWallConversions(WallID.CrimsonGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.CrimstoneUnsafe, WallID.Sets.Conversion.Stone);

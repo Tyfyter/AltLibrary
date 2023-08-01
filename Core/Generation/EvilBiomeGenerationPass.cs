@@ -79,12 +79,13 @@ namespace AltLibrary.Core.Generation
 			}
 			else
 			{
-				if (WorldBiomeManager.WorldEvil == "" && !WorldGen.crimson)
+				EvilBiomes.Add(WorldBiomeManager.GetWorldEvil(true).GetEvilBiomeGenerationPass());
+				/*if (WorldBiomeManager.WorldEvil == "" && !WorldGen.crimson)
 					EvilBiomes.Add(VanillaBiome.corruptPass);
 				else if (WorldBiomeManager.WorldEvil == "" && WorldGen.crimson)
 					EvilBiomes.Add(VanillaBiome.crimsonPass);
 				else
-					EvilBiomes.Add(AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldEvil).GetEvilBiomeGenerationPass());
+					EvilBiomes.Add(AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldEvil).GetEvilBiomeGenerationPass());*/
 			}
 
 			double numberPasses = Main.maxTilesX * 0.00045;

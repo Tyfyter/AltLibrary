@@ -142,7 +142,7 @@ namespace AltLibrary.Common.Hooks
 			if (WorldBiomeManager.drunkEvilGen > 0) {
 				biome = Evil;
 			} else if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
-				biome = WorldBiomeManager.GetWorldEvil();
+				biome = WorldBiomeManager.GetWorldEvil(true, true);
 			} else {
 				biome = WorldBiomeGeneration.WofKilledTimes <= 1 ?
 					(!WorldGen.crimson ? GetInstance<CorruptionAltBiome>() : GetInstance<CrimsonAltBiome>()) :
@@ -166,7 +166,7 @@ namespace AltLibrary.Common.Hooks
 
 		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateEvil(int wallID, int x, int y) {
-			AltBiome biome = WorldBiomeManager.GetWorldEvil(true);
+			AltBiome biome = WorldBiomeManager.GetWorldEvil(true, true);
 			if (WorldBiomeManager.drunkGoodGen > 0) biome = Evil;
 			return biome.WallConversions.TryGetValue(wallID, out int newWall) ? newWall : wallID;
 		}

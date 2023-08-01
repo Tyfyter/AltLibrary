@@ -20,6 +20,7 @@ namespace AltLibrary.Common
 		private static MethodBase UnderworldInfo;
 		private static MethodBase AltarsInfo;
 		private static MethodBase MicroBiomesInfo;
+		internal static MethodBase SpreadingGrassInfo;
 		static FieldInfo _vanillaGenPassesField;
 		static FieldInfo _method;
 
@@ -63,6 +64,7 @@ namespace AltLibrary.Common
 			UnderworldInfo = GetGenPassInfo(_vanillaGenPasses, "Underworld");
 			AltarsInfo = GetGenPassInfo(_vanillaGenPasses, "Altars");
 			MicroBiomesInfo = GetGenPassInfo(_vanillaGenPasses, "Micro Biomes");
+			SpreadingGrassInfo = GetGenPassInfo(_vanillaGenPasses, "Spreading Grass");
 
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchCall(typeof(Console).GetMethod(nameof(Console.WriteLine), BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(object[]) }))))
@@ -94,6 +96,7 @@ namespace AltLibrary.Common
 			UnderworldInfo = null;
 			AltarsInfo = null;
 			MicroBiomesInfo = null;
+			SpreadingGrassInfo = null;
 		}
 
 		private static MethodBase GetGenPassInfo(Dictionary<string, GenPass> _vanillaGenPasses, string name)

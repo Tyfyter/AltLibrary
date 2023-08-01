@@ -28,6 +28,9 @@ namespace AltLibrary.Common.Hooks
 			GenPasses.HookGenPassMicroBiomes += GenPasses_HookGenPassMicroBiomes;
 			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
 			IL_WorldGen.FinishRemixWorld += IL_WorldGen_FinishRemixWorld;
+			MonoModHooks.Modify(GenPasses.SpreadingGrassInfo, IL_GenPasses_SpreadingGrass);
+			IL_WorldGen.FloatingIsland += IL_WorldGen_FloatingIsland;
+			IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort += IL_WorldGen_AddBuriedChest_int_int_int_bool_int_bool_ushort;
 		}
 
 		public static void Unload()
@@ -513,6 +516,23 @@ namespace AltLibrary.Common.Hooks
 			c.MarkLabel(startCorruptionGen);
 		}
 
+		static AltBiome GetRemixBiome(int x) {
+			if (WorldGen.drunkWorldGen) {
+				if (GenVars.crimsonLeft) {
+					if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
+						return WorldBiomeManager.GetDrunkEvil(true);
+					} else {
+						return WorldBiomeManager.GetWorldEvil(true);
+					}
+				} else if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
+					return WorldBiomeManager.GetWorldEvil(true);
+				} else {
+					return WorldBiomeManager.GetDrunkEvil(true);
+				}
+			} else {
+				return WorldBiomeManager.GetWorldEvil(true);
+			}
+		}
 		private static void IL_WorldGen_FinishRemixWorld(ILContext il) {
 			ILCursor c = new(il);
 			ILLabel skipLabel = default;
@@ -537,26 +557,199 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Ldloc, x);
 			c.Emit(OpCodes.Ldloc, y);
 			c.EmitDelegate<Action<int, int>>((x, y) => {
-				AltBiome convertBiome;
-				if (WorldGen.drunkWorldGen) {
-					if (GenVars.crimsonLeft) {
-						if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
-							convertBiome = WorldBiomeManager.GetWorldEvil(true, true);
-						} else {
-							convertBiome = WorldBiomeManager.GetWorldEvil(true, false);
-						}
-					} else if (x < Main.maxTilesX / 2 + WorldGen.genRand.Next(-2, 3)) {
-						convertBiome = WorldBiomeManager.GetWorldEvil(true, false);
-					} else {
-						convertBiome = WorldBiomeManager.GetWorldEvil(true, true);
-					}
-				} else {
-					convertBiome = WorldBiomeManager.GetWorldEvil(true);
-				}
-				ALConvert.ConvertTile(x, y, convertBiome);
+				ALConvert.ConvertTile(x, y, GetRemixBiome(x));
 			});
 			c.Emit(OpCodes.Br, skipLabel);
-			MonoModHooks.DumpIL(AltLibrary.Instance, il);
+			c.GotoLabel(skipLabel, MoveType.After);
+
+
+			skipLabel = default;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out skipLabel)
+			);
+			index = c.Index;
+			x = -1;
+			y = -1;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdloc(out x),
+				i => i.MatchLdloc(out y),
+				i => i.MatchCall<Tilemap>("get_Item")
+			);
+			c.GotoLabel(skipLabel, MoveType.Before);
+			c.Index--;
+			c.Next.MatchBr(out skipLabel);
+			c.Index = index;
+			c.Emit(OpCodes.Ldloc, x);
+			c.Emit(OpCodes.Ldloc, y);
+			c.EmitDelegate<Action<int, int>>((x, y) => {
+				Main.tile[x, y].TileType = (ushort)(GetRemixBiome(x).BiomeFlesh ?? Main.tile[x, y].TileType);
+			});
+			c.Emit(OpCodes.Br, skipLabel);
+			c.GotoLabel(skipLabel, MoveType.After);
+
+
+			skipLabel = default;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out skipLabel)
+			);
+			index = c.Index;
+			x = -1;
+			y = -1;
+			c.GotoNext(MoveType.Before,
+				i => i.MatchLdloc(out x),
+				i => i.MatchLdloc(out y),
+				i => i.MatchCall<Tilemap>("get_Item")
+			);
+			c.GotoLabel(skipLabel, MoveType.Before);
+			c.Index--;
+			c.Next.MatchBr(out skipLabel);
+			c.Index = index;
+			c.Emit(OpCodes.Ldloc, x);
+			c.Emit(OpCodes.Ldloc, y);
+			c.EmitDelegate<Action<int, int>>((x, y) => {
+				Main.tile[x, y].WallType = (ushort)(GetRemixBiome(x).BiomeFleshWall ?? Main.tile[x, y].WallType);
+			});
+			c.Emit(OpCodes.Br, skipLabel);
+			c.GotoLabel(skipLabel, MoveType.After);
+		}
+		private static void IL_GenPasses_SpreadingGrass(ILContext il) {
+			ILCursor c = new(il);
+			while(c.TryGotoNext(MoveType.After,
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchCall<WorldGen>("Convert")
+			)) {
+				c.Index--;
+				c.Remove();
+				c.EmitDelegate<Action<int, int, int, int>>(DrunkRemixGrassConvert);
+			}
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchCall<WorldGen>("Convert")
+			);
+			c.Index--;
+			c.Remove();
+			c.EmitDelegate<Action<int, int, int, int>>(SoberRemixGrassConvert);
+		}
+		public static void DrunkRemixGrassConvert(int i, int j, int conversionType, int size = 4) {
+			if (size != 1 || (conversionType != 1 && conversionType != 4)) {
+				WorldGen.Convert(i, j, conversionType, size);
+				return;
+			}
+			AltBiome evil = conversionType == 4 ? WorldBiomeManager.GetDrunkEvil(true) : WorldBiomeManager.GetWorldEvil(true);
+			ALConvert.Convert(evil, i, j, 1);
+		}
+		public static void SoberRemixGrassConvert(int i, int j, int conversionType, int size = 4) {
+			if (size != 1 || (conversionType != 1 && conversionType != 4)) {
+				WorldGen.Convert(i, j, conversionType, size);
+				return;
+			}
+			AltBiome evil = WorldBiomeManager.GetWorldEvil(true);
+			ALConvert.Convert(evil, i, j, 1);
+		}
+
+		private static void IL_WorldGen_FloatingIsland(ILContext il) {
+			void HookParams(ILCursor c, int breakIndex, params (int value, Func<int, int> hook)[] hooks) {
+				int index = c.Index;
+				foreach ((int value, Func<int, int> hook) in hooks) {
+					c.GotoPrev(MoveType.After,
+						i => i.MatchLdcI4(value)
+					);
+					if (c.Index < breakIndex) {
+						AltLibrary.Instance.Logger.Error($"failed HookParams looking for constant {value} between {breakIndex} and {index}");
+						throw new ILPatchFailureException(AltLibrary.Instance, il, null);
+					}
+					c.EmitDelegate(hook);
+					c.Index -= 2;
+				}
+				c.Index = index;
+			}
+			ILCursor c = new(il);
+			#region Doors
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdsfld<WorldGen>("remixWorldGen"),
+				i => i.MatchBrfalse(out _)
+			);
+			int breakIndex = c.Index;
+
+			c.GotoNext(MoveType.After,
+				i => i.MatchCall<WorldGen>("PlaceTile")
+			);
+			HookParams(c, breakIndex,
+				(5, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshDoorTileStyle ?? v : v),
+				(TileID.ClosedDoor, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshDoorTile ?? v : v)
+			);
+			breakIndex = c.Index;
+
+			c.GotoNext(MoveType.After,
+				i => i.MatchCall<WorldGen>("PlaceTile")
+			);
+			HookParams(c, breakIndex,
+				(38, (v) => WorldBiomeManager.GetDrunkEvil(true).FleshDoorTileStyle ?? v),
+				(TileID.ClosedDoor, (v) => WorldBiomeManager.GetDrunkEvil(true).FleshDoorTile ?? v)
+			);
+			#endregion Doors
+
+			#region Tables/Chairs
+			//crimson
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdsfld<WorldGen>("remixWorldGen"),
+				i => i.MatchBrfalse(out _)
+			);
+			breakIndex = c.Index;
+
+			c.GotoNext(MoveType.After,
+				i => i.MatchCall<WorldGen>("PlaceTile")
+			);
+			HookParams(c, breakIndex,
+				(5, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshTableTileStyle ?? v : v),
+				(TileID.Tables, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshTableTile ?? v : v)
+			);
+			breakIndex = c.Index;
+
+			for (int i = 0; i < 2; i++) {
+				c.GotoNext(MoveType.After,
+					i => i.MatchCall<WorldGen>("PlaceTile")
+				);
+				HookParams(c, breakIndex,
+					(8, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshChairTileStyle ?? v : v),
+					(TileID.Chairs, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshChairTile ?? v : v)
+				);
+				breakIndex = c.Index;
+			}
+
+			//other
+			c.GotoNext(MoveType.After,
+				i => i.MatchCall<WorldGen>("PlaceTile")
+			);
+			HookParams(c, breakIndex,
+				(2, (v) => WorldBiomeManager.GetWorldEvil(true).FleshTableTileStyle ?? v),
+				(TileID.Tables2, (v) => WorldBiomeManager.GetWorldEvil(true).FleshTableTile ?? v)
+			);
+			breakIndex = c.Index;
+
+			for (int i = 0; i < 2; i++) {
+				c.GotoNext(MoveType.After,
+					i => i.MatchCall<WorldGen>("PlaceTile")
+				);
+				HookParams(c, breakIndex,
+					(38, (v) => WorldBiomeManager.GetWorldEvil(true).FleshChairTileStyle ?? v),
+					(TileID.Chairs, (v) => WorldBiomeManager.GetWorldEvil(true).FleshChairTile ?? v)
+				);
+				breakIndex = c.Index;
+			}
+			#endregion Tables/Chairs
+		}
+
+		private static void IL_WorldGen_AddBuriedChest(ILContext il) {
+			ILCursor c = new(il);
 		}
 	}
 }

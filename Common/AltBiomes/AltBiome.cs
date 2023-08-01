@@ -262,14 +262,58 @@ namespace AltLibrary.Common.AltBiomes
 		public bool Selectable = true;
 		#endregion
 
+		#region Remix Worlds
 		/// <summary>
-		/// For Evil alts. The TileID of the tile that will be used for floating islands in remix worlds
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace flesh/lesion blocks if you are making an Evil alt.
 		/// </summary>
 		public int? BiomeFlesh = null;
 		/// <summary>
-		/// For Evil alts. The WallID of the wall that will be used for floating islands in remix worlds
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace flesh/lesion walls if you are making an Evil alt.
 		/// </summary>
 		public int? BiomeFleshWall = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace the flesh/lesion chest if you are making an Evil alt.
+		/// </summary>
+		public int? FleshChestTile = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the style of the block that should replace the flesh/lesion chest if you are making an Evil alt.
+		/// </summary>
+		public int? FleshChestTileStyle = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace the flesh/lesion table if you are making an Evil alt.
+		/// </summary>
+		public int? FleshTableTile = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the style of the block that should replace the flesh/lesion table if you are making an Evil alt.
+		/// </summary>
+		public int? FleshTableTileStyle = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace the flesh/lesion chair if you are making an Evil alt.
+		/// </summary>
+		public int? FleshChairTile = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the style of the block that should replace the flesh/lesion chair if you are making an Evil alt.
+		/// </summary>
+		public int? FleshChairTileStyle = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the TileID of the block that should replace the flesh/lesion door if you are making an Evil alt.
+		/// </summary>
+		public int? FleshDoorTile = null;
+		/// <summary>
+		/// In Remix worlds, sky islands generate as the world's Evil biome.
+		/// Set this field to the style of the block that should replace the flesh/lesion door if you are making an Evil alt.
+		/// </summary>
+		public int? FleshDoorTileStyle = null;
+		#endregion
 		/// <summary>
 		/// In CelebrationMk10 worlds, sky islands may generate as the world's Hallow biome, with a corresponding water fountain.
 		/// Set this field to the TileID of your biome's water fountain if you are making a Hallow alt.

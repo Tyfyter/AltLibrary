@@ -16,7 +16,7 @@ namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem
 	{
-		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = true) {
+		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = false) {
 			if (TryFind((Main.drunkWorld && includeDrunk) ? drunkEvil : WorldEvil, out AltBiome worldEvil)) return worldEvil;
 			if (includeVanilla) {
 				if (Main.drunkWorld && includeDrunk) {
@@ -28,6 +28,18 @@ namespace AltLibrary.Common.Systems {
 					}
 				}
 				return WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+			}
+			return null;
+		}
+		public static AltBiome GetDrunkEvil(bool includeVanilla = true) {
+			if (TryFind(drunkEvil, out AltBiome worldEvil)) return worldEvil;
+			if (includeVanilla) {
+				switch (drunkEvil) {
+					case "Terraria/Crimson":
+					return GetInstance<CrimsonAltBiome>();
+					default:
+					return GetInstance<CorruptionAltBiome>();
+				}
 			}
 			return null;
 		}
