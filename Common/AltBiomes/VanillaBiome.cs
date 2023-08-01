@@ -70,7 +70,8 @@ namespace AltLibrary.Common.AltBiomes
 			FleshDoorTileStyle = 38;
 			FleshChairTileStyle = 38;
 			FleshTableTileStyle = 2;
-			FleshChestTileStyle = TileID.Containers;
+			FleshChestTile = TileID.Containers2;
+			FleshChestTileStyle = 3;
 
 			AddWallConversions(WallID.CorruptGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.EbonstoneUnsafe, WallID.Sets.Conversion.Stone);
@@ -111,8 +112,7 @@ namespace AltLibrary.Common.AltBiomes
 			FleshChairTileStyle = 8;
 			FleshTableTile = TileID.Tables2;
 			FleshTableTileStyle = 5;
-			FleshChestTile = TileID.Containers2;
-			FleshChestTileStyle = TileID.Containers2;
+			FleshChestTileStyle = 43;
 
 			AddWallConversions(WallID.CrimsonGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.CrimstoneUnsafe, WallID.Sets.Conversion.Stone);

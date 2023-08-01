@@ -29,8 +29,8 @@ namespace AltLibrary.Common.Hooks
 			Terraria.GameContent.Biomes.IL_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
 			IL_WorldGen.FinishRemixWorld += IL_WorldGen_FinishRemixWorld;
 			MonoModHooks.Modify(GenPasses.SpreadingGrassInfo, IL_GenPasses_SpreadingGrass);
-			IL_WorldGen.FloatingIsland += IL_WorldGen_FloatingIsland;
-			IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort += IL_WorldGen_AddBuriedChest_int_int_int_bool_int_bool_ushort;
+			IL_WorldGen.IslandHouse += IL_WorldGen_IslandHouse;
+			IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort += IL_WorldGen_AddBuriedChest;
 		}
 
 		public static void Unload()
@@ -655,21 +655,21 @@ namespace AltLibrary.Common.Hooks
 			ALConvert.Convert(evil, i, j, 1);
 		}
 
-		private static void IL_WorldGen_FloatingIsland(ILContext il) {
+		private static void IL_WorldGen_IslandHouse(ILContext il) {
 			void HookParams(ILCursor c, int breakIndex, params (int value, Func<int, int> hook)[] hooks) {
-				int index = c.Index;
+				ILLabel returnIndex = c.MarkLabel();
 				foreach ((int value, Func<int, int> hook) in hooks) {
 					c.GotoPrev(MoveType.After,
 						i => i.MatchLdcI4(value)
 					);
 					if (c.Index < breakIndex) {
-						AltLibrary.Instance.Logger.Error($"failed HookParams looking for constant {value} between {breakIndex} and {index}");
+						AltLibrary.Instance.Logger.Error($"failed HookParams looking for constant {value} between {breakIndex} and {returnIndex}");
 						throw new ILPatchFailureException(AltLibrary.Instance, il, null);
 					}
 					c.EmitDelegate(hook);
 					c.Index -= 2;
 				}
-				c.Index = index;
+				c.GotoLabel(returnIndex, MoveType.After);
 			}
 			ILCursor c = new(il);
 			#region Doors
@@ -679,6 +679,7 @@ namespace AltLibrary.Common.Hooks
 			);
 			int breakIndex = c.Index;
 
+			//crimson
 			c.GotoNext(MoveType.After,
 				i => i.MatchCall<WorldGen>("PlaceTile")
 			);
@@ -687,13 +688,14 @@ namespace AltLibrary.Common.Hooks
 				(TileID.ClosedDoor, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshDoorTile ?? v : v)
 			);
 			breakIndex = c.Index;
-
+			MonoModHooks.DumpIL(AltLibrary.Instance, il);
+			//other
 			c.GotoNext(MoveType.After,
 				i => i.MatchCall<WorldGen>("PlaceTile")
 			);
 			HookParams(c, breakIndex,
-				(38, (v) => WorldBiomeManager.GetDrunkEvil(true).FleshDoorTileStyle ?? v),
-				(TileID.ClosedDoor, (v) => WorldBiomeManager.GetDrunkEvil(true).FleshDoorTile ?? v)
+				(38, (v) => WorldBiomeManager.GetWorldEvil(true).FleshDoorTileStyle ?? v),
+				(TileID.ClosedDoor, (v) => WorldBiomeManager.GetWorldEvil(true).FleshDoorTile ?? v)
 			);
 			#endregion Doors
 
@@ -747,9 +749,34 @@ namespace AltLibrary.Common.Hooks
 			}
 			#endregion Tables/Chairs
 		}
-
+		delegate void ManipChestType(ref int type, ref int frame);
 		private static void IL_WorldGen_AddBuriedChest(ILContext il) {
 			ILCursor c = new(il);
+			ILLabel skipLabel = default;
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdsfld<WorldGen>("remixWorldGen"),
+				i => i.MatchBrfalse(out skipLabel),
+				i => i.MatchLdsfld<WorldGen>("getGoodWorldGen"),
+				i => i.MatchBrtrue(out ILLabel l) && l.Target == skipLabel.Target
+			);
+			int typeArg = -1;
+			int frameLoc = -1;
+			int index = c.Index;
+			c.GotoNext(
+				i => i.MatchLdcI4(467),
+				i => i.MatchStarg(out typeArg),
+				i => i.MatchLdcI4(3),
+				i => i.MatchStloc(out frameLoc)
+			);
+			c.Index = index;
+			c.Emit(OpCodes.Ldarga, typeArg);
+			c.Emit(OpCodes.Ldloca, frameLoc);
+			c.EmitDelegate<ManipChestType>((ref int type, ref int frame) => {
+				type = WorldBiomeManager.GetWorldEvil(true).FleshChestTile ?? type;
+				frame = WorldBiomeManager.GetWorldEvil(true).FleshChestTileStyle ?? frame;
+			});
+			c.Emit(OpCodes.Br, skipLabel);
 		}
+
 	}
 }

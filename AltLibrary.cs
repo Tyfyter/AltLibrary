@@ -329,5 +329,6 @@ namespace AltLibrary
 				this.pathLarge = pathLarge;
 			}
 		}
+		internal static void DumpIL(MonoMod.Cil.ILContext il) => MonoModHooks.DumpIL(Instance, il);
 	}
 }
