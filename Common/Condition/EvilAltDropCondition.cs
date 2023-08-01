@@ -16,14 +16,14 @@ namespace AltLibrary.Common.Conditions
 		public bool CanDrop(DropAttemptInfo info)
 		{
 			if (!info.IsInSimulation) {
-				return WorldBiomeManager.GetWorldEvil(true) == BiomeType;
+				return WorldBiomeManager.GetWorldEvil(true, true) == BiomeType;
 			}
 			return false;
 		}
 
 		public bool CanShowItemDropInUI()
 		{
-			return WorldBiomeManager.GetWorldEvil(true) == BiomeType;
+			return WorldBiomeManager.GetWorldEvil(true, true) == BiomeType;
 		}
 
 		public string GetConditionDescription()

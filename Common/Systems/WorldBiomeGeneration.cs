@@ -40,7 +40,7 @@ namespace AltLibrary.Common.Systems {
 				tasks.Insert(resetIndex + 1, new PassLegacy("Alt Library Setup", new WorldGenLegacyMethod(WorldSetupTask)));
 			}
 			int corruptionIndex = tasks.FindIndex(i => i.Name.Equals("Corruption"));
-			if (WorldBiomeManager.WorldEvil != "" && corruptionIndex != -1)
+			if ((WorldBiomeManager.IsAnyModdedEvil || WorldGen.drunkWorldGen) && corruptionIndex != -1)
 			{
 				tasks[corruptionIndex] = new PassLegacy("Corruption", new WorldGenLegacyMethod(EvilTaskGen));
 			}

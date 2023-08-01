@@ -31,6 +31,11 @@ namespace AltLibrary.Common.Hooks
 			MonoModHooks.Modify(GenPasses.SpreadingGrassInfo, IL_GenPasses_SpreadingGrass);
 			IL_WorldGen.IslandHouse += IL_WorldGen_IslandHouse;
 			IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort += IL_WorldGen_AddBuriedChest;
+			On_WorldGenRange.GetRandom += On_WorldGenRange_GetRandom;
+		}
+
+		private static int On_WorldGenRange_GetRandom(On_WorldGenRange.orig_GetRandom orig, WorldGenRange self, Terraria.Utilities.UnifiedRandom random) {
+			return random.Next(self.ScaledMinimum, self.ScaledMaximum + 1);
 		}
 
 		public static void Unload()
@@ -564,7 +569,7 @@ namespace AltLibrary.Common.Hooks
 
 
 			skipLabel = default;
-			c.GotoNext(MoveType.Before,
+			c.GotoNext(MoveType.AfterLabel,
 				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
 				i => i.MatchBrfalse(out skipLabel)
 			);
@@ -577,13 +582,17 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchCall<Tilemap>("get_Item")
 			);
 			c.GotoLabel(skipLabel, MoveType.Before);
-			c.Index--;
-			c.Next.MatchBr(out skipLabel);
-			c.Index = index;
+			skipLabel = (ILLabel)c.Prev.Operand;
+			c.Index = index - 1;
+			c.GotoNext(MoveType.AfterLabel,
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out _)
+			);
 			c.Emit(OpCodes.Ldloc, x);
 			c.Emit(OpCodes.Ldloc, y);
 			c.EmitDelegate<Action<int, int>>((x, y) => {
-				Main.tile[x, y].TileType = (ushort)(GetRemixBiome(x).BiomeFlesh ?? Main.tile[x, y].TileType);
+				AltBiome biome = GetRemixBiome(x);
+				Main.tile[x, y].TileType = (ushort)(biome.BiomeFlesh ?? Main.tile[x, y].TileType);
 			});
 			c.Emit(OpCodes.Br, skipLabel);
 			c.GotoLabel(skipLabel, MoveType.After);
@@ -603,9 +612,12 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchCall<Tilemap>("get_Item")
 			);
 			c.GotoLabel(skipLabel, MoveType.Before);
-			c.Index--;
-			c.Next.MatchBr(out skipLabel);
-			c.Index = index;
+			skipLabel = (ILLabel)c.Prev.Operand;
+			c.Index = index - 1;
+			c.GotoNext(MoveType.AfterLabel,
+				i => i.MatchLdsfld<WorldGen>("drunkWorldGen"),
+				i => i.MatchBrfalse(out _)
+			);
 			c.Emit(OpCodes.Ldloc, x);
 			c.Emit(OpCodes.Ldloc, y);
 			c.EmitDelegate<Action<int, int>>((x, y) => {
@@ -688,7 +700,6 @@ namespace AltLibrary.Common.Hooks
 				(TileID.ClosedDoor, (v) => WorldGen.drunkWorldGen ? WorldBiomeManager.GetDrunkEvil(true).FleshDoorTile ?? v : v)
 			);
 			breakIndex = c.Index;
-			MonoModHooks.DumpIL(AltLibrary.Instance, il);
 			//other
 			c.GotoNext(MoveType.After,
 				i => i.MatchCall<WorldGen>("PlaceTile")

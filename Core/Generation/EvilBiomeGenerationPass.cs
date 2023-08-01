@@ -177,6 +177,7 @@ namespace AltLibrary.Core.Generation
 			evilBiomePositionWestBound = 0;
 			evilBiomePositionEastBound = 0;
 
+			int tries = 0;
 			while (!FoundEvilLocation)
 			{
 				FoundEvilLocation = true;
@@ -235,43 +236,42 @@ namespace AltLibrary.Core.Generation
 						evilBiomePositionWestBound = Main.maxTilesX - 400;
 					}
 				}
-				if (Main.remixWorld) break;
 				//DIFFERENCE 2 END
-				if (evilBiomePosition > MapCenter - MapCenterGive && evilBiomePosition < MapCenter + MapCenterGive)
+				if (!Main.remixWorld && evilBiomePosition > MapCenter - MapCenterGive && evilBiomePosition < MapCenter + MapCenterGive)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionWestBound > MapCenter - MapCenterGive && evilBiomePositionWestBound < MapCenter + MapCenterGive)
+				if (!Main.remixWorld && evilBiomePositionWestBound > MapCenter - MapCenterGive && evilBiomePositionWestBound < MapCenter + MapCenterGive)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionEastBound > MapCenter - MapCenterGive && evilBiomePositionEastBound < MapCenter + MapCenterGive)
+				if (!Main.remixWorld && evilBiomePositionEastBound > MapCenter - MapCenterGive && evilBiomePositionEastBound < MapCenter + MapCenterGive)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePosition > GenVars.UndergroundDesertLocation.X && evilBiomePosition < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
+				if (tries < 200 && evilBiomePosition > GenVars.UndergroundDesertLocation.X && evilBiomePosition < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionWestBound > GenVars.UndergroundDesertLocation.X && evilBiomePositionWestBound < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
+				if (tries < 200 && evilBiomePositionWestBound > GenVars.UndergroundDesertLocation.X && evilBiomePositionWestBound < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionEastBound > GenVars.UndergroundDesertLocation.X && evilBiomePositionEastBound < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
+				if (tries < 200 && evilBiomePositionEastBound > GenVars.UndergroundDesertLocation.X && evilBiomePositionEastBound < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionWestBound < dungeonLocation + DungeonGive && evilBiomePositionEastBound > dungeonLocation - DungeonGive)
+				if (tries < 1000 && evilBiomePositionWestBound < dungeonLocation + DungeonGive && evilBiomePositionEastBound > dungeonLocation - DungeonGive)
 				{
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionWestBound < SnowBoundMinX && evilBiomePositionEastBound > SnowBoundMaxX)
+				if (tries < 100 && evilBiomePositionWestBound < SnowBoundMinX && evilBiomePositionEastBound > SnowBoundMaxX)
 				{
 					SnowBoundMinX++;
 					SnowBoundMaxX--;
 					FoundEvilLocation = false;
 				}
-				if (evilBiomePositionWestBound < JungleBoundMinX && evilBiomePositionEastBound > JungleBoundMaxX)
+				if (tries < 500 && evilBiomePositionWestBound < JungleBoundMinX && evilBiomePositionEastBound > JungleBoundMaxX)
 				{
 					JungleBoundMinX++;
 					JungleBoundMaxX--;

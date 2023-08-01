@@ -35,16 +35,16 @@ namespace AltLibrary.Common.Hooks
 			c.EmitDelegate<Func<ushort, int, ushort>>((orig, style) => {
 				if (WorldGen.remixWorldGen) {
 					if (style == 5 && WorldGen.drunkWorldGen && WorldBiomeManager.GetDrunkEvil(true).FountainTile is int crimsonTile) {
-						style = 3;
+						TenthAnniversaryFix.style = 3;
 						return (ushort)crimsonTile;
 					}
 					if (WorldBiomeManager.GetWorldEvil(true).FountainTile is int corruptTile) {
-						style = 2;
+						TenthAnniversaryFix.style = 2;
 						return (ushort)corruptTile;
 					}
 				}
 				if (WorldGen.tenthAnniversaryWorldGen && WorldBiomeManager.GetWorldHallow(true).FountainTile is int value) {
-					style = 1;
+					TenthAnniversaryFix.style = 1;
 					return (ushort)value;
 				}
 				return orig;
@@ -55,13 +55,13 @@ namespace AltLibrary.Common.Hooks
 				return;
 			}
 			c.EmitDelegate<Func<int, int>>((orig) => {
-				switch (style) {
+				switch (TenthAnniversaryFix.style) {
 					case 1:
-					return WorldBiomeManager.GetWorldHallow(true).FountainTile ?? orig;
+					return WorldBiomeManager.GetWorldHallow(true).FountainTileStyle ?? orig;
 					case 2:
-					return WorldBiomeManager.GetWorldEvil(true).FountainTile ?? orig;
+					return WorldBiomeManager.GetWorldEvil(true).FountainTileStyle ?? orig;
 					case 3:
-					return WorldBiomeManager.GetDrunkEvil(true).FountainTile ?? orig;
+					return WorldBiomeManager.GetDrunkEvil(true).FountainTileStyle ?? orig;
 				}
 				return orig;
 			});
@@ -76,7 +76,7 @@ namespace AltLibrary.Common.Hooks
 				short frameX = 0;
 				short frameY = 0;
 				AltBiome biome = null;
-				switch (style) {
+				switch (TenthAnniversaryFix.style) {
 					case 1:
 					biome = WorldBiomeManager.GetWorldHallow(true);
 					break;
@@ -113,7 +113,6 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Brfalse_S, label);
 			c.Emit(OpCodes.Call, switchFountains);
 			c.MarkLabel(label);*/
-			AltLibrary.DumpIL(il);
 		}
 
 		internal static void UselessCallThatDoesTechnicallyNothing(int x, int y, ushort type, int style = 0, short frameX = 0, short frameY = 0)

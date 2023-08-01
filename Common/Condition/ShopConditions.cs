@@ -16,7 +16,7 @@ namespace AltLibrary.Common.Conditions {
 		public static Condition GetWorldEvilCondition<T>() where T : AltBiome => GetWorldEvilCondition(GetInstance<T>());
 		public static Condition GetWorldEvilCondition(AltBiome biome) => new Condition(
 			Language.GetOrRegister("Mods.AltLibrary.Condition.Base").WithFormatArgs(biome.DisplayName),
-			() => WorldBiomeManager.GetWorldEvil(true) == biome
+			() => WorldBiomeManager.GetWorldEvil(true, true) == biome
 		);
 		public static Condition GetWorldHallowCondition<T>() where T : AltBiome => GetWorldHallowCondition(GetInstance<T>());
 		public static Condition GetWorldHallowCondition(AltBiome biome) => new Condition(
@@ -37,7 +37,7 @@ namespace AltLibrary.Common.Conditions {
 		public static Condition NotWorldEvilCondition<T>() where T : AltBiome => NotWorldEvilCondition(GetInstance<T>());
 		public static Condition NotWorldEvilCondition(AltBiome biome) => new Condition(
 			Language.GetOrRegister("Mods.AltLibrary.Condition.NotBase").WithFormatArgs(biome.DisplayName),
-			() => WorldBiomeManager.GetWorldEvil(true) != biome
+			() => WorldBiomeManager.GetWorldEvil(true, true) != biome
 		);
 		public static Condition NotWorldHallowCondition<T>() where T : AltBiome => NotWorldHallowCondition(GetInstance<T>());
 		public static Condition NotWorldHallowCondition(AltBiome biome) => new Condition(
