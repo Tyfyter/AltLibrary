@@ -13,8 +13,7 @@ namespace AltLibrary.Core
 	internal class ALReflection
 	{
 		internal static WorldGenScanTileColumnAndRemoveClumps WorldGen_ScanTileColumnAndRemoveClumps = null;
-		internal static FieldInfo UIList__innerList = null;
-		internal static FastFieldInfo<UIList, UIElement> UIList_innerList = null;
+		internal static FastFieldInfo<UIList, UIElement> UIList__innerList = null;
 		internal static FieldInfo UIWorldCreation__evilButtons = null;
 		internal static PropertyInfo ModType_Mod = null;
 		internal static FastFieldInfo<NPCShop.Entry, List<Condition>> ShopEntry_conditions = null;
@@ -26,8 +25,7 @@ namespace AltLibrary.Core
 		internal static void Init()
 		{
 			WorldGen_ScanTileColumnAndRemoveClumps = typeof(WorldGen).GetMethod("ScanTileColumnAndRemoveClumps", BindingFlags.NonPublic | BindingFlags.Static, new Type[] { typeof(int) }).CreateDelegate<WorldGenScanTileColumnAndRemoveClumps>();
-			UIList__innerList = typeof(UIList).GetField("_innerList", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			UIList_innerList = new("_innerList", BindingFlags.NonPublic);
+			UIList__innerList = new("_innerList", BindingFlags.NonPublic);
 			ModType_Mod = typeof(ModType).GetProperty("Mod");
 			UIWorldCreation__evilButtons = typeof(UIWorldCreation).GetField("_evilButtons", BindingFlags.NonPublic | BindingFlags.Instance);
 			ShopEntry_conditions = new("conditions", BindingFlags.NonPublic);
@@ -38,7 +36,6 @@ namespace AltLibrary.Core
 		{
 			WorldGen_ScanTileColumnAndRemoveClumps = null;
 			UIList__innerList = null;
-			UIList_innerList = null;
 			ModType_Mod = null;
 			UIWorldCreation__evilButtons = null;
 			ShopEntry_conditions = null;

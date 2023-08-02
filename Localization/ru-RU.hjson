@@ -277,6 +277,11 @@ Mods: {
 					// Label: Ore Icons visible
 					// Tooltip: When disabled, ore selection icons will use the "base" version of the ore
 				}
+
+				ZenithIconJank: {
+					// Label: Zenith Icon Jank
+					// Tooltip: ""
+				}
 			}
 
 			AltLibraryServerConfig: {

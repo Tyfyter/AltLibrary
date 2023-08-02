@@ -119,6 +119,7 @@ namespace AltLibrary.Common.Hooks
 				WorldFileData data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(uiWorldListItem);
 				ALUtils.GetWorldData(uiWorldListItem, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 
+				if (!AltLibraryConfig.Config.ZenithIconJank && data.DrunkWorld && data.RemixWorld) return;
 				ReplaceIcons(data, ref _worldIcon);
 				LayeredIcons("Normal", data, ref _worldIcon, tempDict, path2);
 				LayeredIcons(data, ref _worldIcon, tempDict, path2);
@@ -240,6 +241,7 @@ namespace AltLibrary.Common.Hooks
 				return;
 			ALUtils.GetWorldData(self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 			UIElement _worldIcon = ALReflection.UIWorldListItem__worldIcon.GetValue(self);
+
 			WorldFileData _data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self);
 			CalculatedStyle innerDimensions = self.GetInnerDimensions();
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();

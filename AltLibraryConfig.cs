@@ -37,6 +37,9 @@ namespace AltLibrary
 		[DefaultValue(true)]
 		public bool OreIconsVisible;
 
+		[DefaultValue(false)]
+		public bool ZenithIconJank;
+
 #pragma warning restore CS0649
 
 		public override void OnLoaded() => Config = this;
