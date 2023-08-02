@@ -119,6 +119,7 @@ namespace AltLibrary.Common.Hooks
 				WorldFileData data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(uiWorldListItem);
 				ALUtils.GetWorldData(uiWorldListItem, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 
+				//TODO: zenith icon
 				if (!AltLibraryConfig.Config.ZenithIconJank && data.DrunkWorld && data.RemixWorld) return;
 				ReplaceIcons(data, ref _worldIcon);
 				LayeredIcons("Normal", data, ref _worldIcon, tempDict, path2);
