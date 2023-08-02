@@ -31,6 +31,8 @@ namespace AltLibrary
 		internal static Asset<Texture2D> WorldIconNotTheBees;
 		internal static Asset<Texture2D> WorldIconAnniversary;
 		internal static Asset<Texture2D> WorldIconDontStarve;
+		internal static Asset<Texture2D> WorldIconNoTraps;
+		internal static Asset<Texture2D> WorldIconRemix;
 		internal static Asset<Texture2D> NullPreview;
 		internal static Asset<Texture2D> OuterTexture;
 		internal static Asset<Texture2D> OuterLowerTexture;
@@ -73,17 +75,19 @@ namespace AltLibrary
 			WorldIconNotTheBees = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNotTheBees", AssetRequestMode.ImmediateLoad);
 			WorldIconAnniversary = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconAnniversary", AssetRequestMode.ImmediateLoad);
 			WorldIconDontStarve = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconDontStarve", AssetRequestMode.ImmediateLoad);
+			WorldIconNoTraps = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNoTraps", AssetRequestMode.ImmediateLoad);
+			WorldIconRemix = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconRemix", AssetRequestMode.ImmediateLoad);
 			NullPreview = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/NullBiomePreview", AssetRequestMode.ImmediateLoad);
 			OuterTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Empty", AssetRequestMode.ImmediateLoad);
 			OuterLowerTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Lower Empty", AssetRequestMode.ImmediateLoad);
 			UIWorldSeedIcon = new Asset<Texture2D>[2];
 			UIWorldSeedIcon[0] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon", AssetRequestMode.ImmediateLoad);
 			UIWorldSeedIcon[1] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon2", AssetRequestMode.ImmediateLoad);
-			PreviewSpecialSizes = new Asset<Texture2D>[6, 3];
+			PreviewSpecialSizes = new Asset<Texture2D>[8, 3];
 			PreviewSpecialSizes[0, 0] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeSmall", AssetRequestMode.ImmediateLoad);
 			PreviewSpecialSizes[0, 1] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeMedium", AssetRequestMode.ImmediateLoad);
 			PreviewSpecialSizes[0, 2] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeLarge", AssetRequestMode.ImmediateLoad);
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 7; i++)
 			{
 				for (int j = 0; j < 3; j++)
 				{

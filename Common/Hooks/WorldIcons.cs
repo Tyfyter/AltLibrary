@@ -128,6 +128,7 @@ namespace AltLibrary.Common.Hooks
 				LayeredIcons("NotTheBees", data, ref _worldIcon, tempDict, path2);
 				LayeredIcons("Anniversary", data, ref _worldIcon, tempDict, path2);
 				LayeredIcons("DontStarve", data, ref _worldIcon, tempDict, path2);
+				LayeredIcons("RemixWorld", data, ref _worldIcon, tempDict, path2);
 			});
 		}
 
@@ -325,7 +326,7 @@ namespace AltLibrary.Common.Hooks
 			}
 			else
 			{
-				bl = !data.Anniversary && !data.DontStarve && !data.NotTheBees && !data.ForTheWorthy && !data.DrunkWorld;
+				bl = !data.Anniversary && !data.DontStarve && !data.NotTheBees && !data.ForTheWorthy && !data.DrunkWorld && !data.RemixWorld && !data.ZenithWorld;
 			}
 			foreach (KeyValuePair<string, Func<WorldFileData, bool>> entry in assets)
 			{
@@ -344,7 +345,6 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void ReplaceIcons(WorldFileData data, ref UIImage image)
 		{
 			Asset<Texture2D> asset = ALTextureAssets.WorldIconNormal;
@@ -375,6 +375,10 @@ namespace AltLibrary.Common.Hooks
 			if (data.DontStarve)
 			{
 				asset = ALTextureAssets.WorldIconDontStarve;
+			}
+			if (data.RemixWorld)
+			{
+				asset = ALTextureAssets.WorldIconRemix;
 			}
 			UIImage worldIcon = new(asset);
 			worldIcon.Height.Set(0, 1);

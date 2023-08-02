@@ -579,6 +579,8 @@ namespace AltLibrary.Common
 					"for the worthy" => "ForTheWorthy",
 					"celebrationmk10" or "05162011" or "5162011" or "05162021" or "5162021" => "Anniversary",
 					"constant" or "theconstant" or "the constant" or "eye4aneye" or "eye4aneye" => "Constant",
+					"don't dig up" or "dont dig up" or "dontdigup" => "Remix",
+					"no traps" or "notraps" => "NoTraps",
 					_ => "",
 				};
 				bool broken = false;
@@ -614,6 +616,8 @@ namespace AltLibrary.Common
 						"ForTheWorthy" => 3,
 						"Anniversary" => 4,
 						"Constant" => 5,
+						"Remix" => 6,
+						"NoTraps" => 7,
 						_ => 0,
 					}) : 0;
 					spriteBatch.Draw(ALTextureAssets.PreviewSpecialSizes[style, size].Value, position, color);
