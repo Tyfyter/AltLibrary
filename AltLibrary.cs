@@ -8,7 +8,9 @@ using AltLibrary.Core.Baking;
 using AltLibrary.Core.States;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -330,5 +332,21 @@ namespace AltLibrary
 			}
 		}
 		internal static void DumpIL(MonoMod.Cil.ILContext il) => MonoModHooks.DumpIL(Instance, il);
+		internal static void DumpIL(MonoMod.Cil.ILContext il, string fileName) {
+			string methodName = il.Method.FullName.Replace(':', '_');
+			if (methodName.Contains('?')) {
+				string text = methodName;
+				int num = methodName.LastIndexOf('?') + 1;
+				methodName = text.Substring(num, text.Length - num);
+				num = methodName.IndexOf('_') + 1;
+				methodName = methodName.Substring(0, num);
+			}
+			string filePath = Path.Combine(Logging.LogDir, "ILDumps", Instance.Name, methodName + fileName + ".txt");
+			string folderPath = Path.GetDirectoryName(filePath);
+			if (!Directory.Exists(folderPath)) {
+				Directory.CreateDirectory(folderPath);
+			}
+			File.WriteAllText(filePath, il.ToString());
+		}
 	}
 }

@@ -10,12 +10,11 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 using Terraria.WorldBuilding;
 
-namespace AltLibrary.Common.Hooks
-{
+namespace AltLibrary.Common.Hooks {
 	internal static class EvenMoreWorldGen
 	{
 		public static void Init()
@@ -31,7 +30,7 @@ namespace AltLibrary.Common.Hooks
 			MonoModHooks.Modify(GenPasses.SpreadingGrassInfo, IL_GenPasses_SpreadingGrass);
 			IL_WorldGen.IslandHouse += IL_WorldGen_IslandHouse;
 			IL_WorldGen.AddBuriedChest_int_int_int_bool_int_bool_ushort += IL_WorldGen_AddBuriedChest;
-			On_WorldGenRange.GetRandom += On_WorldGenRange_GetRandom;
+			//On_WorldGenRange.GetRandom += On_WorldGenRange_GetRandom;
 		}
 
 		private static int On_WorldGenRange_GetRandom(On_WorldGenRange.orig_GetRandom orig, WorldGenRange self, Terraria.Utilities.UnifiedRandom random) {
@@ -324,201 +323,110 @@ namespace AltLibrary.Common.Hooks
 		private static void GenPasses_HookGenPassShinies(ILContext il)
 		{
 			ILCursor c = new(il);
-			for (int j = 0; j < 3; j++)
-			{
-				if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen))))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 1 " + j);
-					return;
-				}
-				if (!c.TryGotoNext(i => i.MatchLdcI4(2)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 2 " + j);
-					return;
-				}
-				c.Index++;
-				c.Emit(OpCodes.Pop);
-				c.Emit(OpCodes.Ldc_I4, 1);
-				if (!c.TryGotoNext(i => i.MatchLdcI4(7)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 3 " + j);
-					return;
-				}
-				c.Index++;
-				c.EmitDelegate<Func<int, int>>((value) =>
-				{
-					List<int> list = new()
-					{
-						7,
-						166
+			FieldReference oreField = default;
+			while (c.TryGotoNext(MoveType.AfterLabel,
+				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen)),
+				i => i.MatchBrfalse(out _) || i.MatchBrtrue(out _),
+				i => i.MatchCall<WorldGen>("get_genRand"),
+				i => i.MatchLdcI4(2),
+				i => i.MatchCallvirt<UnifiedRandom>("Next"),
+				i => i.MatchBrfalse(out _) || i.MatchBrtrue(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchStsfld(out oreField),
+				i => i.MatchBr(out _),
+				i => i.MatchLdcI4(out _),
+				i => i.MatchStsfld(oreField)
+			)) {
+				c.SkipIf(false, true);
+				List<int> list = null;
+				OreType oreType = default;
+				switch (oreField.Name) {
+					case nameof(GenVars.copper):
+					oreType = OreType.Copper;
+					list = new() {
+						TileID.Copper,
+						TileID.Tin
 					};
-					AltLibrary.Ores.Where(x => x.OreType == OreType.Copper)
-								   .ToList()
-								   .ForEach(x => list.Add(x.ore));
-					return WorldGen.genRand.Next(list);
-				});
-			}
+					break;
 
-			for (int j = 0; j < 3; j++)
-			{
-				if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen))))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 4 " + j);
-					return;
-				}
-				if (!c.TryGotoNext(i => i.MatchLdcI4(2)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 5 " + j);
-					return;
-				}
-				c.Index++;
-				c.Emit(OpCodes.Pop);
-				c.Emit(OpCodes.Ldc_I4, 1);
-				if (!c.TryGotoNext(i => i.MatchLdcI4(6)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 6 " + j);
-					return;
-				}
-				c.Index++;
-				c.EmitDelegate<Func<int, int>>((value) =>
-				{
-					List<int> list = new()
-					{
-						6,
-						167
+					case nameof(GenVars.iron):
+					oreType = OreType.Iron;
+					list = new() {
+						TileID.Iron,
+						TileID.Lead
 					};
-					AltLibrary.Ores.Where(x => x.OreType == OreType.Iron)
-								   .ToList()
-								   .ForEach(x => list.Add(x.ore));
-					return WorldGen.genRand.Next(list);
-				});
-			}
+					break;
 
-			for (int j = 0; j < 3; j++)
-			{
-				if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen))))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 7 " + j);
-					return;
-				}
-				if (!c.TryGotoNext(i => i.MatchLdcI4(2)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 8 " + j);
-					return;
-				}
-				c.Index++;
-				c.Emit(OpCodes.Pop);
-				c.Emit(OpCodes.Ldc_I4, 1);
-				if (!c.TryGotoNext(i => i.MatchLdcI4(9)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 9 " + j);
-					return;
-				}
-				c.Index++;
-				c.EmitDelegate<Func<int, int>>((value) =>
-				{
-					List<int> list = new()
-					{
-						9,
-						168
+					case nameof(GenVars.silver):
+					oreType = OreType.Silver;
+					list = new() {
+						TileID.Silver,
+						TileID.Tungsten
 					};
-					AltLibrary.Ores.Where(x => x.OreType == OreType.Silver)
-								   .ToList()
-								   .ForEach(x => list.Add(x.ore));
-					return WorldGen.genRand.Next(list);
-				});
-			}
+					break;
 
-			for (int j = 0; j < 2; j++)
-			{
-				if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen))))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 10 " + j);
-					return;
-				}
-				if (!c.TryGotoNext(i => i.MatchLdcI4(2)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 11 " + j);
-					return;
-				}
-				c.Index++;
-				c.Emit(OpCodes.Pop);
-				c.Emit(OpCodes.Ldc_I4, 1);
-				if (!c.TryGotoNext(i => i.MatchLdcI4(8)))
-				{
-					AltLibrary.Instance.Logger.Info("g $ 12 " + j);
-					return;
-				}
-				c.Index++;
-				c.EmitDelegate<Func<int, int>>((value) =>
-				{
-					List<int> list = new()
-					{
-						8,
-						169
+					case nameof(GenVars.gold):
+					oreType = OreType.Gold;
+					list = new() {
+						TileID.Gold,
+						TileID.Platinum
 					};
-					AltLibrary.Ores.Where(x => x.OreType == OreType.Gold)
-								   .ToList()
-								   .ForEach(x => list.Add(x.ore));
-					return WorldGen.genRand.Next(list);
-				});
-			}
-
-			if (!c.TryGotoNext(i => i.MatchRet()))
-			{
-				AltLibrary.Instance.Logger.Info("g $ 13");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen))))
-			{
-				AltLibrary.Instance.Logger.Info("g $ 14");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchBrfalse(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("g $ 15");
-				return;
-			}
-			c.Index++;
-			c.EmitDelegate<Action>(() =>
-			{
-				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.HasValue)
-				{
-					for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * 2.25E-05 / 2.0); i++)
-					{
-						WorldGen.TileRunner(WorldGen.genRand.Next(0, Main.maxTilesX),
-							WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY), WorldGen.genRand.Next(3, 6),
-							WorldGen.genRand.Next(4, 8), ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.Value);
-					}
+					break;
 				}
-			});
-			if (!c.TryGotoNext(i => i.MatchRet()))
-			{
-				AltLibrary.Instance.Logger.Info("g $ 16");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchBr(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("g $ 17");
-				return;
-			}
-			ILLabel startCorruptionGen = c.DefineLabel();
-			c.EmitDelegate<Func<bool>>(() => !WorldGen.crimson && WorldBiomeManager.WorldEvil != "");
-			c.Emit(OpCodes.Brfalse, startCorruptionGen);
-			c.EmitDelegate<Action>(() =>
-			{
-				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.HasValue)
-				{
-					for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * 2.25E-05); i++)
-					{
-						WorldGen.TileRunner(WorldGen.genRand.Next(0, Main.maxTilesX),
-							WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY), WorldGen.genRand.Next(3, 6),
-							WorldGen.genRand.Next(4, 8), ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOre.Value);
-					}
+				foreach (var ore in AltLibrary.Ores) {
+					if (ore.OreType == oreType) list.Add(ore.ore);
 				}
-			});
-			c.Emit(OpCodes.Ret);
-			c.MarkLabel(startCorruptionGen);
+				c.EmitDelegate<Func<int>>(() => WorldGen.genRand.Next(list));
+				c.Emit(OpCodes.Stsfld, oreField);
+			}
+			c = new(il);
+			while (c.TryGotoNext(MoveType.AfterLabel,
+				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.drunkWorldGen)),
+				i => i.MatchBrfalse(out _) || i.MatchBrtrue(out _),
+				i => i.MatchLdcI4(0),
+				i => i.MatchStloc(out _),
+				i => i.MatchBr(out _)
+			)) {
+				c.EmitDelegate<Action>(GenEvilOres);
+				c.Emit(OpCodes.Ret);
+				c.Index += 5;
+			}
+		}
+		static void GenEvilOres() {
+			int minY = (int)Main.worldSurface;
+			int maxY = (int)Main.rockLayer;
+			double oreMult = 4.25E-05;
+			if (WorldGen.drunkWorldGen || WorldGen.remixWorldGen) {
+				minY = (int)Main.rockLayer;
+				maxY = Main.maxTilesY;
+				if (WorldGen.drunkWorldGen && WorldGen.remixWorldGen) {
+					oreMult = 2.25E-05 * 2;
+				} else if (WorldGen.drunkWorldGen && !WorldGen.remixWorldGen) {
+					oreMult = 4.25E-05 + 2.25E-05;
+				} else if (!WorldGen.drunkWorldGen && WorldGen.remixWorldGen) {
+					oreMult = 2.25E-05;
+				}
+			}
+			int oreType = WorldBiomeManager.GetWorldEvil(true, false).BiomeOre ?? TileID.Demonite;
+			List<int> list = new() {
+				TileID.Demonite,
+				TileID.Crimtane
+			};
+			foreach (var biome in AltLibrary.Biomes) {
+				if (biome.BiomeType == BiomeType.Evil && biome.BiomeOre.HasValue) list.Add(biome.BiomeOre.Value);
+			}
+			for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * oreMult); i++) {
+				if (WorldGen.drunkWorldGen) {
+					oreType = WorldGen.genRand.Next(list);
+				}
+				WorldGen.TileRunner(
+					WorldGen.genRand.Next(0, Main.maxTilesX),
+					WorldGen.genRand.Next(minY, maxY),
+					WorldGen.genRand.Next(3, 6),
+					WorldGen.genRand.Next(4, 8),
+					oreType
+				);
+			}
 		}
 
 		static AltBiome GetRemixBiome(int x) {
@@ -788,6 +696,5 @@ namespace AltLibrary.Common.Hooks
 			});
 			c.Emit(OpCodes.Br, skipLabel);
 		}
-
 	}
 }

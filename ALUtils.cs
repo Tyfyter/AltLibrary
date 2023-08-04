@@ -63,6 +63,28 @@ namespace AltLibrary
 			}
 			cursor.RemoveRange(predicates.Length);
 		}
+		public static void SkipIf(this ILCursor c, bool @else = false, bool afterIf = false) {
+			ILLabel start = c.MarkLabel();
+			c.GotoNext(MoveType.Before, i => i.Operand is ILLabel);
+			if (c.Next.Operand is not ILLabel skip) {
+				throw new ILPatchFailureException(AltLibrary.Instance, c.Context, null);
+			}
+			if (afterIf) {
+				c.Index++;
+				start = c.MarkLabel();
+			}
+			if (@else) {
+				c.GotoLabel(skip);
+				if (c.Prev.Operand is not ILLabel elseSkip) {
+					throw new ILPatchFailureException(AltLibrary.Instance, c.Context, null);
+				}
+				skip = elseSkip;
+			}
+
+			c.GotoLabel(start);
+			c.Emit(OpCodes.Br, skip);
+			c.Index--;
+		}
 		internal static ulong SteamID()
 		{
 			if (AltLibrary._steamId.HasValue)

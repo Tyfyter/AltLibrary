@@ -1,4 +1,5 @@
-﻿using AltLibrary.Core.Baking;
+﻿using AltLibrary.Common.Hooks;
+using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Generation;
+using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -30,6 +32,7 @@ namespace AltLibrary.Common.AltBiomes
 			BiomeType.Hallow => 2,
 			_ => 0,
 		};
+		public virtual bool NPCsHate => BiomeType == BiomeType.Evil;
 		public int Type { get; internal set; }
 		public virtual string LocalizationCategory => "AltBiomes";
 
@@ -69,6 +72,11 @@ namespace AltLibrary.Common.AltBiomes
 		public WorldGenLegacyMethod TempleGenPass = null;
 
 		public virtual WorldGenLegacyMethod GetHellforgeGenerationPass() { return null; }
+
+		/// <summary>
+		/// For all biome types, only used used by AltLibrary if NPCsHate returns true, but should be overridden if a biome is associated with this biome
+		/// </summary>
+		public virtual IShoppingBiome Biome => null;
 
 		#region Dungeon Loot
 		/// <summary>
@@ -338,6 +346,7 @@ namespace AltLibrary.Common.AltBiomes
 		public virtual AltMaterialContext MaterialContext => null;
 		public sealed override void SetupContent()
 		{
+			if (NPCsHate && Biome is not null) ShopHelper_EvilBiomes.DangerousBiomes.Add(Biome);
 			SetStaticDefaults();
 		}
 		/// <summary>
