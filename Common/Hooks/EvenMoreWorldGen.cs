@@ -393,19 +393,16 @@ namespace AltLibrary.Common.Hooks {
 			}
 		}
 		static void GenEvilOres() {
-			int minY = (int)Main.worldSurface;
-			int maxY = (int)Main.rockLayer;
-			double oreMult = 4.25E-05;
-			if (WorldGen.drunkWorldGen || WorldGen.remixWorldGen) {
-				minY = (int)Main.rockLayer;
-				maxY = Main.maxTilesY;
-				if (WorldGen.drunkWorldGen && WorldGen.remixWorldGen) {
-					oreMult = 2.25E-05 * 2;
-				} else if (WorldGen.drunkWorldGen && !WorldGen.remixWorldGen) {
-					oreMult = 4.25E-05 + 2.25E-05;
-				} else if (!WorldGen.drunkWorldGen && WorldGen.remixWorldGen) {
-					oreMult = 2.25E-05;
+			int minY = (int)Main.rockLayer;
+			int maxY = Main.maxTilesY;
+			double oreMult = 2.25E-05;
+			if (WorldGen.remixWorldGen) {
+				oreMult = 4.25E-05;
+				if (WorldGen.drunkWorldGen) {
+					oreMult += 2.25E-05;
 				}
+			}else if (WorldGen.drunkWorldGen) {
+				oreMult += 2.25E-05;
 			}
 			int oreType = WorldBiomeManager.GetWorldEvil(true, false).BiomeOre ?? TileID.Demonite;
 			List<int> list = new() {
@@ -418,6 +415,10 @@ namespace AltLibrary.Common.Hooks {
 			for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * oreMult); i++) {
 				if (WorldGen.drunkWorldGen) {
 					oreType = WorldGen.genRand.Next(list);
+				}
+				if (WorldGen.drunkWorldGen && WorldGen.remixWorldGen && i > Main.maxTilesX * Main.maxTilesY * oreMult * 0.5f) {
+					minY = (int)Main.worldSurface;
+					maxY = (int)Main.rockLayer;
 				}
 				WorldGen.TileRunner(
 					WorldGen.genRand.Next(0, Main.maxTilesX),
