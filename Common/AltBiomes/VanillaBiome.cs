@@ -20,6 +20,8 @@ namespace AltLibrary.Common.AltBiomes
 		private readonly string name;
 		private readonly Color nameColor;
 		public override int ConversionType => 0;
+		AltMaterialContext materialContext = new();
+		public override AltMaterialContext MaterialContext => materialContext;
 
 		internal static readonly EvilBiomeGenerationPass corruptPass = new CorruptionEvilBiomeGenerationPass();
 		internal static readonly EvilBiomeGenerationPass crimsonPass = new CrimsonEvilBiomeGenerationPass();
@@ -73,6 +75,16 @@ namespace AltLibrary.Common.AltBiomes
 			FleshChestTile = TileID.Containers2;
 			FleshChestTileStyle = 3;
 
+			MaterialContext.SetCombinationSword(ItemID.NightsEdge);
+			MaterialContext.SetEvilBar(ItemID.DemoniteBar);
+			MaterialContext.SetEvilBossDrop(ItemID.ShadowScale);
+			MaterialContext.SetEvilHerb(ItemID.Deathweed);
+			MaterialContext.SetEvilOre(ItemID.DemoniteOre);
+			MaterialContext.SetEvilSword(ItemID.LightsBane);
+			MaterialContext.SetVileComponent(ItemID.CursedFlame);
+			MaterialContext.SetVileInnard(ItemID.RottenChunk);
+			MaterialContext.SetTrueCombinationSword(ItemID.TrueNightsEdge);
+
 			AddWallConversions(WallID.CorruptGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.EbonstoneUnsafe, WallID.Sets.Conversion.Stone);
 			AddWallConversions(WallID.CorruptHardenedSand, WallID.Sets.Conversion.HardenedSand);
@@ -113,6 +125,13 @@ namespace AltLibrary.Common.AltBiomes
 			FleshTableTile = TileID.Tables2;
 			FleshTableTileStyle = 5;
 			FleshChestTileStyle = 43;
+
+			MaterialContext.SetEvilBar(ItemID.CrimtaneBar);
+			MaterialContext.SetEvilBossDrop(ItemID.TissueSample);
+			MaterialContext.SetEvilOre(ItemID.CrimtaneOre);
+			MaterialContext.SetEvilSword(ItemID.BloodButcherer);
+			MaterialContext.SetVileComponent(ItemID.Ichor);
+			MaterialContext.SetVileInnard(ItemID.Vertebrae);
 
 			AddWallConversions(WallID.CrimsonGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.CrimstoneUnsafe, WallID.Sets.Conversion.Stone);

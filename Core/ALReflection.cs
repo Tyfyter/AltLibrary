@@ -18,6 +18,7 @@ namespace AltLibrary.Core
 		internal static PropertyInfo ModType_Mod = null;
 		internal static FastFieldInfo<NPCShop.Entry, List<Condition>> ShopEntry_conditions = null;
 		internal static FastFieldInfo<UIWorldListItem, UIElement> UIWorldListItem__worldIcon = null;
+		internal static FastFieldInfo<Recipe, bool> Recipe_alchemy = null;
 
 
 		internal delegate void WorldGenScanTileColumnAndRemoveClumps(int x);
@@ -30,6 +31,7 @@ namespace AltLibrary.Core
 			UIWorldCreation__evilButtons = typeof(UIWorldCreation).GetField("_evilButtons", BindingFlags.NonPublic | BindingFlags.Instance);
 			ShopEntry_conditions = new("conditions", BindingFlags.NonPublic);
 			UIWorldListItem__worldIcon = new("_worldIcon", BindingFlags.NonPublic);
+			Recipe_alchemy = new("alchemy", BindingFlags.NonPublic);
 		}
 
 		internal static void Unload()
@@ -40,6 +42,7 @@ namespace AltLibrary.Core
 			UIWorldCreation__evilButtons = null;
 			ShopEntry_conditions = null;
 			UIWorldListItem__worldIcon = null;
+			Recipe_alchemy = null;
 		}
 	}
 	public class FastFieldInfo<TParent, T> {

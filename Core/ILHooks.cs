@@ -31,6 +31,7 @@ namespace AltLibrary.Core
 			SmashAltarInfection.Init();
 			MowingGrassTile.Init();
 			AltOreInsideBodies.Load();
+			ShimmerDecraft.Load();
 			MimicSummon.Init();
 			SimpleReplacements.Load();
 			DryadText.Init();
@@ -55,6 +56,7 @@ namespace AltLibrary.Core
 			SmashAltarInfection.Unload();
 			MowingGrassTile.Unload();
 			AltOreInsideBodies.Unload();
+			ShimmerDecraft.Unload();
 			MimicSummon.Unload();
 			SimpleReplacements.Unload();
 			DryadText.Unload();

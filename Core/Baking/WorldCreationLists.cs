@@ -36,8 +36,8 @@ namespace AltLibrary.Core.Baking {
 					ItemID.PlatinumOre
 				};
 
-				for (int i = 0; i < prehmOreData.Types.FindIndex(x => x.ore == ItemID.CobaltOre); i++) {
-					ores.Add(prehmOreData.Types[i].ore);
+				foreach (var ore in AltLibrary.Ores.Where(x => x.OreType < OreType.Cobalt)) {
+					ores.Add(TileLoader.GetItemDropFromTypeAndStyle(ore.ore));
 				}
 
 				AltOreInsideBodies.ores = ores;

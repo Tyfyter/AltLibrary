@@ -1,15 +1,23 @@
-﻿using Terraria;
+﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.Hooks;
+using AltLibrary.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Systems
 {
 	internal class RecipeChanges : ModSystem {
-		//already double checked that this code makes sense
-		public override void PostAddRecipes()
-		{
-			for (int i = 0; i < Recipe.numRecipes; i++)
-			{
+		public override void PostAddRecipes() {
+			FieldInfo[] fields = typeof(RecipeGroups).GetFields();
+			List<RecipeGroup> recipeGroups = fields.Select(f => f.GetValue(null) as RecipeGroup)
+				.Where(v => v is not null && RecipeGroups.AppropriateMaterials.ContainsKey(v.RegisteredId)).ToList();
+
+			for (int i = 0; i < Recipe.numRecipes; i++) {
 				Recipe recipe = Main.recipe[i];
 
 				ReplaceRecipe(ref recipe,
@@ -147,9 +155,36 @@ namespace AltLibrary.Common.Systems
 								  new int[] { ItemID.GoldWatch },
 								  "GoldWatches",
 								  ItemID.PlatinumWatch);
-			}
-		}
+				if (!recipe.Disabled && !ShimmerDecraft.recipes.ContainsKey(recipe.createItem.type)) {
+					List<(int type, int count)> ingredients = recipe.requiredItem.Select(it => (it.type, it.stack)).ToList();
+					List<(int type, int count)> ingredientGroups = new();
+					for (int j = ingredients.Count - 1; j >= 0; j--) {
+						(int type, int count) = ingredients[j];
+						foreach (var group in recipeGroups) {
+							if (recipe.AcceptsGroup(group.RegisteredId) && group.ContainsItem(type)) {
+								ingredientGroups.Add((group.RegisteredId, count));
+								ingredients.RemoveAt(j);
+								break;
+							}
+						}
+					}
+					if (ingredientGroups.Count > 0) {
+						ShimmerDecraft.recipes.Add(
+							recipe.createItem.type,
+							(
+							recipe.createItem.stack,
+								ingredients.Select<(int type, int count), (Func<int>, int)>(ing => (() => ing.type, ing.count)).Union(
+								ingredientGroups.Select<(int type, int count), (Func<int>, int)>(g => (RecipeGroups.AppropriateMaterials[g.type], g.count)))
 
+								.ToList(),
+								ALReflection.Recipe_alchemy.GetValue(recipe)
+							)
+						);
+					}
+				}
+			}
+
+		}
 		private static void ReplaceRecipe(ref Recipe r, int[] results, int[] ingredients, string group)
 		{
 			foreach (int result in results)

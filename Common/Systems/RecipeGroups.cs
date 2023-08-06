@@ -1,4 +1,5 @@
 ﻿using AltLibrary.Common.AltBiomes;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -7,47 +8,47 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Systems
 {
-	internal class RecipeGroups : ModSystem
-	{
-		internal static RecipeGroup EvilOres;
-		internal static RecipeGroup EvilBars;
-		internal static RecipeGroup HallowBars;
-		internal static RecipeGroup HellBars;
-		internal static RecipeGroup JungleBars;
-		internal static RecipeGroup MushroomBars;
-		internal static RecipeGroup EvilSwords;
-		internal static RecipeGroup HallowSwords;
-		internal static RecipeGroup HellSwords;
-		internal static RecipeGroup JungleSwords;
-		internal static RecipeGroup ComboSwords;
-		internal static RecipeGroup TrueComboSwords;
-		internal static RecipeGroup TrueHallowSwords;
-		internal static RecipeGroup RottenChunks;
-		internal static RecipeGroup PixieDusts;
-		internal static RecipeGroup UnicornHorns;
-		internal static RecipeGroup CrystalShards;
-		internal static RecipeGroup CursedFlames;
-		internal static RecipeGroup ShadowScales;
-		internal static RecipeGroup JungleSpores;
-		internal static RecipeGroup Deathweed;
-		internal static RecipeGroup Fireblossom;
-		internal static RecipeGroup Moonglow;
-		internal static RecipeGroup Hellforges;
-		internal static RecipeGroup CopperBars;
-		internal static RecipeGroup IronOres;
-		internal static RecipeGroup IronBars;
-		internal static RecipeGroup SilverBars;
-		internal static RecipeGroup GoldOres;
-		internal static RecipeGroup GoldBars;
-		internal static RecipeGroup CobaltBars;
-		internal static RecipeGroup MythrilBars;
-		internal static RecipeGroup AdamantiteBars;
-		internal static RecipeGroup GoldCandles;
-		internal static RecipeGroup CopperWatches;
-		internal static RecipeGroup SilverWatches;
-		internal static RecipeGroup GoldWatches;
-		internal static RecipeGroup SoulsOfEvil;
+	public class RecipeGroups : ModSystem {
+		public static RecipeGroup EvilOres;
+		public static RecipeGroup EvilBars;
+		public static RecipeGroup HallowBars;
+		public static RecipeGroup HellBars;
+		public static RecipeGroup JungleBars;
+		public static RecipeGroup MushroomBars;
+		public static RecipeGroup EvilSwords;
+		public static RecipeGroup HallowSwords;
+		public static RecipeGroup HellSwords;
+		public static RecipeGroup JungleSwords;
+		public static RecipeGroup ComboSwords;
+		public static RecipeGroup TrueComboSwords;
+		public static RecipeGroup TrueHallowSwords;
+		public static RecipeGroup RottenChunks;
+		public static RecipeGroup PixieDusts;
+		public static RecipeGroup UnicornHorns;
+		public static RecipeGroup CrystalShards;
+		public static RecipeGroup CursedFlames;
+		public static RecipeGroup ShadowScales;
+		public static RecipeGroup JungleSpores;
+		public static RecipeGroup Deathweed;
+		public static RecipeGroup Fireblossom;
+		public static RecipeGroup Moonglow;
+		public static RecipeGroup Hellforges;
+		public static RecipeGroup CopperBars;
+		public static RecipeGroup IronOres;
+		public static RecipeGroup IronBars;
+		public static RecipeGroup SilverBars;
+		public static RecipeGroup GoldOres;
+		public static RecipeGroup GoldBars;
+		public static RecipeGroup CobaltBars;
+		public static RecipeGroup MythrilBars;
+		public static RecipeGroup AdamantiteBars;
+		public static RecipeGroup GoldCandles;
+		public static RecipeGroup CopperWatches;
+		public static RecipeGroup SilverWatches;
+		public static RecipeGroup GoldWatches;
+		public static RecipeGroup SoulsOfEvil;
 
+		public static Dictionary<int, Func<int>> AppropriateMaterials;
 		public override void Unload()
 		{
 			EvilOres = null;
@@ -88,10 +89,12 @@ namespace AltLibrary.Common.Systems
 			GoldOres = null;
 			IronOres = null;
 			SoulsOfEvil = null;
+
+			AppropriateMaterials = null;
 		}
 
-		public override void AddRecipeGroups()
-		{
+		public override void AddRecipeGroups() {
+			AppropriateMaterials = new();
 			List<AltBiome> Hell = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hell);
 			List<AltBiome> Light = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hallow);
 			List<AltBiome> Evil = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Evil);
@@ -107,6 +110,9 @@ namespace AltLibrary.Common.Systems
 			});
 			EvilOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilOres")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilOres", EvilOres);
+			AppropriateMaterials.Add(EvilOres.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilOre ?? ItemID.DemoniteOre;
+			});
 
 			array = new List<int>() { ItemID.DemoniteBar, ItemID.CrimtaneBar };
 			Evil.ForEach(x =>
@@ -118,6 +124,9 @@ namespace AltLibrary.Common.Systems
 			});
 			EvilBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilBars", EvilBars);
+			AppropriateMaterials.Add(EvilBars.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBar ?? ItemID.DemoniteBar;
+			});
 
 			array = new List<int>() { ItemID.HallowedBar };
 			Light.ForEach(x =>
@@ -173,6 +182,9 @@ namespace AltLibrary.Common.Systems
 			});
 			EvilSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilSwords", EvilSwords);
+			AppropriateMaterials.Add(EvilSwords.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilSword ?? ItemID.LightsBane;
+			});
 
 			array = new List<int>() { ItemID.Excalibur };
 			Light.ForEach(x =>
@@ -217,6 +229,9 @@ namespace AltLibrary.Common.Systems
 			});
 			ComboSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.ComboSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("ComboSwords", ComboSwords);
+			AppropriateMaterials.Add(ComboSwords.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.CombinationSword ?? ItemID.NightsEdge;
+			});
 
 			array = new List<int>() { ItemID.TrueNightsEdge };
 			Evil.ForEach(x =>
@@ -228,6 +243,9 @@ namespace AltLibrary.Common.Systems
 			});
 			TrueComboSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.TrueComboSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("TrueComboSwords", TrueComboSwords);
+			AppropriateMaterials.Add(TrueComboSwords.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.TrueCombinationSword ?? ItemID.TrueNightsEdge;
+			});
 
 			array = new List<int>() { ItemID.TrueExcalibur };
 			Light.ForEach(x =>
@@ -250,6 +268,9 @@ namespace AltLibrary.Common.Systems
 			});
 			RottenChunks = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.RottenChunks")}", array.ToArray());
 			RecipeGroup.RegisterGroup("RottenChunks", RottenChunks);
+			AppropriateMaterials.Add(RottenChunks.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileInnard ?? ItemID.RottenChunk;
+			});
 
 			array = new List<int>() { ItemID.PixieDust };
 			Light.ForEach(x =>
@@ -294,6 +315,9 @@ namespace AltLibrary.Common.Systems
 			});
 			CursedFlames = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CursedFlames")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CursedFlames", CursedFlames);
+			AppropriateMaterials.Add(CursedFlames.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileComponent ?? ItemID.CursedFlame;
+			});
 
 			array = new List<int>() { ItemID.ShadowScale, ItemID.TissueSample };
 			Evil.ForEach(x =>
@@ -305,6 +329,9 @@ namespace AltLibrary.Common.Systems
 			});
 			ShadowScales = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.ShadowScales")}", array.ToArray());
 			RecipeGroup.RegisterGroup("ShadowScales", ShadowScales);
+			AppropriateMaterials.Add(ShadowScales.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBossDrop ?? ItemID.ShadowScale;
+			});
 
 			array = new List<int>() { ItemID.JungleSpores };
 			Tropic.ForEach(x =>
@@ -327,6 +354,9 @@ namespace AltLibrary.Common.Systems
 			});
 			Deathweed = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Deathweed")}", array.ToArray());
 			RecipeGroup.RegisterGroup("Deathweed", Deathweed);
+			AppropriateMaterials.Add(Deathweed.RegisteredId, () => {
+				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilHerb ?? ItemID.Deathweed;
+			});
 
 			array = new List<int>() { ItemID.Fireblossom };
 			Hell.ForEach(x =>
