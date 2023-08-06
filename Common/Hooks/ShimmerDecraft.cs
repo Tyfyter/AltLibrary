@@ -3,6 +3,7 @@ using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Achievements;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,13 +25,14 @@ namespace AltLibrary.Common.Hooks
 			if (recipes.TryGetValue(self.type, out var recipe)) {
 				int decraftAmount = self.stack / recipe.createCount;
 				bool spread = recipe.ingredients.Count > 1;
-				int i = 0;
-				foreach ((Func<int> ingredientType, int stack) in recipe.ingredients) {
+				int num = 0;
+				for (int i = 0; i < recipe.ingredients.Count; i++) {
+					(Func<int> ingredientType, int stack) = recipe.ingredients[i];
 					int itemType = ingredientType();
 					if (itemType <= 0) {
 						break;
 					}
-					i++;
+					num++;
 					int totalDecrafted = decraftAmount * stack;
 					if (recipe.alchemy) {
 						for (int num9 = totalDecrafted; num9 > 0; num9--) {
@@ -54,9 +56,9 @@ namespace AltLibrary.Common.Hooks
 						newItem.velocity *= 0.1f;
 						newItem.playerIndexTheItemIsReservedFor = Main.myPlayer;
 						if (spread) {
-							newItem.velocity.X = 1f * i;
-							newItem.velocity.X *= 1f + i * 0.05f;
-							if (i % 2 == 0) {
+							newItem.velocity.X = 1f * num;
+							newItem.velocity.X *= 1f + num * 0.05f;
+							if (num % 2 == 0) {
 								newItem.velocity.X *= -1f;
 							}
 						}
@@ -66,7 +68,20 @@ namespace AltLibrary.Common.Hooks
 				self.stack -= decraftAmount * recipe.createCount;
 				if (self.stack <= 0) {
 					self.TurnToAir();
+					self.shimmerTime = 0f;
+				} else {
+					self.shimmerTime = 1f;
 				}
+				self.shimmerWet = true;
+				self.wet = true;
+				self.velocity *= 0.1f;
+				if (Main.netMode == NetmodeID.SinglePlayer) {
+					Item.ShimmerEffect(self.Center);
+				} else {
+					NetMessage.SendData(146, -1, -1, null, 0, (int)self.Center.X, (int)self.Center.Y);
+					NetMessage.SendData(145, -1, -1, null, self.whoAmI, 1f);
+				}
+				AchievementsHelper.NotifyProgressionEvent(27);
 			} else {
 				orig(self);
 			}
