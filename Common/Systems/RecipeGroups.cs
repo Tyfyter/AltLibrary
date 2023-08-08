@@ -94,6 +94,9 @@ namespace AltLibrary.Common.Systems
 		}
 
 		public override void AddRecipeGroups() {
+			static int DefaultTo(int? value, int @default){
+				return (value ?? -1) == -1 ? @default : value.Value;
+			}
 			AppropriateMaterials = new();
 			List<AltBiome> Hell = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hell);
 			List<AltBiome> Light = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hallow);
@@ -111,7 +114,7 @@ namespace AltLibrary.Common.Systems
 			EvilOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilOres")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilOres", EvilOres);
 			AppropriateMaterials.Add(EvilOres.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilOre ?? ItemID.DemoniteOre;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilOre, ItemID.DemoniteOre);
 			});
 
 			array = new List<int>() { ItemID.DemoniteBar, ItemID.CrimtaneBar };
@@ -125,7 +128,7 @@ namespace AltLibrary.Common.Systems
 			EvilBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilBars", EvilBars);
 			AppropriateMaterials.Add(EvilBars.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBar ?? ItemID.DemoniteBar;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBar, ItemID.DemoniteBar);
 			});
 
 			array = new List<int>() { ItemID.HallowedBar };
@@ -139,7 +142,7 @@ namespace AltLibrary.Common.Systems
 			HallowBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.HallowBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("HallowBars", HallowBars);
 			AppropriateMaterials.Add(HallowBars.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightBar ?? ItemID.HallowedBar;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightBar, ItemID.HallowedBar);
 			});
 
 			array = new List<int>() { ItemID.HellstoneBar };
@@ -153,7 +156,7 @@ namespace AltLibrary.Common.Systems
 			HellBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.HellBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("HellBars", HellBars);
 			AppropriateMaterials.Add(HellBars.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldBar ?? ItemID.HellstoneBar;
+				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldBar, ItemID.HellstoneBar);
 			});
 
 			array = new List<int>() { ItemID.ChlorophyteBar };
@@ -167,7 +170,7 @@ namespace AltLibrary.Common.Systems
 			JungleBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.JungleBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("JungleBars", JungleBars);
 			AppropriateMaterials.Add(JungleBars.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalBar ?? ItemID.ChlorophyteBar;
+				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalBar, ItemID.ChlorophyteBar);
 			});
 
 			array = new List<int>() { ItemID.ShroomiteBar };
@@ -181,7 +184,7 @@ namespace AltLibrary.Common.Systems
 			MushroomBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.MushroomBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("MushroomBars", MushroomBars);
 			AppropriateMaterials.Add(MushroomBars.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldJungle(true).MaterialContext?.MushroomBar ?? ItemID.ShroomiteBar;
+				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.MushroomBar, ItemID.ShroomiteBar);
 			});
 
 			array = new List<int>() { ItemID.LightsBane, ItemID.BloodButcherer };
@@ -195,7 +198,7 @@ namespace AltLibrary.Common.Systems
 			EvilSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.EvilSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("EvilSwords", EvilSwords);
 			AppropriateMaterials.Add(EvilSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilSword ?? ItemID.LightsBane;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilSword, ItemID.LightsBane);
 			});
 
 			array = new List<int>() { ItemID.Excalibur };
@@ -209,7 +212,7 @@ namespace AltLibrary.Common.Systems
 			HallowSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.HallowSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("HallowSwords", HallowSwords);
 			AppropriateMaterials.Add(HallowSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightSword ?? ItemID.Excalibur;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightSword, ItemID.Excalibur);
 			});
 
 			array = new List<int>() { ItemID.FieryGreatsword };
@@ -223,7 +226,7 @@ namespace AltLibrary.Common.Systems
 			HellSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.HellSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("HellSwords", HellSwords);
 			AppropriateMaterials.Add(HellSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldSword ?? ItemID.FieryGreatsword;
+				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldSword, ItemID.FieryGreatsword);
 			});
 
 			array = new List<int>() { ItemID.BladeofGrass };
@@ -237,7 +240,7 @@ namespace AltLibrary.Common.Systems
 			JungleSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.JungleSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("JungleSwords", JungleSwords);
 			AppropriateMaterials.Add(JungleSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalSword ?? ItemID.BladeofGrass;
+				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalSword, ItemID.BladeofGrass);
 			});
 
 			array = new List<int>() { ItemID.NightsEdge };
@@ -251,7 +254,7 @@ namespace AltLibrary.Common.Systems
 			ComboSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.ComboSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("ComboSwords", ComboSwords);
 			AppropriateMaterials.Add(ComboSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.CombinationSword ?? ItemID.NightsEdge;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.CombinationSword, ItemID.NightsEdge);
 			});
 
 			array = new List<int>() { ItemID.TrueNightsEdge };
@@ -265,7 +268,7 @@ namespace AltLibrary.Common.Systems
 			TrueComboSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.TrueComboSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("TrueComboSwords", TrueComboSwords);
 			AppropriateMaterials.Add(TrueComboSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.TrueCombinationSword ?? ItemID.TrueNightsEdge;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.TrueCombinationSword, ItemID.TrueNightsEdge);
 			});
 
 			array = new List<int>() { ItemID.TrueExcalibur };
@@ -279,7 +282,7 @@ namespace AltLibrary.Common.Systems
 			TrueHallowSwords = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.TrueHallowSwords")}", array.ToArray());
 			RecipeGroup.RegisterGroup("TrueHallowSwords", TrueHallowSwords);
 			AppropriateMaterials.Add(TrueHallowSwords.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.TrueLightSword ?? ItemID.TrueExcalibur;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.TrueLightSword, ItemID.TrueExcalibur);
 			});
 
 			array = new List<int>() { ItemID.RottenChunk, ItemID.Vertebrae };
@@ -293,7 +296,7 @@ namespace AltLibrary.Common.Systems
 			RottenChunks = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.RottenChunks")}", array.ToArray());
 			RecipeGroup.RegisterGroup("RottenChunks", RottenChunks);
 			AppropriateMaterials.Add(RottenChunks.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileInnard ?? ItemID.RottenChunk;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileInnard, ItemID.RottenChunk);
 			});
 
 			array = new List<int>() { ItemID.PixieDust };
@@ -307,7 +310,7 @@ namespace AltLibrary.Common.Systems
 			PixieDusts = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.PixieDusts")}", array.ToArray());
 			RecipeGroup.RegisterGroup("PixieDusts", PixieDusts);
 			AppropriateMaterials.Add(PixieDusts.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightResidue ?? ItemID.PixieDust;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightResidue, ItemID.PixieDust);
 			});
 
 			array = new List<int>() { ItemID.UnicornHorn };
@@ -321,7 +324,7 @@ namespace AltLibrary.Common.Systems
 			UnicornHorns = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.UnicornHorns")}", array.ToArray());
 			RecipeGroup.RegisterGroup("UnicornHorns", UnicornHorns);
 			AppropriateMaterials.Add(UnicornHorns.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightInnard ?? ItemID.UnicornHorn;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightInnard, ItemID.UnicornHorn);
 			});
 
 			array = new List<int>() { ItemID.CrystalShard };
@@ -335,7 +338,7 @@ namespace AltLibrary.Common.Systems
 			CrystalShards = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CrystalShards")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CrystalShards", CrystalShards);
 			AppropriateMaterials.Add(CrystalShards.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightComponent ?? ItemID.CrystalShard;
+				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightComponent, ItemID.CrystalShard);
 			});
 
 			array = new List<int>() { ItemID.CursedFlame, ItemID.Ichor };
@@ -349,7 +352,7 @@ namespace AltLibrary.Common.Systems
 			CursedFlames = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CursedFlames")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CursedFlames", CursedFlames);
 			AppropriateMaterials.Add(CursedFlames.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileComponent ?? ItemID.CursedFlame;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileComponent, ItemID.CursedFlame);
 			});
 
 			array = new List<int>() { ItemID.ShadowScale, ItemID.TissueSample };
@@ -363,7 +366,7 @@ namespace AltLibrary.Common.Systems
 			ShadowScales = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.ShadowScales")}", array.ToArray());
 			RecipeGroup.RegisterGroup("ShadowScales", ShadowScales);
 			AppropriateMaterials.Add(ShadowScales.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBossDrop ?? ItemID.ShadowScale;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBossDrop, ItemID.ShadowScale);
 			});
 
 			array = new List<int>() { ItemID.JungleSpores };
@@ -388,7 +391,7 @@ namespace AltLibrary.Common.Systems
 			Deathweed = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Deathweed")}", array.ToArray());
 			RecipeGroup.RegisterGroup("Deathweed", Deathweed);
 			AppropriateMaterials.Add(Deathweed.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilHerb ?? ItemID.Deathweed;
+				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilHerb, ItemID.Deathweed);
 			});
 
 			array = new List<int>() { ItemID.Fireblossom };
@@ -402,7 +405,7 @@ namespace AltLibrary.Common.Systems
 			Fireblossom = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Fireblossom")}", array.ToArray());
 			RecipeGroup.RegisterGroup("Fireblossom", Fireblossom);
 			AppropriateMaterials.Add(Fireblossom.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldHerb ?? ItemID.Fireblossom;
+				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldHerb, ItemID.Fireblossom);
 			});
 
 			array = new List<int>() { ItemID.Moonglow };
@@ -416,7 +419,7 @@ namespace AltLibrary.Common.Systems
 			Moonglow = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Moonglow")}", array.ToArray());
 			RecipeGroup.RegisterGroup("Moonglow", Moonglow);
 			AppropriateMaterials.Add(Moonglow.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalHerb ?? ItemID.Moonglow;
+				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalHerb, ItemID.Moonglow);
 			});
 
 			array = new List<int>() { ItemID.Hellforge };
@@ -430,7 +433,7 @@ namespace AltLibrary.Common.Systems
 			Hellforges = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Hellforges")}", array.ToArray());
 			RecipeGroup.RegisterGroup("Hellforges", Hellforges);
 			AppropriateMaterials.Add(Hellforges.RegisteredId, () => {
-				return WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldForge ?? ItemID.Hellforge;
+				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldForge, ItemID.Hellforge);
 			});
 
 
