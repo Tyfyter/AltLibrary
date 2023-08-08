@@ -415,10 +415,10 @@ namespace AltLibrary.Common.Hooks {
 			for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * oreMult); i++) {
 				if (WorldGen.drunkWorldGen) {
 					oreType = WorldGen.genRand.Next(list);
-				}
-				if (WorldGen.drunkWorldGen && WorldGen.remixWorldGen && i > Main.maxTilesX * Main.maxTilesY * oreMult * 0.5f) {
-					minY = (int)Main.worldSurface;
-					maxY = (int)Main.rockLayer;
+					if (WorldGen.remixWorldGen && i > Main.maxTilesX * Main.maxTilesY * oreMult * 0.5f) {
+						minY = (int)Main.worldSurface;
+						maxY = (int)Main.rockLayer;
+					}
 				}
 				WorldGen.TileRunner(
 					WorldGen.genRand.Next(0, Main.maxTilesX),

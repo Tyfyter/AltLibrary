@@ -66,7 +66,9 @@ namespace AltLibrary.Core.Generation
 			{
 				EvilBiomes.Add(VanillaBiome.crimsonPass);
 				EvilBiomes.Add(VanillaBiome.corruptPass);
-				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().ForEach(i => EvilBiomes.Add(i.GetEvilBiomeGenerationPass()));
+				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().ForEach(i => {
+					if (i.GetEvilBiomeGenerationPass() is EvilBiomeGenerationPass genPass) EvilBiomes.Add(genPass);
+				});
 				//shuffle list
 
 				int n = EvilBiomes.Count;
