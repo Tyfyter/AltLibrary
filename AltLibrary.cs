@@ -9,6 +9,7 @@ using AltLibrary.Core.States;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Terraria;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
@@ -347,6 +348,17 @@ namespace AltLibrary
 				Directory.CreateDirectory(folderPath);
 			}
 			File.WriteAllText(filePath, il.ToString());
+		}
+		static long lastLogTime = int.MinValue;
+		static readonly StringBuilder logSummary = new();
+		internal static void RateLimitedLog(string full, string compressed) {
+			if (lastLogTime < Main.GameUpdateCount - 60) {
+				Instance.Logger.Info($"{logSummary};\n{full}");
+				lastLogTime = Main.GameUpdateCount;
+				logSummary.Clear();
+			} else {
+				logSummary.Append(compressed);
+			}
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Core.Baking;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,6 +19,31 @@ namespace AltLibrary.Core
 			bool isJungleSpreadingOre = false;
 			bool isGrass = false;
 			AltBiome biomeToSpread = null;
+			ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(type, out (int baseTile, AltBiome fromBiome) parent);
+			AltBiome biome = parent.fromBiome;
+			if (biome is null or VanillaBiome) {
+				return;
+			}
+			if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow) {
+				if (type == biome.BiomeGrass) {
+					isGrass = true;
+					biomeToSpread = biome;
+				}
+				if (biome.SpreadingTiles.Contains(type)) {
+					isSpreadingTile = true;
+					biomeToSpread = biome;
+				}
+			} else if (biome.BiomeType == BiomeType.Jungle) {
+				if (type == biome.BiomeGrass || !biome.BiomeGrass.HasValue && type == biome.BiomeJungleGrass) {
+					isGrass = true;
+					isOreGrowingTile = true;
+					biomeToSpread = biome;
+				} else if (type == biome.BiomeOre) {
+					isJungleSpreadingOre = true;
+					biomeToSpread = biome;
+				}
+			}
+			/*
 			foreach (AltBiome biome in AltLibrary.Biomes)
 			{
 				if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow)
@@ -50,7 +76,7 @@ namespace AltLibrary.Core
 					}
 
 				}
-			}
+			}*/
 			if (isSpreadingTile)
 			{
 				SpreadInfection(i, j, biomeToSpread);

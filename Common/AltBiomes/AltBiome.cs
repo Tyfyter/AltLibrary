@@ -161,7 +161,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// For Evil and Hallow alts. The list of tiles that can spread this biome. 
 		/// This should generally include the biomeGrass, biomeStone, etc blocks, but they can be omitted if you for some reason do not wish for those blocks to spread the biome.
 		/// </summary>
-		public virtual List<int> SpreadingTiles => new();
+		public virtual List<int> SpreadingTiles { get; }  = new();
 
 		/// <summary>
 		/// For Evil alts, this is the TileID of this biome's equivalent to Demon Altars.

@@ -59,47 +59,46 @@ namespace AltLibrary.Core
 			c.Emit(OpCodes.Br, skip);
 		}
 
-		private static void WorldGen_Convert(Terraria.On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size)
-		{
+		private static void WorldGen_Convert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size) {
+			AltBiome biome;
+			switch (conversionType) {
+				case 1:
+				biome = ModContent.GetInstance<CorruptionAltBiome>();
+				break;
+				case 4:
+				biome = ModContent.GetInstance<CrimsonAltBiome>();
+				break;
+
+				case 2:
+				biome = ModContent.GetInstance<HallowAltBiome>();
+				break;
+
+				case 3:
+				biome = ModContent.GetInstance<MushroomAltBiome>();
+				break;
+
+				case 5:
+				biome = ModContent.GetInstance<DesertAltBiome>();
+				break;
+
+				case 6:
+				biome = ModContent.GetInstance<SnowAltBiome>();
+				break;
+
+				case 7:
+				biome = ModContent.GetInstance<ForestAltBiome>();
+				break;
+
+				default:
+				biome = ModContent.GetInstance<DeconvertAltBiome>();
+				break;
+			}
 			for (int k = i - size; k <= i + size; k++)
 			{
 				for (int l = j - size; l <= j + size; l++)
 				{
 					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
 					{
-						AltBiome biome;
-						switch (conversionType) {
-							case 1:
-							biome = ModContent.GetInstance<CorruptionAltBiome>();
-							break;
-							case 4:
-							biome = ModContent.GetInstance<CrimsonAltBiome>();
-							break;
-
-							case 2:
-							biome = ModContent.GetInstance<HallowAltBiome>();
-							break;
-
-							case 3:
-							biome = ModContent.GetInstance<MushroomAltBiome>();
-							break;
-
-							case 5:
-							biome = ModContent.GetInstance<DesertAltBiome>();
-							break;
-
-							case 6:
-							biome = ModContent.GetInstance<SnowAltBiome>();
-							break;
-
-							case 7:
-							biome = ModContent.GetInstance<ForestAltBiome>();
-							break;
-
-							default:
-							biome = ModContent.GetInstance<DeconvertAltBiome>();
-							break;
-						}
 						ConvertTile(k, l, biome);
 
 						ConvertWall(k, l, biome);
@@ -293,13 +292,14 @@ namespace AltLibrary.Core
 					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
 						NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
 					}
-				} else if (newTile != tile.WallType) {
+				} else if (newTile != tile.TileType) {
 					tile.TileType = (ushort)newTile;
 
 					WorldGen.SquareTileFrame(i, j, true);
 					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
 				}
 				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
+				//AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
 			}
 		}
 		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) {
