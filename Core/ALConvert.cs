@@ -299,7 +299,7 @@ namespace AltLibrary.Core
 					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
 				}
 				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
-				//AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
+				AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
 			}
 		}
 		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) {
