@@ -284,6 +284,7 @@ namespace AltLibrary.Core
 		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
 			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome);
+			if (fromBiome == targetBiome) return;
 
 			if (newTile != -1 && newTile != tile.TileType && GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j)) {
 				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
@@ -327,6 +328,7 @@ namespace AltLibrary.Core
 		public static void ConvertWall(int i, int j, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
 			(int newWall, AltBiome fromBiome) = GetWallConversionState(i, j, targetBiome);
+			if (fromBiome == targetBiome) return;
 
 			if (newWall != -1 && newWall != tile.WallType && GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j)) {
 				if (newWall == -2) {
