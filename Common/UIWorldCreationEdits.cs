@@ -34,6 +34,7 @@ namespace AltLibrary.Common
 		internal static List<AltOre> AddInFinishedCreation;
 		internal static List<AltBiome> AddInFinishedCreation2;
 		internal static bool panelActive = false;
+		internal static int forceRecalculate = 0;
 		internal static int AltEvilBiomeChosenType;
 		internal static int AltHallowBiomeChosenType;
 		internal static int AltJungleBiomeChosenType;
@@ -458,6 +459,7 @@ namespace AltLibrary.Common
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
 						_altList.SetFilter(el => el is ALUIBiomeListItem biome && biome.biomeType == biomeType);
 						panelActive = true;
+						forceRecalculate = 2;
 					}
 				}
 				spriteBatch.Draw(ALTextureAssets.Button.Value, topLeft, (color * (hovered ? 1 : 0.75f)) with { A = 255 });
@@ -486,6 +488,7 @@ namespace AltLibrary.Common
 					if (Main.mouseLeft && Main.mouseLeftRelease) {
 						_altList.SetFilter(el => el is ALUIOreListItem ore && ore.oreType == oreType);
 						panelActive = true;
+						forceRecalculate = 2;
 					}
 				}
 
@@ -650,6 +653,10 @@ namespace AltLibrary.Common
 			c.EmitDelegate<Action<UIWorldCreation>>((self) =>
 			{
 				seed = (string)typeof(UIWorldCreation).GetField("_optionSeed", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(self);
+				if (forceRecalculate > 0) {
+					forceRecalculate--;
+					UserInterface.ActiveInstance.Recalculate();
+				}
 			});
 		}
 
@@ -666,6 +673,7 @@ namespace AltLibrary.Common
 		private static void CloseIcon_OnClick(UIMouseEvent evt, UIElement listeningElement)
 		{
 			panelActive = false;
+			forceRecalculate = 2;
 		}
 
 		public static void OnAddWorldEvilOptions(

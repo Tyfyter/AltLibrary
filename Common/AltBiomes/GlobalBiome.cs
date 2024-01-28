@@ -38,6 +38,21 @@ namespace AltLibrary.Common.AltBiomes {
 		public virtual void PostConvertWall(AltBiome oldBiome, AltBiome newBiome, int i, int j) { }
 	}
 	public static class GlobalBiomeHooks {
+		/*public delegate bool _HookPreConvertTile(AltBiome currentBiome, AltBiome newBiome, int i, int j);
+		public static readonly GlobalHookList<GlobalBiome, _HookPreConvertTile> HookPreConvertTile = ItemLoader.AddModHook(new HookList<GlobalItem, Delegate>(
+		//Method reference
+			typeof(IShowItemCrosshair).GetMethod(nameof(IShowItemCrosshair.ShowItemCrosshair)),
+			//Invocation
+			e => (Item item, Player player) => {
+				foreach (IShowItemCrosshair g in e.Enumerate(item)) {
+					if (g.ShowItemCrosshair(item, player)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+		));*/
 		/// <summary>
 		/// Called before a tile is converted to a different biome
 		/// Return false to prevent conversion
