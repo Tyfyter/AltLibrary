@@ -17,7 +17,7 @@ namespace AltLibrary.Core
 		internal static void Load()
 		{
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
-			IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
+			//IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
 			IL_WorldGen.smCallBack += IL_WorldGen_smCallBack;
 		}
 
@@ -290,7 +290,7 @@ namespace AltLibrary.Core
 				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
 				if (newTile == -2) {
 					WorldGen.KillTile(i, j, false, false, false);
-					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
+					if (Main.netMode != NetmodeID.SinglePlayer && !silent) {
 						NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
 					}
 				} else if (newTile != tile.TileType) {
@@ -333,7 +333,7 @@ namespace AltLibrary.Core
 			if (newWall != -1 && newWall != tile.WallType && GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j)) {
 				if (newWall == -2) {
 					WorldGen.KillWall(i, j, false);
-					if (Main.netMode == NetmodeID.MultiplayerClient && !silent) {
+					if (Main.netMode != NetmodeID.SinglePlayer && !silent) {
 						NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
 					}
 				} else if (newWall != tile.WallType) {
