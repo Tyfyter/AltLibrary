@@ -381,7 +381,7 @@ namespace AltLibrary.Common.AltBiomes
 		{
 			ModTypeLookup<AltBiome>.Register(this);
 			if (this is VanillaBiome) {
-				Type = -1;
+				//Type = -1;
 				return;
 			}
 			AltLibrary.Biomes.Add(this);
@@ -510,6 +510,10 @@ namespace AltLibrary.Common.AltBiomes
 				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
 			}
 		}
+		public virtual bool PreConvertMultitileAway(int i, int j, int width, int height, ref int newTile, AltBiome targetBiome) {
+			return true;
+		}
+		public virtual void ConvertMultitileTo(int i, int j, int width, int height, int newTile, AltBiome fromBiome) { }
 		public static bool operator ==(AltBiome a, AltBiome b) {
 			if (a is null) return b is null;
 			if (b is null) return false;

@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using PieData = AltLibrary.Core.UIs.ALUIPieChart.PieData;
 using static Terraria.ModLoader.ModContent;
+using System;
 
 namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
@@ -64,7 +65,22 @@ namespace AltLibrary.Common.Systems {
 			}
 			return null;
 		}
-		public static string WorldEvil { get; internal set; } = "";
+		public static AltBiome WorldEvilBiome { get; internal set; }
+		static string worldEvilName = "";
+		[Obsolete("Should never have been designed this way to begin with", false)]
+		public static string WorldEvil {
+			get => worldEvilName;
+			internal set {
+				worldEvilName = value;
+				if (value == "") {
+					WorldEvilBiome = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+				} else if(TryFind(worldEvilName, out AltBiome altEvil)) {
+					WorldEvilBiome = altEvil;
+				} else {
+					WorldEvilBiome = new UnloadedAltBiome(value, BiomeType.Evil);
+				}
+			}
+		}
 		public static string WorldHallow { get; internal set; } = "";
 		public static string WorldHell { get; internal set; } = "";
 		public static string WorldJungle { get; internal set; } = "";

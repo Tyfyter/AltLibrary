@@ -318,4 +318,22 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	#endregion
+	public class UnloadedAltBiome : AltBiome {
+		public override string IconSmall => "Terraria/Images/UI/Bestiary/Icon_Tags_Shadow";
+		public override string Name => name;
+		public override Color NameColor => nameColor;
+
+		private readonly string name;
+		private readonly Color nameColor;
+		public override int ConversionType => 0;
+		AltMaterialContext materialContext = new();
+		public override AltMaterialContext MaterialContext => materialContext;
+		public UnloadedAltBiome(string name, BiomeType biome) {
+			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
+			this.name = name;
+			BiomeType = biome;
+			Type = -1;
+			nameColor = Color.Magenta;
+		}
+	}
 }

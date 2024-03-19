@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Core
@@ -282,9 +283,13 @@ namespace AltLibrary.Core
 			return (newTile, fromBiome);
 		}
 		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
-			Tile tile = Main.tile[i, j];
 			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome);
 			if (fromBiome == targetBiome) return;
+			Tile tile = Main.tile[i, j];
+			if (Main.tileFrameImportant[tile.TileType] && TileObjectData.GetTileData(tile) is TileObjectData tileObjectData) {
+				ConvertMultiTile(i, j, newTile, tileObjectData, fromBiome, targetBiome, silent);
+				return;
+			}
 
 			if (newTile != -1 && newTile != tile.TileType && GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j)) {
 				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
@@ -302,6 +307,20 @@ namespace AltLibrary.Core
 				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
 				AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
 			}
+		}
+		public static void ConvertMultiTile(int i, int j, int newTile, TileObjectData objectData, AltBiome fromBiome, AltBiome targetBiome, bool silent = false) {
+			Tile tile = Main.tile[i, j];
+			int innerFrameY = tile.TileFrameY % objectData.CoordinateFullHeight;
+			int frameI = (tile.TileFrameX % objectData.CoordinateFullWidth) / (objectData.CoordinateWidth + objectData.CoordinatePadding);
+			int frameJ = 0;
+			while (innerFrameY >= objectData.CoordinateHeights[frameJ] + objectData.CoordinatePadding) {
+				innerFrameY -= objectData.CoordinateHeights[frameJ] + objectData.CoordinatePadding;
+				frameJ++;
+			}
+			int left = i - frameI;
+			int top = j - frameJ;
+			if (!fromBiome.PreConvertMultitileAway(left, top, objectData.Width, objectData.Height, ref newTile, targetBiome)) return;
+			targetBiome.ConvertMultitileTo(left, top, objectData.Width, objectData.Height, newTile, fromBiome);
 		}
 		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) {
 			Tile tile = Main.tile[i, j];

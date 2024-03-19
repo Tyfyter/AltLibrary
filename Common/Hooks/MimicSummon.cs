@@ -52,8 +52,18 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		private static bool NPC_BigMimicSummonCheck(Terraria.On_NPC.orig_BigMimicSummonCheck orig, int x, int y, Player user)
-		{
+		private static bool NPC_BigMimicSummonCheck(Terraria.On_NPC.orig_BigMimicSummonCheck orig, int x, int y, Player user) {
+			/*Proof that even with only 2 alt biomes Find is really inefficient (iirc this is even the first of the two)
+			bool crim;
+			var s = System.Diagnostics.Stopwatch.StartNew();
+			crim = Terraria.ModLoader.ModContent.Find<AltBiome>("Origins/Defiled_Wastelands_Alt_Biome").Type == -666;
+			s.Stop();
+			AltLibrary.Instance.Logger.Info($"{crim}: {s.ElapsedTicks}");
+			s.Restart();
+			crim = WorldBiomeManager.WorldEvilBiome.Type == -666;
+			s.Stop();
+			AltLibrary.Instance.Logger.Info($"{crim}: {s.ElapsedTicks}");
+			*/
 			if (MimicPairs == null)
 			{
 				MimicPairs = new()

@@ -46,8 +46,9 @@ namespace AltLibrary.Common
 			private static MethodInfo SBSL_DrawFarTexture = null;
 			private static MethodInfo SBSL_DrawCloseBackground = null;
 
-			internal static void Inject()
-			{
+			internal static void Inject() {
+				if (Main.dedServ) return;
+
 				Terraria.GameContent.On_BackgroundChangeFlashInfo.UpdateCache += FlashUpdateCache;
 				Terraria.On_WorldGen.RandomizeBackgroundBasedOnPlayer += FlashRandomizeOnPlayer;
 
@@ -65,6 +66,8 @@ namespace AltLibrary.Common
 
 			internal static void Init()
 			{
+				if (Main.dedServ) return;
+
 				float[] _flashPower = (float[])ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_flashPower").Value.GetValue(WorldGen.BackgroundsCache);
 				int[] _variations = (int[])ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.GetValue(WorldGen.BackgroundsCache);
 				
@@ -101,8 +104,9 @@ namespace AltLibrary.Common
 				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.SetValue(WorldGen.BackgroundsCache, newVariations);
 			}
 
-			public static void Uninit()
-			{
+			public static void Uninit() {
+				if (Main.dedServ) return;
+
 				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_flashPower").Value.SetValue(WorldGen.BackgroundsCache, _oldFlashPower);
 				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.SetValue(WorldGen.BackgroundsCache, _oldVariations);
 				

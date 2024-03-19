@@ -77,7 +77,7 @@ namespace AltLibrary.Common
 					{
 						foreach (var entry in entries)
 						{
-							if (entry is ItemDropWithConditionRule rule && rule.itemId == ItemID.Pwnhammer)
+							if (entry is CommonDrop rule && rule.itemId == ItemID.Pwnhammer)
 							{
 								itemLoot.Remove(rule);
 							}
