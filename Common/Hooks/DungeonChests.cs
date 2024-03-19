@@ -41,7 +41,8 @@ namespace AltLibrary.Common.Hooks
 				biomeChests.Add((TileID.Containers, ItemID.PiranhaGun, 23));
 			}
 
-			if (ModContent.TryFind(WorldBiomeManager.WorldEvil, out AltBiome altEvil) && GetBiomeChest(altEvil, out chestData)) {
+			AltBiome altEvil = WorldBiomeManager.GetWorldEvil(false);
+			if (altEvil is not null && GetBiomeChest(altEvil, out chestData)) {
 				biomeChests.Add(chestData);
 			} else {
 				biomeChests.Add(WorldGen.crimson ? (TileID.Containers, ItemID.VampireKnives, 25) : (TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
@@ -69,7 +70,7 @@ namespace AltLibrary.Common.Hooks
 				}
 				for (int i = 0; i < AltLibrary.Biomes.Count; i++) {
 					AltBiome currentDrunkBiome = AltLibrary.Biomes[i];
-					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome != altEvil && GetBiomeChest(currentDrunkBiome, out chestData)) {
+					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome.Type != altEvil.Type && GetBiomeChest(currentDrunkBiome, out chestData)) {
 						biomeChests.Add(chestData);
 					}
 				}

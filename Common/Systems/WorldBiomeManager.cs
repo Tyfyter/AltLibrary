@@ -15,32 +15,21 @@ using System;
 
 namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
-	public class WorldBiomeManager : ModSystem
-	{
+	public class WorldBiomeManager : ModSystem {
 		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = false) {
-			if (TryFind((Main.drunkWorld && includeDrunk) ? drunkEvil : WorldEvil, out AltBiome worldEvil)) return worldEvil;
-			if (includeVanilla) {
-				if (Main.drunkWorld && includeDrunk) {
-					switch (drunkEvil) {
-						case "Terraria/Crimson":
-						return GetInstance<CrimsonAltBiome>();
-						default:
-						return GetInstance<CorruptionAltBiome>();
-					}
+			if (Main.drunkWorld && includeDrunk) {
+				if (includeVanilla || !drunkEvilName.StartsWith("Terraria/")) {
+					return DrunkEvil;
 				}
-				return WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+			}
+			if (includeVanilla || WorldEvilName != "") {
+				return WorldEvilBiome;
 			}
 			return null;
 		}
 		public static AltBiome GetDrunkEvil(bool includeVanilla = true) {
-			if (TryFind(drunkEvil, out AltBiome worldEvil)) return worldEvil;
-			if (includeVanilla) {
-				switch (drunkEvil) {
-					case "Terraria/Crimson":
-					return GetInstance<CrimsonAltBiome>();
-					default:
-					return GetInstance<CorruptionAltBiome>();
-				}
+			if (includeVanilla || !drunkEvilName.StartsWith("Terraria/")) {
+				return DrunkEvil;
 			}
 			return null;
 		}
@@ -77,7 +66,18 @@ namespace AltLibrary.Common.Systems {
 				}
 			}
 		}
-		public static AltBiome WorldEvilBiome { get; internal set; }
+		static AltBiome worldEvilBiome;
+		public static AltBiome WorldEvilBiome {
+			get => worldEvilBiome;
+			internal set {
+				worldEvilBiome = value;
+				if (value.Type < 0) {
+					worldEvilName = "";
+				} else {
+					worldEvilName = value.FullName;
+				}
+			}
+		}
 		static string worldEvilName = "";
 		[Obsolete("Should never have been designed this way to begin with", false)]
 		public static string WorldEvil {
@@ -117,7 +117,37 @@ namespace AltLibrary.Common.Systems {
 		}
 		public static string WorldHell { get; internal set; } = "";
 		public static string WorldJungle { get; internal set; } = "";
-		internal static string drunkEvil = "";
+		internal static string drunkEvilName = "";
+		private static AltBiome drunkEvil;
+		public static AltBiome DrunkEvil {
+			get {
+				if (drunkEvil is not null) return drunkEvil;
+				if(!TryFind(drunkEvilName, out drunkEvil)) {
+					switch (drunkEvilName) {
+						case "Terraria/Crimson":
+						drunkEvil = GetInstance<CrimsonAltBiome>();
+						break;
+
+						default:
+						drunkEvil = GetInstance<CorruptionAltBiome>();
+						break;
+					}
+				}
+				return drunkEvil;
+			}
+			set {
+				if (value is null) {
+					_ = DrunkEvil;
+				} else {
+					drunkEvil = value;
+					if (value is VanillaBiome) {
+						drunkEvilName = "Terraria/" + (value is CrimsonAltBiome ? "Crimson" : "Corruption");
+					} else {
+						drunkEvilName = value.FullName;
+					}
+				}
+			}
+		}
 		internal static int drunkIndex = 0;
 		internal static int drunkGoodGen = -1;
 		internal static int drunkEvilGen = -1;
@@ -268,6 +298,7 @@ namespace AltLibrary.Common.Systems {
 			worldHallowName = null;
 			WorldHell = null;
 			WorldJungle = null;
+			drunkEvilName = null;
 			drunkEvil = null;
 			Copper = 0;
 			Iron = 0;
@@ -291,7 +322,7 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:WorldHallow", WorldHallowName);
 			tag.Add("AltLibrary:WorldHell", WorldHell);
 			tag.Add("AltLibrary:WorldJungle", WorldJungle);
-			tag.Add("AltLibrary:DrunkEvil", drunkEvil);
+			tag.Add("AltLibrary:DrunkEvil", drunkEvilName);
 			tag.Add("AltLibrary:Copper", Copper);
 			tag.Add("AltLibrary:Iron", Iron);
 			tag.Add("AltLibrary:Silver", Silver);
@@ -311,7 +342,7 @@ namespace AltLibrary.Common.Systems {
 			worldData.worldHallow = WorldHallowName;
 			worldData.worldHell = WorldHell;
 			worldData.worldJungle = WorldJungle;
-			worldData.drunkEvil = drunkEvil;
+			worldData.drunkEvil = drunkEvilName;
 
 			string path = Path.ChangeExtension(Main.worldPathName, ".twld");
 			tempDict[path] = worldData;
@@ -325,7 +356,7 @@ namespace AltLibrary.Common.Systems {
 			WorldHallowName = tag.GetString("AltLibrary:WorldHallow");
 			WorldHell = tag.GetString("AltLibrary:WorldHell");
 			WorldJungle = tag.GetString("AltLibrary:WorldJungle");
-			drunkEvil = tag.GetString("AltLibrary:DrunkEvil");
+			drunkEvilName = tag.GetString("AltLibrary:DrunkEvil");
 			Copper = tag.GetInt("AltLibrary:Copper");
 			Iron = tag.GetInt("AltLibrary:Iron");
 			Silver = tag.GetInt("AltLibrary:Silver");
@@ -337,6 +368,7 @@ namespace AltLibrary.Common.Systems {
 			hmOreIndex = tag.GetInt("AltLibrary:HardmodeOreIndex");
 			drunkGoodGen = tag.GetInt("AltLibrary:DrunkGoodGen");
 			drunkEvilGen = tag.GetInt("AltLibrary:DrunkEvilGen");
+			DrunkEvil = null;
 
 			//reset every unload
 			drunkCobaltCycle = null;
@@ -350,7 +382,7 @@ namespace AltLibrary.Common.Systems {
 			writer.Write(WorldHallowName);
 			writer.Write(WorldHell);
 			writer.Write(WorldJungle);
-			writer.Write(drunkEvil);
+			writer.Write(drunkEvilName);
 			writer.Write(Copper);
 			writer.Write(Iron);
 			writer.Write(Silver);
@@ -370,7 +402,9 @@ namespace AltLibrary.Common.Systems {
 			WorldHallowName = reader.ReadString();
 			WorldHell = reader.ReadString();
 			WorldJungle = reader.ReadString();
-			drunkEvil = reader.ReadString();
+			string oldDrunkEvilName = drunkEvilName;
+			drunkEvilName = reader.ReadString();
+			if (drunkEvilName != oldDrunkEvilName) DrunkEvil = null;
 			Copper = reader.ReadInt32();
 			Iron = reader.ReadInt32();
 			Silver = reader.ReadInt32();

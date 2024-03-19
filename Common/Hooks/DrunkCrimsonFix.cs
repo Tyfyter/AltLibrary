@@ -1,10 +1,12 @@
-﻿using AltLibrary.Common.Systems;
+﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.Systems;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Hooks
 {
@@ -63,11 +65,11 @@ namespace AltLibrary.Common.Hooks
 				gotIndex = AllBiomes[(WorldBiomeManager.drunkIndex + 1) % AllBiomes.Count];
 				if (gotIndex < 0)
 				{
-					WorldBiomeManager.drunkEvil = gotIndex == -666 ? "Terraria/Crimson" : "Terraria/Corruption";
+					WorldBiomeManager.DrunkEvil = gotIndex == -666 ? ModContent.GetInstance<CrimsonAltBiome>() : ModContent.GetInstance<CorruptionAltBiome>();
 				}
 				else
 				{
-					WorldBiomeManager.drunkEvil = AltLibrary.Biomes.Find(x => x.Type == gotIndex).FullName;
+					WorldBiomeManager.DrunkEvil = AltLibrary.Biomes.Find(x => x.Type == gotIndex);
 				}
 				WorldBiomeManager.drunkIndex++;
 				if (WorldBiomeManager.drunkIndex >= AllBiomes.Count)

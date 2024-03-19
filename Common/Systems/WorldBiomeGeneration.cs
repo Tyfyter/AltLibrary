@@ -19,17 +19,10 @@ namespace AltLibrary.Common.Systems {
 		public static int DungeonLocation { get; internal set; } = 0;
 		public static int WofKilledTimes { get; internal set; } = 0;
 
-		public static int WorldCrimson { get; internal set; }
-		public static bool WorldCrimson2 { get; internal set; }
-		public static AltBiome WorldCrimson3 { get; internal set; }
-
 		public override void Unload()
 		{
 			DungeonSide = 0;
 			DungeonLocation = 0;
-			WorldCrimson = 0;
-			WorldCrimson2 = false;
-			WorldCrimson3 = null;
 		}
 
 		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
@@ -436,44 +429,23 @@ namespace AltLibrary.Common.Systems {
 				WorldGen.SavedOreTiers.Adamantite = AltLibrary.Ores[WorldBiomeManager.Adamantite - 1].ore;
 			}
 
-			if (WorldGen.drunkWorldGen)
-			{
-				List<int> vs = new() { -333, -666 };
-				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil && x.Selectable).ToList().ForEach(x => vs.Add(x.Type - 1));
-				int index = WorldGen.genRand.Next(vs.Count);
-				int current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvilName == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
-				while (vs[index] == current)
-				{
-					index = WorldGen.genRand.Next(vs.Count);
-					current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvilName == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
-				}
-				int worldCrimson = vs[index];
-				bool worldCrimson2 = worldCrimson == -666;
-				AltBiome worldCrimson3 = worldCrimson >= 0 ? AltLibrary.Biomes[worldCrimson] : null;
-				WorldBiomeManager.drunkEvil = worldCrimson3 != null ? worldCrimson3.FullName : (!worldCrimson2 ? "Terraria/Corruption" : "Terraria/Crimson");
-				WorldCrimson = worldCrimson;
-				WorldCrimson2 = worldCrimson2;
-				WorldCrimson3 = worldCrimson3;
+			if (WorldGen.drunkWorldGen) {
+				List<AltBiome> biomes = AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil && x.Selectable).Append(ModContent.GetInstance<CorruptionAltBiome>()).Append(ModContent.GetInstance<CrimsonAltBiome>()).ToList();
+				int index = WorldGen.genRand.Next(biomes.Count);
+				AltBiome mainEvil = biomes[index];
+				biomes.RemoveAt(index);
+				WorldBiomeManager.DrunkEvil = biomes[WorldGen.genRand.Next(biomes.Count)];
 			}
 		}
 
 		public override void SaveWorldData(TagCompound tag)
 		{
 			tag.Add("AltLibrary:WofKilledTimes", WofKilledTimes);
-			tag.Add("AltLibrary:WorldCrimson", WorldCrimson);
-			tag.Add("AltLibrary:WorldCrimson2", WorldCrimson2);
-			if (WorldCrimson3 != null)
-				tag.Add("AltLibrary:WorldCrimson3", WorldCrimson3?.FullName);
 		}
 
 		public override void LoadWorldData(TagCompound tag)
 		{
 			WofKilledTimes = tag.GetInt("AltLibrary:WofKilledTimes");
-			WorldCrimson = tag.GetInt("AltLibrary:WorldCrimson");
-			WorldCrimson2 = tag.GetBool("AltLibrary:WorldCrimson2");
-			string fullname = tag.GetString("AltLibrary:WorldCrimson3");
-			if (fullname != null)
-				WorldCrimson3 = AltLibrary.Biomes.Find(x => x.FullName == fullname);
 		}
 	}
 }

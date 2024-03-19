@@ -14,7 +14,8 @@ namespace AltLibrary.Common.Systems {
 			if (WorldBiomeManager.WorldHallowName == null) WorldBiomeManager.WorldHallowName = "";
 			if (WorldBiomeManager.WorldHell == null) WorldBiomeManager.WorldHell = "";
 			if (WorldBiomeManager.WorldJungle == null) WorldBiomeManager.WorldJungle = "";
-			if (WorldBiomeManager.drunkEvil == null) WorldBiomeManager.drunkEvil = "";
+			if (WorldBiomeManager.drunkEvilName == null) WorldBiomeManager.drunkEvilName = "";
+			WorldBiomeManager.DrunkEvil = null;
 
 			string evil = WorldBiomeManager.WorldEvilName;
 			string hallow = WorldBiomeManager.WorldHallowName;
