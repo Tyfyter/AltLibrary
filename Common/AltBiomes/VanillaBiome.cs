@@ -11,8 +11,7 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltBiomes
 {
-	public abstract class VanillaBiome : AltBiome
-	{
+	public abstract class VanillaBiome : AltBiome {
 		public override string IconSmall => "Terraria/Images/UI/Bestiary/Icon_Tags_Shadow";
 		public override string Name => name;
 		public override Color NameColor => nameColor;

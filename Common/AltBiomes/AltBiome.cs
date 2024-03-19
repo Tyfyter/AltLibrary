@@ -19,8 +19,7 @@ using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.Comm
 
 namespace AltLibrary.Common.AltBiomes
 {
-	public abstract class AltBiome : ModType, ILocalizedModType
-	{
+	public abstract class AltBiome : ModType, ILocalizedModType {
 		internal int SpecialValueForWorldUIDoNotTouchElseYouCanBreakStuff { get; set; }
 		internal bool? IsForCrimsonOrCorruptWorldUIFix { get; set; }
 		/// <summary>

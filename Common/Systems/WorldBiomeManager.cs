@@ -45,9 +45,8 @@ namespace AltLibrary.Common.Systems {
 			return null;
 		}
 		public static AltBiome GetWorldHallow(bool includeVanilla = true) {
-			if (TryFind(WorldHallow, out AltBiome worldHallow)) return worldHallow;
-			if (includeVanilla) {
-				return GetInstance<HallowAltBiome>();
+			if (includeVanilla || WorldHallowName != "") {
+				return WorldHallowBiome;
 			}
 			return null;
 		}
@@ -65,23 +64,57 @@ namespace AltLibrary.Common.Systems {
 			}
 			return null;
 		}
-		public static AltBiome WorldEvilBiome { get; internal set; }
-		static string worldEvilName = "";
-		[Obsolete("Should never have been designed this way to begin with", false)]
-		public static string WorldEvil {
+		public static string WorldEvilName {
 			get => worldEvilName;
 			internal set {
 				worldEvilName = value;
 				if (value == "") {
 					WorldEvilBiome = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
-				} else if(TryFind(worldEvilName, out AltBiome altEvil)) {
+				} else if (TryFind(worldEvilName, out AltBiome altEvil)) {
 					WorldEvilBiome = altEvil;
 				} else {
 					WorldEvilBiome = new UnloadedAltBiome(value, BiomeType.Evil);
 				}
 			}
 		}
-		public static string WorldHallow { get; internal set; } = "";
+		public static AltBiome WorldEvilBiome { get; internal set; }
+		static string worldEvilName = "";
+		[Obsolete("Should never have been designed this way to begin with", false)]
+		public static string WorldEvil {
+			get => worldEvilName;
+			internal set => WorldEvilName = value;
+		}
+		static AltBiome worldHallowBiome;
+		public static AltBiome WorldHallowBiome {
+			get => worldHallowBiome;
+			internal set {
+				worldHallowBiome = value;
+				if (value.Type < 0) {
+					worldHallowName = "";
+				} else {
+					worldHallowName = value.FullName;
+				}
+			}
+		}
+		public static string WorldHallowName {
+			get => worldHallowName;
+			internal set {
+				worldHallowName = value;
+				if (value == "") {
+					worldHallowBiome = GetInstance<HallowAltBiome>();
+				} else if (TryFind(worldHallowName, out AltBiome altHallow)) {
+					worldHallowBiome = altHallow;
+				} else {
+					worldHallowBiome = new UnloadedAltBiome(value, BiomeType.Hallow);
+				}
+			}
+		}
+		static string worldHallowName = "";
+		[Obsolete("Should never have been designed this way to begin with", false)]
+		public static string WorldHallow {
+			get => worldHallowName;
+			internal set => WorldHallowName = value;
+		}
 		public static string WorldHell { get; internal set; } = "";
 		public static string WorldJungle { get; internal set; } = "";
 		internal static string drunkEvil = "";
@@ -97,9 +130,9 @@ namespace AltLibrary.Common.Systems {
 		public static int Adamantite { get; internal set; } = 0;
 		internal static int hmOreIndex = 0;
 
-		public static bool IsCorruption => WorldEvil == "" && !WorldGen.crimson;
-		public static bool IsCrimson => WorldEvil == "" && WorldGen.crimson;
-		public static bool IsAnyModdedEvil => WorldEvil != "" && !WorldGen.crimson;
+		public static bool IsCorruption => WorldEvilName == "" && !WorldGen.crimson;
+		public static bool IsCrimson => WorldEvilName == "" && WorldGen.crimson;
+		public static bool IsAnyModdedEvil => WorldEvilName != "" && !WorldGen.crimson;
 
 		//do not need to sync, world seed should be constant between players
 		internal static AltOre[] drunkCobaltCycle;
@@ -228,8 +261,11 @@ namespace AltLibrary.Common.Systems {
 
 		public override void Unload()
 		{
-			WorldEvil = null;
-			WorldHallow = null;
+			//TODO: uncomment
+			//worldEvilBiome = null;
+			worldEvilName = null;
+			worldHallowBiome = null;
+			worldHallowName = null;
 			WorldHell = null;
 			WorldJungle = null;
 			drunkEvil = null;
@@ -251,8 +287,8 @@ namespace AltLibrary.Common.Systems {
 
 		public override void SaveWorldData(TagCompound tag)
 		{
-			tag.Add("AltLibrary:WorldEvil", WorldEvil);
-			tag.Add("AltLibrary:WorldHallow", WorldHallow);
+			tag.Add("AltLibrary:WorldEvil", WorldEvilName);
+			tag.Add("AltLibrary:WorldHallow", WorldHallowName);
 			tag.Add("AltLibrary:WorldHell", WorldHell);
 			tag.Add("AltLibrary:WorldJungle", WorldJungle);
 			tag.Add("AltLibrary:DrunkEvil", drunkEvil);
@@ -271,8 +307,8 @@ namespace AltLibrary.Common.Systems {
 			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
 			AltLibraryConfig.WorldDataValues worldData;
 
-			worldData.worldEvil = WorldEvil;
-			worldData.worldHallow = WorldHallow;
+			worldData.worldEvil = WorldEvilName;
+			worldData.worldHallow = WorldHallowName;
 			worldData.worldHell = WorldHell;
 			worldData.worldJungle = WorldJungle;
 			worldData.drunkEvil = drunkEvil;
@@ -285,8 +321,8 @@ namespace AltLibrary.Common.Systems {
 
 		public override void LoadWorldData(TagCompound tag)
 		{
-			WorldEvil = tag.GetString("AltLibrary:WorldEvil");
-			WorldHallow = tag.GetString("AltLibrary:WorldHallow");
+			WorldEvilName = tag.GetString("AltLibrary:WorldEvil");
+			WorldHallowName = tag.GetString("AltLibrary:WorldHallow");
 			WorldHell = tag.GetString("AltLibrary:WorldHell");
 			WorldJungle = tag.GetString("AltLibrary:WorldJungle");
 			drunkEvil = tag.GetString("AltLibrary:DrunkEvil");
@@ -310,8 +346,8 @@ namespace AltLibrary.Common.Systems {
 
 		public override void NetSend(BinaryWriter writer)
 		{
-			writer.Write(WorldEvil);
-			writer.Write(WorldHallow);
+			writer.Write(WorldEvilName);
+			writer.Write(WorldHallowName);
 			writer.Write(WorldHell);
 			writer.Write(WorldJungle);
 			writer.Write(drunkEvil);
@@ -330,8 +366,8 @@ namespace AltLibrary.Common.Systems {
 
 		public override void NetReceive(BinaryReader reader)
 		{
-			WorldEvil = reader.ReadString();
-			WorldHallow = reader.ReadString();
+			WorldEvilName = reader.ReadString();
+			WorldHallowName = reader.ReadString();
 			WorldHell = reader.ReadString();
 			WorldJungle = reader.ReadString();
 			drunkEvil = reader.ReadString();

@@ -86,13 +86,13 @@ namespace AltLibrary.Common.Hooks
 			{
 				if (WorldBiomeGeneration.WofKilledTimes <= 1)
 				{
-					if (TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow) &&
+					if (WorldBiomeManager.GetWorldHallow(false) is AltBiome worldHallow &&
 						worldHallow.HardmodeWalls.Count > 0 && worldHallow.TileConversions.ContainsValue(tile.TileType)
 						)
 					{
 						orig = WorldGen.genRand.Next(worldHallow.HardmodeWalls);
 					}
-					if (TryFind(WorldBiomeManager.WorldEvil, out AltBiome worldEvil) &&
+					if (TryFind(WorldBiomeManager.WorldEvilName, out AltBiome worldEvil) &&
 						worldEvil.HardmodeWalls.Count > 0 && worldEvil.TileConversions.ContainsValue(tile.TileType)
 						)
 					{
@@ -123,7 +123,7 @@ namespace AltLibrary.Common.Hooks
 			AltBiome biome;
 			if (WorldBiomeManager.drunkGoodGen > 0) {
 				biome = Good;
-			} else if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
+			} else if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
 				biome = WorldBiomeManager.GetWorldHallow();
 			} else {
 				biome = GetInstance<HallowAltBiome>();
@@ -141,7 +141,7 @@ namespace AltLibrary.Common.Hooks
 			AltBiome biome;
 			if (WorldBiomeManager.drunkEvilGen > 0) {
 				biome = Evil;
-			} else if (WorldBiomeManager.WorldEvil != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
+			} else if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeGeneration.WofKilledTimes <= 1) {
 				biome = WorldBiomeManager.GetWorldEvil(true, true);
 			} else {
 				biome = WorldBiomeGeneration.WofKilledTimes <= 1 ?
@@ -210,7 +210,8 @@ namespace AltLibrary.Common.Hooks
 				if (!good)
 				{
 					Tile tile = Main.tile[m, l];
-					if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldEvil, out AltBiome evilBiome)) {
+					if (WorldBiomeGeneration.WofKilledTimes <= 1 && WorldBiomeManager.WorldEvilName != "") {
+						AltBiome evilBiome = WorldBiomeManager.WorldEvilBiome;
 						if (evilBiome.TileConversions.TryGetValue(tile.TileType, out int tileReplacement)) {
 							tile.TileType = (ushort)tileReplacement;
 							WorldGen.SquareTileFrame(m, l, true);
@@ -254,7 +255,8 @@ namespace AltLibrary.Common.Hooks
 			c.EmitDelegate<Action<int, int>>((m, l) =>
 			{
 				Tile tile = Main.tile[m, l];
-				if (WorldBiomeGeneration.WofKilledTimes <= 1 && TryFind(WorldBiomeManager.WorldHallow, out AltBiome worldHallow)) {
+				if (WorldBiomeGeneration.WofKilledTimes <= 1 && WorldBiomeManager.WorldHallowName != "") {
+					AltBiome worldHallow = WorldBiomeManager.WorldHallowBiome;
 					if (worldHallow.TileConversions.TryGetValue(tile.TileType, out int tileReplacement)) {
 						tile.TileType = (ushort)tileReplacement;
 						WorldGen.SquareTileFrame(m, l, true);

@@ -9,12 +9,12 @@ namespace AltLibrary.Common.Conditions
 	{
 		public bool CanDrop(DropAttemptInfo info)
 		{
-			return !info.IsInSimulation && WorldBiomeManager.WorldEvil == "";
+			return !info.IsInSimulation && WorldBiomeManager.WorldEvilName == "";
 		}
 
 		public bool CanShowItemDropInUI()
 		{
-			return WorldBiomeManager.WorldEvil == "";
+			return WorldBiomeManager.WorldEvilName == "";
 		}
 
 		public string GetConditionDescription()

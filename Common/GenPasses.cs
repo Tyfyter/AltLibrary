@@ -84,8 +84,8 @@ namespace AltLibrary.Common
 					WorldBiomeManager.WorldJungle == "" ? "NONE" : WorldBiomeManager.WorldJungle,
 					WorldBiomeManager.WorldHell == "" ? -1 : AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHell).Type,
 					WorldBiomeManager.WorldHell == "" ? "NONE" : WorldBiomeManager.WorldHell,
-					WorldBiomeManager.WorldHallow == "" ? -1 : AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHallow).Type,
-					WorldBiomeManager.WorldHallow == "" ? "NONE" : WorldBiomeManager.WorldHallow,
+					WorldBiomeManager.WorldHallowName == "" ? -1 : WorldBiomeManager.WorldHallowBiome.Type,
+					WorldBiomeManager.WorldHallowName == "" ? "NONE" : WorldBiomeManager.WorldHallowBiome.DisplayName,
 				});
 			});
 		}

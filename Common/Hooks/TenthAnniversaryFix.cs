@@ -141,8 +141,8 @@ namespace AltLibrary.Common.Hooks
 
 			ALUtils.ReplaceIDs<int>(il,
 				TileID.HallowedGrass,
-				(orig) => ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass ?? orig,
-				(orig) => WorldBiomeManager.WorldHallow != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass.HasValue);
+				(orig) => WorldBiomeManager.WorldHallowBiome.BiomeGrass ?? orig,
+				(orig) => WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass.HasValue);
 
 			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.Convert))))
 			{
@@ -154,7 +154,7 @@ namespace AltLibrary.Common.Hooks
 			c.Emit(OpCodes.Ldloc, 5);
 			c.EmitDelegate<Action<int, int>>((i, j) =>
 			{
-				if (WorldBiomeManager.WorldHallow != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass.HasValue)
+				if (WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass is int biomeGrass)
 				{
 					int size = 1;
 					for (int l = i - size; l <= i + size; l++)
@@ -166,7 +166,7 @@ namespace AltLibrary.Common.Hooks
 							if (TileID.Sets.Conversion.Grass[type] && type == 109)
 							{
 								tile = Main.tile[l, k];
-								tile.TileType = (ushort)ModContent.Find<AltBiome>(WorldBiomeManager.WorldHallow).BiomeGrass.Value;
+								tile.TileType = (ushort)biomeGrass;
 								WorldGen.SquareTileFrame(l, k, true);
 								NetMessage.SendTileSquare(-1, l, k, TileChangeType.None);
 							}

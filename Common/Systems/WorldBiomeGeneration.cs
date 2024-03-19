@@ -441,11 +441,11 @@ namespace AltLibrary.Common.Systems {
 				List<int> vs = new() { -333, -666 };
 				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil && x.Selectable).ToList().ForEach(x => vs.Add(x.Type - 1));
 				int index = WorldGen.genRand.Next(vs.Count);
-				int current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvil == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
+				int current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvilName == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
 				while (vs[index] == current)
 				{
 					index = WorldGen.genRand.Next(vs.Count);
-					current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvil == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
+					current = !WorldGen.crimson ? (WorldBiomeManager.WorldEvilName == "" ? -333 : AltLibrary.Biomes.FindIndex(x => x.Type == vs[index] + 1)) : -666;
 				}
 				int worldCrimson = vs[index];
 				bool worldCrimson2 = worldCrimson == -666;

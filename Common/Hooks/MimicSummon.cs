@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Hooks
 {
@@ -23,7 +24,7 @@ namespace AltLibrary.Common.Hooks
 
 		private static bool Cond(AltBiome biome, bool isEvil)
 		{
-			return isEvil ? !WorldGen.crimson && WorldBiomeManager.WorldEvil == biome.FullName : (!AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallow == biome.FullName);
+			return isEvil ? !WorldGen.crimson && WorldBiomeManager.WorldEvilBiome.Type == biome.Type : (!AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallowBiome.Type == biome.Type);
 		}
 
 		public static void Unload()
@@ -52,25 +53,35 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		private static bool NPC_BigMimicSummonCheck(Terraria.On_NPC.orig_BigMimicSummonCheck orig, int x, int y, Player user) {
-			/*Proof that even with only 2 alt biomes Find is really inefficient (iirc this is even the first of the two)
+		private static bool NPC_BigMimicSummonCheck(On_NPC.orig_BigMimicSummonCheck orig, int x, int y, Player user) {
+			//This is a convenient place for benchmarks since it's easy to trigger on-demand
+			/*
 			bool crim;
-			var s = System.Diagnostics.Stopwatch.StartNew();
-			crim = Terraria.ModLoader.ModContent.Find<AltBiome>("Origins/Defiled_Wastelands_Alt_Biome").Type == -666;
-			s.Stop();
-			AltLibrary.Instance.Logger.Info($"{crim}: {s.ElapsedTicks}");
-			s.Restart();
-			crim = WorldBiomeManager.WorldEvilBiome.Type == -666;
-			s.Stop();
-			AltLibrary.Instance.Logger.Info($"{crim}: {s.ElapsedTicks}");
-			*/
+			int crims = 0;
+			var s = new System.Diagnostics.Stopwatch();
+			for (int i = 0; i < 1000; i++) {
+				s.Start();
+				crim = WorldBiomeManager.GetWorldHallow(false) is AltBiome altHallow;
+				s.Stop();
+				crims += crim ? 1 : -1;
+			}
+			AltLibrary.Instance.Logger.Info($"{s.ElapsedTicks}: {crims}");
+			s.Reset();
+			for (int i = 0; i < 1000; i++) {
+				s.Start();
+				crim = ModContent.TryFind(WorldBiomeManager.WorldHallow, out AltBiome altEvil);
+				s.Stop();
+				crims += crim ? 1 : -1;
+			}
+			AltLibrary.Instance.Logger.Info($"{s.ElapsedTicks}: {crims}");
+			//*/
 			if (MimicPairs == null)
 			{
 				MimicPairs = new()
 				{
 					["Corruption"] = new(ItemID.NightKey, NPCID.BigMimicCorruption, () => WorldBiomeManager.IsCorruption),
 					["Crimson"] = new(ItemID.NightKey, NPCID.BigMimicCrimson, () => WorldBiomeManager.IsCrimson),
-					["Hallow"] = new(ItemID.LightKey, NPCID.BigMimicHallow, () => !AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallow == ""),
+					["Hallow"] = new(ItemID.LightKey, NPCID.BigMimicHallow, () => !AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallowName == ""),
 				};
 				foreach (AltBiome biome in AltLibrary.Biomes)
 				{

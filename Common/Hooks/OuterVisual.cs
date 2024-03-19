@@ -45,22 +45,20 @@ namespace AltLibrary.Common.Hooks
 			{
 				int worldGenStep = 0;
 				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvil != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).Type + 2;
+				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
 
 				if (WorldGen.drunkWorldGen && Main.rand.NextBool(2)) worldGenStep = Main.rand.Next(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().Count + 2);
 
-				Color expected = new(95, 242, 86);
-				if (worldGenStep == 1) expected = new Color(255, 237, 131);
-				foreach (AltBiome biome in AltLibrary.Biomes)
-				{
-					if (worldGenStep == biome.Type + 2 && biome.BiomeType == BiomeType.Evil)
-					{
-						expected = biome.OuterColor;
-					}
-				}
+				switch (worldGenStep) {
+					case 0:
+					return new Color(95, 242, 86);
 
-				Color result = expected;
-				return result;
+					case 1:
+					return new Color(255, 237, 131);
+
+					default:
+					return WorldBiomeManager.WorldEvilBiome.OuterColor;
+				}
 			});
 			c.Emit(OpCodes.Stloc, 5);
 			if (!c.TryGotoNext(i => i.MatchLdfld<UIGenProgressBar>("_texOuterCorrupt")))
@@ -78,7 +76,7 @@ namespace AltLibrary.Common.Hooks
 			{
 				int worldGenStep = 0;
 				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvil != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).Type + 2;
+				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
 				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
 				return worldGenStep <= 1 ? (worldGenStep == 0 ? corrupt : crimson) : asset;
 			});
@@ -97,7 +95,7 @@ namespace AltLibrary.Common.Hooks
 			{
 				int worldGenStep = 0;
 				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvil != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).Type + 2;
+				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
 				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
 				return worldGenStep <= 1 ? (worldGenStep == 0 ? corrupt : crimson) : asset;
 			});
@@ -122,17 +120,22 @@ namespace AltLibrary.Common.Hooks
 			{
 				int worldGenStep = 0;
 				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvil != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).Type + 2;
+				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
 				if (WorldGen.drunkWorldGen && Main.rand.NextBool(2)) worldGenStep = Main.rand.Next(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().Count + 2);
 				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
 				if (worldGenStep == 0) asset = corrupt;
-				if (worldGenStep == 1) asset = crimson;
-				foreach (AltBiome biome in AltLibrary.Biomes)
-				{
-					if (worldGenStep == biome.Type + 2 && biome.BiomeType == BiomeType.Evil)
-					{
-						asset = ALTextureAssets.BiomeOuter[biome.Type - 1];
-					}
+				switch (worldGenStep) {
+					case 0:
+					asset = corrupt;
+					break;
+
+					case 1:
+					asset = crimson;
+					break;
+
+					default:
+					asset = ALTextureAssets.BiomeOuter[worldGenStep - 3];
+					break;
 				}
 				spriteBatch.Draw(asset.Value, r.TopLeft(), Color.White);
 			});

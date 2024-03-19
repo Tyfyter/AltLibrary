@@ -53,11 +53,11 @@ namespace AltLibrary.Common.Hooks
 				int gotIndex = AllBiomes[WorldBiomeManager.drunkIndex % AllBiomes.Count];
 				if (gotIndex < 0)
 				{
-					WorldBiomeManager.WorldEvil = "";
+					WorldBiomeManager.WorldEvilName = "";
 				}
 				else
 				{
-					WorldBiomeManager.WorldEvil = AltLibrary.Biomes.Find(x => x.Type == gotIndex).FullName;
+					WorldBiomeManager.WorldEvilBiome = AltLibrary.Biomes.Find(x => x.Type == gotIndex);
 				}
 				WorldGen.crimson = gotIndex == -666;
 				gotIndex = AllBiomes[(WorldBiomeManager.drunkIndex + 1) % AllBiomes.Count];

@@ -384,21 +384,21 @@ namespace AltLibrary.Common
 			{
 				if (AltHallowBiomeChosenType <= -1)
 				{
-					WorldBiomeManager.WorldHallow = "";
+					WorldBiomeManager.WorldHallowName = "";
 				}
 				else
 				{
-					WorldBiomeManager.WorldHallow = AltLibrary.Biomes[AltHallowBiomeChosenType].FullName;
+					WorldBiomeManager.WorldHallowName = AltLibrary.Biomes[AltHallowBiomeChosenType].FullName;
 				}
 				if (AltEvilBiomeChosenType <= -1)
 				{
-					WorldBiomeManager.WorldEvil = "";
+					WorldBiomeManager.WorldEvilName = "";
 					WorldGen.WorldGenParam_Evil = isCrimson ? 1 : 0;
 					WorldGen.crimson = isCrimson;
 				}
 				else
 				{
-					WorldBiomeManager.WorldEvil = AltLibrary.Biomes[AltEvilBiomeChosenType].FullName;
+					WorldBiomeManager.WorldEvilName = AltLibrary.Biomes[AltEvilBiomeChosenType].FullName;
 					WorldGen.WorldGenParam_Evil = 0;
 					WorldGen.crimson = false;
 				}

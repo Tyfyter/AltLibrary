@@ -47,7 +47,7 @@ namespace AltLibrary.Common.Hooks
 				biomeChests.Add(WorldGen.crimson ? (TileID.Containers, ItemID.VampireKnives, 25) : (TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
 			}
 
-			if (ModContent.TryFind(WorldBiomeManager.WorldHallow, out AltBiome altHallow) && GetBiomeChest(altHallow, out chestData)) {
+			if (WorldBiomeManager.GetWorldHallow(false) is AltBiome altHallow && GetBiomeChest(altHallow, out chestData)) {
 				biomeChests.Add(chestData);
 			} else {
 				biomeChests.Add((TileID.Containers, ItemID.RainbowGun, 26));

@@ -8,12 +8,12 @@ namespace AltLibrary.Common.Conditions
 	{
 		public bool CanDrop(DropAttemptInfo info)
 		{
-			return !info.IsInSimulation && WorldBiomeManager.WorldHallow == "";
+			return !info.IsInSimulation && WorldBiomeManager.WorldHallowName == "";
 		}
 
 		public bool CanShowItemDropInUI()
 		{
-			return WorldBiomeManager.WorldHallow == "";
+			return WorldBiomeManager.WorldHallowName == "";
 		}
 
 		public string GetConditionDescription()

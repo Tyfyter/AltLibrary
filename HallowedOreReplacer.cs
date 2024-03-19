@@ -12,13 +12,12 @@ namespace AltLibrary
 		public static Dictionary<int, bool> HallowedOreList;
 		public override void OnSpawn(Item item, IEntitySource source)
 		{
-			if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallow == "")
+			if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallowName == "")
 				return;
 			if (source is EntitySource_TileBreak tile && HallowedOreList.ContainsKey(Main.tile[tile.TileCoords].TileType))
 			{
-				AltBiome biome = AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHallow);
-				if (biome.BiomeOre != null)
-					item.SetDefaults(biome.MechDropItemType.Value);
+				AltBiome biome = WorldBiomeManager.WorldHallowBiome;
+				if (biome.BiomeOre != null) item.SetDefaults(biome.MechDropItemType.Value);
 			}
 		}
 
@@ -37,14 +36,14 @@ namespace AltLibrary
 			}
 			private static void OreRunner_ReplaceHallowedOre(Terraria.On_WorldGen.orig_OreRunner orig, int i, int j, double strength, int steps, ushort type)
 			{
-				if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallow == "")
+				if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallowName == "")
 				{
 					orig(i, j, strength, steps, type);
 					return;
 				}
 				if (HallowedOreList.ContainsKey(type))
 				{
-					AltBiome biome = AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHallow);
+					AltBiome biome = WorldBiomeManager.WorldHallowBiome;
 					if (biome.BiomeOre != null)
 						type = (ushort)biome.BiomeOre.Value;
 				}

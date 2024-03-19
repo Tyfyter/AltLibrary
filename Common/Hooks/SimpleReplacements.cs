@@ -65,16 +65,16 @@ namespace AltLibrary.Common.Hooks
 		{
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptBunny,
-				(orig) => (short)(Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodBunny ?? orig),
-				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodBunny.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodBunny ?? orig),
+				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodBunny.HasValue);
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptGoldfish,
-				(orig) => (short)(Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodGoldfish ?? orig),
-				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodGoldfish.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodGoldfish ?? orig),
+				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodGoldfish.HasValue);
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptPenguin,
-				(orig) => (short)(Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodPenguin ?? orig),
-				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BloodPenguin.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodPenguin ?? orig),
+				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodPenguin.HasValue);
 		}
 
 		//TODO: double check that this code makes sense to begin with
@@ -82,8 +82,8 @@ namespace AltLibrary.Common.Hooks
 		{
 			ALUtils.ReplaceIDs(il,
 				TileID.DemoniteBrick,
-				(orig) => (ushort)(Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOreBrick ?? orig),
-				(orig) => WorldBiomeManager.WorldEvil != "" && Find<AltBiome>(WorldBiomeManager.WorldEvil).BiomeOreBrick.HasValue);
+				(orig) => (ushort)(WorldBiomeManager.WorldEvilBiome.BiomeOreBrick ?? orig),
+				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BiomeOreBrick.HasValue);
 		}
 
 		//TODO: double check that this code makes sense to begin with

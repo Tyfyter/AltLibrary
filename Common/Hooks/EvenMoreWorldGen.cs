@@ -155,17 +155,17 @@ namespace AltLibrary.Common.Hooks {
 				AltLibrary.Instance.Logger.Info("e $ 1");
 				return;
 			}
-			c.EmitDelegate<Func<bool>>(() => WorldGen.crimson || WorldBiomeManager.WorldEvil != "");
+			c.EmitDelegate<Func<bool>>(() => WorldGen.crimson || WorldBiomeManager.WorldEvilName != "");
 			c.Emit(OpCodes.Brfalse, startNormalAltar);
 			c.Emit(OpCodes.Ldloc, 3);
 			c.Emit(OpCodes.Ldloc, 4);
 			c.EmitDelegate<Action<int, int>>((int x, int y) =>
 			{
-				if (WorldBiomeManager.WorldEvil != "" && ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).AltarTile.HasValue)
+				if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.AltarTile is int type)
 				{
-					if (!WorldGen.IsTileNearby(x, y, ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).AltarTile.Value, 3))
+					if (!WorldGen.IsTileNearby(x, y, type, 3))
 					{
-						WorldGen.Place3x2(x, y, (ushort)ModContent.Find<AltBiome>(WorldBiomeManager.WorldEvil).AltarTile.Value);
+						WorldGen.Place3x2(x, y, (ushort)type);
 					}
 				}
 			});
