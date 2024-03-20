@@ -284,7 +284,7 @@ namespace AltLibrary.Core
 		}
 		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
 			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome);
-			if (fromBiome == targetBiome) return;
+			if (fromBiome == targetBiome || (fromBiome is null && targetBiome is DeconvertAltBiome)) return;
 			Tile tile = Main.tile[i, j];
 			if (Main.tileFrameImportant[tile.TileType] && TileObjectData.GetTileData(tile) is TileObjectData tileObjectData) {
 				ConvertMultiTile(i, j, newTile, tileObjectData, fromBiome, targetBiome, silent);
@@ -319,7 +319,7 @@ namespace AltLibrary.Core
 			}
 			int left = i - frameI;
 			int top = j - frameJ;
-			if (!fromBiome.PreConvertMultitileAway(left, top, objectData.Width, objectData.Height, ref newTile, targetBiome)) return;
+			if (fromBiome is not null && !fromBiome.PreConvertMultitileAway(left, top, objectData.Width, objectData.Height, ref newTile, targetBiome)) return;
 			targetBiome.ConvertMultitileTo(left, top, objectData.Width, objectData.Height, newTile, fromBiome);
 		}
 		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) {
