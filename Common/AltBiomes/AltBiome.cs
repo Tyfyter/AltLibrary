@@ -51,7 +51,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// <summary>
 		/// Set this to something if for some reason you need RNG generation types or something
 		/// </summary>
-		public virtual EvilBiomeGenerationPass GetEvilBiomeGenerationPass() { return EvilBiomeGenerationPass; }
+		public virtual EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => EvilBiomeGenerationPass;
 
 		/// <summary>
 		/// Set this to something so your evil biome can generate
@@ -61,16 +61,16 @@ namespace AltLibrary.Common.AltBiomes
 		/// <summary>
 		/// For Jungle alts. Set this to something to replace Beehives.
 		/// </summary>
-		public virtual WorldGenLegacyMethod GetHiveGenerationPass() { return HiveGenerationPass; }
+		public virtual WorldGenLegacyMethod GetHiveGenerationPass() => HiveGenerationPass;
 		public WorldGenLegacyMethod HiveGenerationPass = null;
 
 		/// <summary>
 		/// For Jungle alts. Set this to something to replace the Lihzahrd Temple.
 		/// </summary>
-		public virtual WorldGenLegacyMethod GetTempleGenerationPass() { return TempleGenPass; }
+		public virtual WorldGenLegacyMethod GetTempleGenerationPass() => TempleGenPass;
 		public WorldGenLegacyMethod TempleGenPass = null;
 
-		public virtual WorldGenLegacyMethod GetHellforgeGenerationPass() { return null; }
+		public virtual WorldGenLegacyMethod GetHellforgeGenerationPass() => null;
 
 		/// <summary>
 		/// For all biome types, only used used by AltLibrary if NPCsHate returns true, but should be overridden if a biome is associated with this biome

@@ -1,3 +1,5 @@
+using AltLibrary.Common.Systems;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.WorldBuilding;
@@ -8,11 +10,12 @@ namespace AltLibrary.Core.Generation
 	{
 		public override string ProgressMessage => Lang.gen[72].Value;
 		public override int DrunkRNGMapCenterGive => 100;
-		public override void GenerateEvil(int num15, int num16, int num17)
+		public override void GenerateEvil(int evilBiomePosition, int evilBiomePositionWestBound, int evilBiomePositionEastBound)
 		{
-			WorldGen.CrimStart(num15, (int)GenVars.worldSurfaceLow - 10);
+			WorldGen.CrimStart(evilBiomePosition, (int)GenVars.worldSurfaceLow - 10);
 			double num22 = Main.worldSurface + 40.0;
-			for (int l = num16; l < num17; l++)
+			int worldSurfaceLow = (int)GenVars.worldSurfaceLow;
+			for (int l = evilBiomePositionWestBound; l < evilBiomePositionEastBound; l++)
 			{
 				num22 += WorldGen.genRand.Next(-2, 3);
 				if (num22 < Main.worldSurface + 30.0)
@@ -25,58 +28,57 @@ namespace AltLibrary.Core.Generation
 				}
 				int i2 = l;
 				bool flag4 = false;
-				int num23 = (int)GenVars.worldSurfaceLow;
-				while (num23 < num22)
+				while (worldSurfaceLow < num22)
 				{
-					if (Main.tile[i2, num23].HasTile)
+					if (Main.tile[i2, worldSurfaceLow].HasTile)
 					{
-						if (Main.tile[i2, num23].TileType == 53 && i2 >= num16 + WorldGen.genRand.Next(5) && i2 <= num17 - WorldGen.genRand.Next(5))
+						if (Main.tile[i2, worldSurfaceLow].TileType == 53 && i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5))
 						{
-							Main.tile[i2, num23].TileType = 234;
+							Main.tile[i2, worldSurfaceLow].TileType = 234;
 						}
-						if (num23 < Main.worldSurface - 1.0 && !flag4) {
-							if (Main.tile[i2, num23].TileType == TileID.Dirt) {
+						if (worldSurfaceLow < Main.worldSurface - 1.0 && !flag4) {
+							if (Main.tile[i2, worldSurfaceLow].TileType == TileID.Dirt) {
 								WorldGen.grassSpread = 0;
-								WorldGen.SpreadGrass(i2, num23, TileID.Dirt, TileID.CrimsonGrass, true);
-							} else if (Main.tile[i2, num23].TileType == TileID.Mud) {
+								WorldGen.SpreadGrass(i2, worldSurfaceLow, TileID.Dirt, TileID.CrimsonGrass, true);
+							} else if (Main.tile[i2, worldSurfaceLow].TileType == TileID.Mud) {
 								WorldGen.grassSpread = 0;
-								WorldGen.SpreadGrass(i2, num23, TileID.Mud, TileID.CrimsonJungleGrass);
+								WorldGen.SpreadGrass(i2, worldSurfaceLow, TileID.Mud, TileID.CrimsonJungleGrass);
 							}
 						}
 						flag4 = true;
-						if (Main.tile[i2, num23].WallType == 216)
+						if (Main.tile[i2, worldSurfaceLow].WallType == 216)
 						{
-							Main.tile[i2, num23].WallType = 218;
+							Main.tile[i2, worldSurfaceLow].WallType = 218;
 						}
-						else if (Main.tile[i2, num23].WallType == 187)
+						else if (Main.tile[i2, worldSurfaceLow].WallType == 187)
 						{
-							Main.tile[i2, num23].WallType = 221;
+							Main.tile[i2, worldSurfaceLow].WallType = 221;
 						}
-						if (Main.tile[i2, num23].TileType == 1)
+						if (Main.tile[i2, worldSurfaceLow].TileType == 1)
 						{
-							if (i2 >= num16 + WorldGen.genRand.Next(5) && i2 <= num17 - WorldGen.genRand.Next(5))
+							if (i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5))
 							{
-								Main.tile[i2, num23].TileType = 203;
+								Main.tile[i2, worldSurfaceLow].TileType = 203;
 							}
 						}
-						else if (Main.tile[i2, num23].TileType == 2)
+						else if (Main.tile[i2, worldSurfaceLow].TileType == 2)
 						{
-							Main.tile[i2, num23].TileType = 199;
+							Main.tile[i2, worldSurfaceLow].TileType = 199;
 						}
-						else if (Main.tile[i2, num23].TileType == 161)
+						else if (Main.tile[i2, worldSurfaceLow].TileType == 161)
 						{
-							Main.tile[i2, num23].TileType = 200;
+							Main.tile[i2, worldSurfaceLow].TileType = 200;
 						}
-						else if (Main.tile[i2, num23].TileType == 396)
+						else if (Main.tile[i2, worldSurfaceLow].TileType == 396)
 						{
-							Main.tile[i2, num23].TileType = 401;
+							Main.tile[i2, worldSurfaceLow].TileType = 401;
 						}
-						else if (Main.tile[i2, num23].TileType == 397)
+						else if (Main.tile[i2, worldSurfaceLow].TileType == 397)
 						{
-							Main.tile[i2, num23].TileType = 399;
+							Main.tile[i2, worldSurfaceLow].TileType = 399;
 						}
 					}
-					num23++;
+					worldSurfaceLow++;
 				}
 			}
 			int num24 = WorldGen.genRand.Next(10, 15);
@@ -88,11 +90,11 @@ namespace AltLibrary.Core.Generation
 				while (!flag5)
 				{
 					num25++;
-					int x = WorldGen.genRand.Next(num16 - num26, num17 + num26);
+					int x = WorldGen.genRand.Next(evilBiomePositionWestBound - num26, evilBiomePositionEastBound + num26);
 					int num27 = WorldGen.genRand.Next((int)(Main.worldSurface - num26 / 2), (int)(Main.worldSurface + 100.0 + num26));
 					while (WorldGen.oceanDepths(x, num27))
 					{
-						x = WorldGen.genRand.Next(num16 - num26, num17 + num26);
+						x = WorldGen.genRand.Next(evilBiomePositionWestBound - num26, evilBiomePositionEastBound + num26);
 						num27 = WorldGen.genRand.Next((int)(Main.worldSurface - num26 / 2), (int)(Main.worldSurface + 100.0 + num26));
 					}
 					if (num25 > 100)
@@ -129,6 +131,13 @@ namespace AltLibrary.Core.Generation
 					}
 				}
 			}
+
+			WorldBiomeGeneration.EvilBiomeGenRanges.Add(new Rectangle(
+				evilBiomePositionWestBound,
+				worldSurfaceLow,
+				evilBiomePositionEastBound - evilBiomePositionWestBound,
+				(int)GenVars.worldSurfaceHigh - worldSurfaceLow + 500
+			));
 		}
 
 		public override void PostGenerateEvil()

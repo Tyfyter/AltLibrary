@@ -39,6 +39,7 @@ namespace AltLibrary.Core
 			TenthAnniversaryFix.Init();
 			DrunkCrimsonFix.Load();
 			BackgroundsAlternating.Inject();
+			EvilBiomeRangeTracker.Init();
 		}
 
 		public static void Unload()

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AltLibrary.Common.Systems;
+using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.WorldBuilding;
@@ -10,26 +12,26 @@ namespace AltLibrary.Core.Generation
 		public override string ProgressMessage => Lang.gen[20].Value;
 		public override bool CanGenerateNearDungeonOcean => false;
 
-		public override void GenerateEvil(int num33, int num34, int num35)
+		public override void GenerateEvil(int evilBiomePosition, int evilBiomePositionWestBound, int evilBiomePositionEastBound)
 		{
 			bool worldCrimson = WorldGen.crimson;
 			WorldGen.crimson = false;
 
 			int num38 = 0;
-			for (int n = num34; n < num35; n++)
+			for (int n = evilBiomePositionWestBound; n < evilBiomePositionEastBound; n++)
 			{
 				if (num38 > 0)
 				{
 					num38--;
 				}
-				if (n == num33 || num38 == 0)
+				if (n == evilBiomePosition || num38 == 0)
 				{
 					int num39 = (int)GenVars.worldSurfaceLow;
 					while (num39 < Main.worldSurface - 1.0)
 					{
 						if (Main.tile[n, num39].HasTile || Main.tile[n, num39].WallType > 0)
 						{
-							if (n == num33)
+							if (n == evilBiomePosition)
 							{
 								num38 = 20;
 								WorldGen.ChasmRunner(n, num39, WorldGen.genRand.Next(150) + 150, true);
@@ -52,7 +54,7 @@ namespace AltLibrary.Core.Generation
 				}
 			}
 			double num43 = Main.worldSurface + 40.0;
-			for (int num44 = num34; num44 < num35; num44++)
+			for (int num44 = evilBiomePositionWestBound; num44 < evilBiomePositionEastBound; num44++)
 			{
 				num43 += WorldGen.genRand.Next(-2, 3);
 				if (num43 < Main.worldSurface + 30.0)
@@ -70,7 +72,7 @@ namespace AltLibrary.Core.Generation
 				{
 					if (Main.tile[i2, num45].HasTile)
 					{
-						if (Main.tile[i2, num45].TileType == 53 && i2 >= num34 + WorldGen.genRand.Next(5) && i2 <= num35 - WorldGen.genRand.Next(5))
+						if (Main.tile[i2, num45].TileType == 53 && i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5))
 						{
 							Main.tile[i2, num45].TileType = 112;
 						}
@@ -84,7 +86,7 @@ namespace AltLibrary.Core.Generation
 							}
 						}
 						flag7 = true;
-						if (Main.tile[i2, num45].TileType == 1 && i2 >= num34 + WorldGen.genRand.Next(5) && i2 <= num35 - WorldGen.genRand.Next(5))
+						if (Main.tile[i2, num45].TileType == 1 && i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5))
 						{
 							Main.tile[i2, num45].TileType = 25;
 						}
@@ -116,7 +118,7 @@ namespace AltLibrary.Core.Generation
 					num45++;
 				}
 			}
-			for (int num46 = num34; num46 < num35; num46++)
+			for (int num46 = evilBiomePositionWestBound; num46 < evilBiomePositionEastBound; num46++)
 			{
 				for (int num47 = 0; num47 < Main.maxTilesY - 50; num47++)
 				{
@@ -152,10 +154,16 @@ namespace AltLibrary.Core.Generation
 				}
 			}
 			WorldGen.crimson = worldCrimson;
+			int worldSurfaceLow = (int)GenVars.worldSurfaceLow;
+			WorldBiomeGeneration.EvilBiomeGenRanges.Add(new Rectangle(
+				evilBiomePositionWestBound,
+				worldSurfaceLow,
+				evilBiomePositionEastBound - evilBiomePositionWestBound,
+				(int)GenVars.worldSurfaceHigh - worldSurfaceLow + 500
+			));
 		}
 
-		public override void PostGenerateEvil()
-		{
+		public override void PostGenerateEvil() {
 		}
 	}
 }

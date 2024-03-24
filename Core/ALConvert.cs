@@ -26,40 +26,6 @@ namespace AltLibrary.Core
 		{
 		}
 
-		private static void IL_Projectile_VanillaAI(ILContext il) {
-			ILCursor c = new(il);
-			ILLabel skip = default;
-			c.GotoNext(MoveType.After,
-				i => i.MatchLdarg(0),
-				i => i.MatchLdfld<Projectile>("type"),
-				i => i.MatchLdcI4(10),
-				i => i.MatchBneUn(out skip)
-			);
-			int index = c.Index;
-
-			int xPos = -1;
-			int yPos = -1;
-			c.GotoNext(MoveType.After,
-				i => i.MatchLdsflda<Main>("tile"),
-				i => i.MatchLdloc(out xPos),
-				i => i.MatchLdloc(out yPos),
-				i => i.MatchCall<Tilemap>("get_Item")
-			);
-			c.Index = index;
-			c.Emit(OpCodes.Ldloc, xPos);
-			c.Emit(OpCodes.Ldloc, yPos);
-			c.EmitDelegate<Action<int, int>>((x, y) => {
-				Tile tile = Main.tile[x, y];
-				if (tile.HasTile) {
-					ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent);
-					if (parent.fromBiome?.BiomeType == BiomeType.Evil) {
-						ConvertTile(x, y, ModContent.GetInstance<DeconvertAltBiome>());
-					}
-				}
-			});
-			c.Emit(OpCodes.Br, skip);
-		}
-
 		private static void WorldGen_Convert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size) {
 			AltBiome biome;
 			switch (conversionType) {

@@ -1,6 +1,7 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core;
 using AltLibrary.Core.Generation;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -13,16 +14,43 @@ using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.Systems {
 	//TODO: double check that this code makes sense to begin with
-	public class WorldBiomeGeneration : ModSystem
-	{
+	public class WorldBiomeGeneration : ModSystem {
+		public static class ChangeRange {
+			static int minX, maxX, minY, maxY;
+			public static void ResetRange() {
+				minX = int.MaxValue;
+				maxX = int.MinValue;
+
+				minY = int.MaxValue;
+				maxY = int.MinValue;
+			}
+			public static void AddChangeToRange(int i, int j) {
+				if (i < minX) minX = i;
+				if (i > maxX) maxX = i;
+
+				if (j < minY) minY = j;
+				if (j > maxY) maxY = j;
+			}
+			public static Rectangle GetRange() {
+				return new(
+					minX,
+					minY,
+					maxX - minX,
+					maxY - minY
+				);
+			}
+		}
 		public static int DungeonSide { get; internal set; } = 0;
 		public static int DungeonLocation { get; internal set; } = 0;
 		public static int WofKilledTimes { get; internal set; } = 0;
+		static List<Rectangle> _evilBiomeGenRanges = new();
+		public static ref List<Rectangle> EvilBiomeGenRanges => ref _evilBiomeGenRanges;
 
 		public override void Unload()
 		{
 			DungeonSide = 0;
 			DungeonLocation = 0;
+			EvilBiomeGenRanges = new();
 		}
 
 		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
@@ -437,15 +465,19 @@ namespace AltLibrary.Common.Systems {
 				WorldBiomeManager.DrunkEvil = biomes[WorldGen.genRand.Next(biomes.Count)];
 			}
 		}
-
+		public override void ClearWorld() {
+			EvilBiomeGenRanges = new();
+		}
 		public override void SaveWorldData(TagCompound tag)
 		{
 			tag.Add("AltLibrary:WofKilledTimes", WofKilledTimes);
+			tag.Add("AltLibrary:EvilBiomeGenRanges", EvilBiomeGenRanges);
 		}
 
 		public override void LoadWorldData(TagCompound tag)
 		{
 			WofKilledTimes = tag.GetInt("AltLibrary:WofKilledTimes");
+			if(!tag.TryGet("AltLibrary:EvilBiomeGenRanges", out EvilBiomeGenRanges)) EvilBiomeGenRanges = new();
 		}
 	}
 }
