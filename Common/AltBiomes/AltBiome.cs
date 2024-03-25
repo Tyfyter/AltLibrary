@@ -127,6 +127,7 @@ namespace AltLibrary.Common.AltBiomes
 
 		public Dictionary<int, int> TileConversions = new();
 		public Dictionary<int, int> WallConversions = new();
+		public Dictionary<int, int> GERunnerWallConversions = new();
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>

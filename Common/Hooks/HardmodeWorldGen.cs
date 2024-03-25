@@ -29,10 +29,8 @@ namespace AltLibrary.Common.Hooks
 
 		private static void WorldGen_GERunner1(Terraria.On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good)
 		{
-			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1)
-			{
-				if (good)
-				{
+			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1) {
+				if (good) {
 					List<int> possibles = new() { 0 };
 					AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hallow).ForEach(x => possibles.Add(x.Type));
 					if (AltLibraryServerConfig.Config.HardmodeGenRandom)
@@ -68,41 +66,28 @@ namespace AltLibrary.Common.Hooks
 		private static void GenPasses_HookGenPassHardmodeWalls(ILContext il)
 		{
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchStloc(8)))
-			{
-				AltLibrary.Instance.Logger.Info("h $ 1");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdloc(4)))
-			{
-				AltLibrary.Instance.Logger.Info("h $ 2");
+			if (!c.TryGotoNext(MoveType.AfterLabel, 
+				i => i.MatchLdloca(5),
+				i => i.MatchCall<Tile>("active")
+				)) {
+				AltLibrary.Instance.Logger.Info("GenPassHardmodeWalls $ active");
 				return;
 			}
 			c.Index++;
-			c.Emit(OpCodes.Pop);
 			c.Emit(OpCodes.Ldloc, 7);
 			c.Emit(OpCodes.Ldloc, 5);
 			c.EmitDelegate<Func<int, Tile, int>>((orig, tile) =>
 			{
 				if (WorldBiomeGeneration.WofKilledTimes <= 1)
 				{
-					if (WorldBiomeManager.GetWorldHallow(false) is AltBiome worldHallow &&
-						worldHallow.HardmodeWalls.Count > 0 && worldHallow.TileConversions.ContainsValue(tile.TileType)
-						)
-					{
+					if (WorldBiomeManager.GetWorldHallow(false) is AltBiome worldHallow && worldHallow.HardmodeWalls.Count > 0 && worldHallow.TileConversions.ContainsValue(tile.TileType)) {
 						orig = WorldGen.genRand.Next(worldHallow.HardmodeWalls);
 					}
-					if (TryFind(WorldBiomeManager.WorldEvilName, out AltBiome worldEvil) &&
-						worldEvil.HardmodeWalls.Count > 0 && worldEvil.TileConversions.ContainsValue(tile.TileType)
-						)
-					{
+					if (TryFind(WorldBiomeManager.WorldEvilName, out AltBiome worldEvil) && worldEvil.HardmodeWalls.Count > 0 && worldEvil.TileConversions.ContainsValue(tile.TileType)) {
 						orig = WorldGen.genRand.Next(worldEvil.HardmodeWalls);
 					}
-				}
-				else
-				{
-					if (Main.drunkWorld)
-					{
+				} else {
+					if (Main.drunkWorld) {
 						if (Evil?.HardmodeWalls.Count > 0 && (Evil?.TileConversions?.ContainsValue(tile.TileType) ?? false)) {
 							orig = WorldGen.genRand.Next(Evil?.HardmodeWalls);
 						}
@@ -114,7 +99,6 @@ namespace AltLibrary.Common.Hooks
 				return orig;
 			});
 			c.Emit(OpCodes.Stloc, 7);
-			c.Emit(OpCodes.Ldloc, 4);
 		}
 		//TODO: double check that this code makes sense to begin with
 
@@ -157,18 +141,23 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static int GetWallOnStateHallow(int wallID, int x, int y)
-		{
-			AltBiome biome = WorldBiomeManager.GetWorldHallow(true);
+		private static int GetWallOnStateHallow(int wallID, int x, int y) {
+			AltBiome biome;
 			if (WorldBiomeManager.drunkGoodGen > 0) biome = Good;
-			return biome.WallConversions.TryGetValue(wallID, out int newWall) ? newWall : wallID;
+			else biome = WorldBiomeManager.GetWorldHallow(true);
+
+			if (biome.GERunnerWallConversions.TryGetValue(wallID, out int newWall)) return newWall;
+			return biome.WallConversions.TryGetValue(wallID, out newWall) ? newWall : wallID;
 		}
 
 		//TODO: double check that this code makes sense to begin with
 		private static int GetWallOnStateEvil(int wallID, int x, int y) {
-			AltBiome biome = WorldBiomeManager.GetWorldEvil(true, true);
+			AltBiome biome;
 			if (WorldBiomeManager.drunkGoodGen > 0) biome = Evil;
-			return biome.WallConversions.TryGetValue(wallID, out int newWall) ? newWall : wallID;
+			else biome = WorldBiomeManager.GetWorldEvil(true, true);
+
+			if (biome.GERunnerWallConversions.TryGetValue(wallID, out int newWall)) return newWall;
+			return biome.WallConversions.TryGetValue(wallID, out newWall) ? newWall : wallID;
 		}
 
 		private static AltBiome Good => AltLibrary.Biomes.Find(x => x.Type == WorldBiomeManager.drunkGoodGen);
@@ -235,9 +224,11 @@ namespace AltLibrary.Common.Hooks
 								WorldGen.SquareTileFrame(m, l, true);
 							}
 						}
-						if (WorldGen.InWorld(m, l) && wall != -1 && GetWallOnStateEvil(wall, m, l) != -1 && wall != GetWallOnStateEvil(wall, m, l))
-						{
-							tile.WallType = (ushort)GetWallOnStateEvil(wall, m, l);
+						if (WorldGen.InWorld(m, l) && wall != -1) {
+							int evilWall = GetWallOnStateEvil(wall, m, l);
+							if (evilWall != -1 && wall != evilWall) {
+								tile.WallType = (ushort)evilWall;
+							}
 						}
 					}
 				}
@@ -280,9 +271,11 @@ namespace AltLibrary.Common.Hooks
 							WorldGen.SquareTileFrame(m, l, true);
 						}
 					}
-					if (WorldGen.InWorld(m, l) && wall != -1 && GetWallOnStateHallow(wall, m, l) != -1 && wall != GetWallOnStateHallow(wall, m, l))
-					{
-						wall = (ushort)GetWallOnStateHallow(wall, m, l);
+					if (WorldGen.InWorld(m, l) && wall != -1) {
+						int hallowWall = GetWallOnStateHallow(wall, m, l);
+						if (hallowWall != -1 && wall != hallowWall) {
+							wall = (ushort)hallowWall;
+						}
 					}
 				}
 			});
