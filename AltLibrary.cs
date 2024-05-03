@@ -18,7 +18,7 @@ using Terraria.UI;
 
 namespace AltLibrary
 {
-	public class AltLibrary : Mod
+	public partial class AltLibrary : Mod
 	{
 		private static AltLibrary instance;
 

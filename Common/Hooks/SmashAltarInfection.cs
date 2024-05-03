@@ -42,11 +42,13 @@ namespace AltLibrary.Common.Hooks
 				substitutionTile = WorldGen.SavedOreTiers.Adamantite;
 				break;
 			}
-			LocalizedText substitutionKey = Lang._mapLegendCache[MapHelper.TileToLookup(substitutionTile, 0)];
 			if (Main.netMode == NetmodeID.SinglePlayer) {
-				Main.NewText(Language.GetTextValue(baseKey, substitutionKey.Value), 50, byte.MaxValue, 130);
+				Main.NewText(Language.GetTextValue(baseKey, Lang._mapLegendCache[MapHelper.TileToLookup(substitutionTile, 0)].Value), 50, byte.MaxValue, 130);
 			} else if (Main.netMode == NetmodeID.Server) {
-				ChatHelper.BroadcastChatMessage(NetworkText.FromKey(baseKey, NetworkText.FromKey(substitutionKey.Key)), new Color(50, 255, 130));
+				ModPacket packet = AltLibrary.Instance.GetPacket();
+				packet.Write((byte)PacketType.SmashAltar);
+				packet.Write((int)substitutionTile);
+				packet.Send();
 			}
 		}
 
