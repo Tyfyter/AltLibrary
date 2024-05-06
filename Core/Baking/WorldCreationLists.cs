@@ -79,11 +79,11 @@ namespace AltLibrary.Core.Baking {
 					if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomEvilBiome");
 					if (AltEvilBiomeChosenType == -333) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CorruptBiome");
 					if (AltEvilBiomeChosenType == -666) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.CrimsonBiome");
-					return AltLibrary.Biomes[AltEvilBiomeChosenType].Name;
+					return AltLibrary.Biomes[AltEvilBiomeChosenType].DisplayName.Value;
 				}, (mod) => {
 					if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 					return AltEvilBiomeChosenType switch {
-						>= 0 => AltLibrary.Biomes[AltEvilBiomeChosenType].Mod.Name,
+						>= 0 => AltLibrary.Biomes[AltEvilBiomeChosenType].Mod.DisplayName,
 						_ => mod
 					};
 				}));
@@ -137,11 +137,11 @@ namespace AltLibrary.Core.Baking {
 						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomJungleBiome");
 						return AltJungleBiomeChosenType < 0
 								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.JungleBiome")
-								: AltLibrary.Biomes[AltJungleBiomeChosenType].Name;
+								: AltLibrary.Biomes[AltJungleBiomeChosenType].DisplayName.Value;
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return AltJungleBiomeChosenType switch {
-							>= 0 => AltLibrary.Biomes[AltJungleBiomeChosenType].Mod.Name,
+							>= 0 => AltLibrary.Biomes[AltJungleBiomeChosenType].Mod.DisplayName,
 							_ => mod
 						};
 					}));
@@ -165,11 +165,11 @@ namespace AltLibrary.Core.Baking {
 						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.AltBiomeName.RandomUnderworldBiome");
 						return AltHellBiomeChosenType < 0
 								? Language.GetTextValue("Mods.AltLibrary.AltBiomeName.UnderworldBiome")
-								: AltLibrary.Biomes[AltHellBiomeChosenType].Name;
+								: AltLibrary.Biomes[AltHellBiomeChosenType].DisplayName.Value;
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.BiomeIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return AltHellBiomeChosenType switch {
-							>= 0 => AltLibrary.Biomes[AltHellBiomeChosenType].Mod.Name,
+							>= 0 => AltLibrary.Biomes[AltHellBiomeChosenType].Mod.DisplayName,
 							_ => mod
 						};
 					}));
@@ -229,12 +229,12 @@ namespace AltLibrary.Core.Baking {
 						return Copper switch {
 							-1 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Copper"),
 							-2 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Tin"),
-							_ => AltLibrary.Ores[Copper - 1].Name
+							_ => AltLibrary.Ores[Copper - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Copper switch {
-							>= 0 => AltLibrary.Ores[Copper - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Copper - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -260,12 +260,12 @@ namespace AltLibrary.Core.Baking {
 						return Iron switch {
 							-3 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Iron"),
 							-4 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Lead"),
-							_ => AltLibrary.Ores[Iron - 1].Name
+							_ => AltLibrary.Ores[Iron - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Iron switch {
-							>= 0 => AltLibrary.Ores[Iron - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Iron - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -291,12 +291,12 @@ namespace AltLibrary.Core.Baking {
 						return Silver switch {
 							-5 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Silver"),
 							-6 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Tungsten"),
-							_ => AltLibrary.Ores[Silver - 1].Name
+							_ => AltLibrary.Ores[Silver - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Silver switch {
-							>= 0 => AltLibrary.Ores[Silver - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Silver - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -322,12 +322,12 @@ namespace AltLibrary.Core.Baking {
 						return Gold switch {
 							-7 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Gold"),
 							-8 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Platinum"),
-							_ => AltLibrary.Ores[Gold - 1].Name
+							_ => AltLibrary.Ores[Gold - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Gold switch {
-							>= 0 => AltLibrary.Ores[Gold - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Gold - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -355,12 +355,12 @@ namespace AltLibrary.Core.Baking {
 						return Cobalt switch {
 							-9 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Cobalt"),
 							-10 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Palladium"),
-							_ => AltLibrary.Ores[Cobalt - 1].Name
+							_ => AltLibrary.Ores[Cobalt - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Cobalt switch {
-							>= 0 => AltLibrary.Ores[Cobalt - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Cobalt - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -386,12 +386,12 @@ namespace AltLibrary.Core.Baking {
 						return Mythril switch {
 							-11 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Mythril"),
 							-12 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Orichalcum"),
-							_ => AltLibrary.Ores[Mythril - 1].Name
+							_ => AltLibrary.Ores[Mythril - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Mythril switch {
-							>= 0 => AltLibrary.Ores[Mythril - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Mythril - 1].Mod.DisplayName,
 							_ => mod
 						};
 					}),
@@ -417,12 +417,12 @@ namespace AltLibrary.Core.Baking {
 						return Adamantite switch {
 							-13 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Adamantite"),
 							-14 => Language.GetTextValue("Mods.AltLibrary.AltOreName.Titanium"),
-							_ => AltLibrary.Ores[Adamantite - 1].Name
+							_ => AltLibrary.Ores[Adamantite - 1].DisplayName.Value
 						};
 					}, (mod) => {
 						if (!AltLibraryConfig.Config.OreIconsVisible) return Language.GetTextValue("Mods.AltLibrary.BiomeOrOreModSecret");
 						return Adamantite switch {
-							>= 0 => AltLibrary.Ores[Adamantite - 1].Mod.Name,
+							>= 0 => AltLibrary.Ores[Adamantite - 1].Mod.DisplayName,
 							_ => mod
 						};
 					})

@@ -262,22 +262,6 @@ namespace AltLibrary.Core.UIs
 			vector.X += 4f;
 			vector.X += 17f;
 			string displayNameValue = biome.DisplayName?.Value ?? biome.Name;
-			if (biome.Mod == null)
-			{
-				switch (biome.Name)
-				{
-					case "CorruptBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "CrimsonBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "HallowBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "JungleBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "UnderworldBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "RandomEvilBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "RandomHallowBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "RandomJungleBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					case "RandomUnderworldBiome": displayNameValue = Language.GetTextValue($"Mods.AltLibrary.AltBiomeName.{biome.Name}"); break;
-					default: break;
-				}
-			}
 			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, displayNameValue, vector, value7, 0f, Vector2.Zero, baseScale5, num7, 2f);
 			vector.X -= 17f;
 			Vector2 position = value9 + Vector2.UnitY * 25f + value8;
