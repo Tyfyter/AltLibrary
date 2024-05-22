@@ -257,7 +257,7 @@ namespace AltLibrary.Core
 				return;
 			}
 
-			if (newTile != -1 && newTile != tile.TileType && GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j)) {
+			if (newTile != -1 && newTile != tile.TileType && (WorldGen.generatingWorld || GlobalBiomeHooks.PreConvertTile(fromBiome, targetBiome, i, j))) {
 				WorldGen.TryKillingTreesAboveIfTheyWouldBecomeInvalid(i, j, newTile);
 				if (newTile == -2) {
 					WorldGen.KillTile(i, j, false, false, false);
@@ -266,12 +266,13 @@ namespace AltLibrary.Core
 					}
 				} else if (newTile != tile.TileType) {
 					tile.TileType = (ushort)newTile;
-
-					WorldGen.SquareTileFrame(i, j, true);
-					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+					if (!WorldGen.generatingWorld) {
+						WorldGen.SquareTileFrame(i, j, true);
+						if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+					}
 				}
-				GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
-				AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
+				if (!WorldGen.generatingWorld) GlobalBiomeHooks.PostConvertTile(fromBiome, targetBiome, i, j);
+				//AltLibrary.RateLimitedLog($"converted tile at {i}, {j}, from {fromBiome} to {targetBiome}", $"({i},{j})");
 			}
 		}
 		public static void ConvertMultiTile(int i, int j, int newTile, TileObjectData objectData, AltBiome fromBiome, AltBiome targetBiome, bool silent = false) {
@@ -315,7 +316,7 @@ namespace AltLibrary.Core
 			(int newWall, AltBiome fromBiome) = GetWallConversionState(i, j, targetBiome);
 			if (fromBiome == targetBiome) return;
 
-			if (newWall != -1 && newWall != tile.WallType && GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j)) {
+			if (newWall != -1 && newWall != tile.WallType && (WorldGen.generatingWorld || GlobalBiomeHooks.PreConvertWall(fromBiome, targetBiome, i, j))) {
 				if (newWall == -2) {
 					WorldGen.KillWall(i, j, false);
 					if (Main.netMode != NetmodeID.SinglePlayer && !silent) {
@@ -323,11 +324,12 @@ namespace AltLibrary.Core
 					}
 				} else if (newWall != tile.WallType) {
 					tile.WallType = (ushort)newWall;
-
-					WorldGen.SquareTileFrame(i, j, true);
-					if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+					if (!WorldGen.generatingWorld) {
+						WorldGen.SquareTileFrame(i, j, true);
+						if (!silent) NetMessage.SendTileSquare(-1, i, j, TileChangeType.None);
+					}
 				}
-				GlobalBiomeHooks.PostConvertWall(fromBiome, targetBiome, i, j);
+				if (!WorldGen.generatingWorld) GlobalBiomeHooks.PostConvertWall(fromBiome, targetBiome, i, j);
 			}
 		}
 	}
