@@ -305,7 +305,6 @@ namespace AltLibrary.Core
 					newWall = targetBiome.GetAltWall(baseWall, i, j);
 				}
 			}
-
 			if (newWall == -1 && ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.TryGetValue(baseWall, out BitsByte bits)) {
 				if (bits[targetBiome.ConversionType]) newWall = -2;
 			}

@@ -15,7 +15,7 @@ namespace AltLibrary.Core.Baking
 		public Dictionary<int, (int, AltBiome)> Parent = new();
 
 		public Dictionary<int, int> Deconversion => new(Parent.Where(i => !NoDeconversion.Contains(i.Key)).Select(i => new KeyValuePair<int, int>(i.Key, i.Value.Item1)));
-		public HashSet<int> NoDeconversion = new();
+		public HashSet<int> NoDeconversion = [];
 
 		public Dictionary<int, BitsByte> BreakIfConversionFail = new();
 

@@ -215,9 +215,10 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	#region 1.4.4 solutions
 	public class DesertAltBiome : VanillaBiome {
-		public DesertAltBiome() : base("DesertBiome", BiomeType.None, -1, Color.SandyBrown) { }
+		public DesertAltBiome() : base("DesertBiome", BiomeType.None, -2, Color.SandyBrown) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
+			NoDeconversion = true;
 
 			AddTileConversion(TileID.Sand, TileID.Grass, spread: false, oneWay: true, extraFunctions: false);
 			AddTileConversion(TileID.Sand, TileID.Sand, spread: false, oneWay: true, extraFunctions: false);
@@ -251,9 +252,11 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class SnowAltBiome : VanillaBiome {
-		public SnowAltBiome() : base("SnowBiome", BiomeType.None, -1, Color.White) { }
+		public SnowAltBiome() : base("SnowBiome", BiomeType.None, -2, Color.White) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
+			NoDeconversion = true;
+
 			AddTileConversion(TileID.SnowBlock, TileID.Grass, spread: false, oneWay: true, extraFunctions: false);
 			AddTileConversion(TileID.SnowBlock, TileID.Sand, spread: false, oneWay: true, extraFunctions: false);
 			AddTileConversion(TileID.SnowBlock, TileID.HardenedSand, spread: false, oneWay: true, extraFunctions: false);
@@ -276,9 +279,11 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class ForestAltBiome : VanillaBiome {
-		public ForestAltBiome() : base("ForestBiome", BiomeType.None, -1, Color.Brown) { }
+		public ForestAltBiome() : base("ForestBiome", BiomeType.None, -2, Color.Brown) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
+			NoDeconversion = true;
+
 			AddTileConversion(TileID.Grass, TileID.Grass, spread: false, oneWay: true, extraFunctions: false);
 			AddTileConversion(TileID.GolfGrass, TileID.GolfGrass);
 

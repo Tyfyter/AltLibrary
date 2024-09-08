@@ -339,6 +339,10 @@ namespace AltLibrary.Common.AltBiomes
 		/// If your Hallow alt's water fountain is part of a larger tilesheet, specify the y frame of the appropriate active water fountain here.
 		/// </summary>
 		public int? FountainActiveFrameY = null;
+		/// <summary>
+		/// If your Hallow alt's water fountain is part of a larger tilesheet, specify the y frame of the appropriate active water fountain here.
+		/// </summary>
+		public bool NoDeconversion = false;
 
 		public PassLegacy WorldGenPassLegacy = null;
 		public virtual Color AltUnderworldColor => Color.Black;
@@ -461,15 +465,17 @@ namespace AltLibrary.Common.AltBiomes
 			if (spread) {
 				SpreadingTiles.Add(block);
 			}
+			if (NoDeconversion) ALConvertInheritanceData.tileParentageData.NoDeconversion.Add(block);
 		}
 		public void AddWallConversions<T>(params int[] orig) where T : ModWall {
 			ushort type = ContentInstance<T>.Instance.Type;
 			AddWallConversions(type, orig);
 		}
 		public void AddWallConversions(int with, params int[] orig) {
-			foreach (ushort original in orig) {
+			foreach (int original in orig) {
 				WallConversions.TryAdd(original, with);
 				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (original, this));
+				if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
 			}
 		}
 		public void AddWallConversions<T>(params bool[] set) where T : ModWall {
@@ -481,6 +487,7 @@ namespace AltLibrary.Common.AltBiomes
 				if (set[i]) {
 					WallConversions.TryAdd(i, with);
 					ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (i, this));
+					if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
 				}
 			}
 		}
