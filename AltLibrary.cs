@@ -92,8 +92,8 @@ namespace AltLibrary
 			}
 		}
 
-		public override void PostSetupContent()
-		{
+		public override void PostSetupContent() {
+			ALHooks.OnInitialize();
 			ALTextureAssets.PostContentLoad();
 			MimicSummon.SetupContent();
 			ALConvertInheritanceData.FillData();
@@ -283,6 +283,7 @@ namespace AltLibrary
 			evilStoppingOres = null;
 			baseTiles = null;
 			ILHooks.Unload();
+			ALHooks.Unload();
 			AltLibraryServerConfig.Config = null;
 			HallowBunnyCageRecipeIndex = 0;
 			pieChartState = null;
