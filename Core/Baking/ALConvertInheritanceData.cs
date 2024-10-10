@@ -14,7 +14,10 @@ namespace AltLibrary.Core.Baking
 		//tiles
 		public Dictionary<int, (int, AltBiome)> Parent = new();
 
-		public Dictionary<int, int> Deconversion => new(Parent.Where(i => !NoDeconversion.Contains(i.Key)).Select(i => new KeyValuePair<int, int>(i.Key, i.Value.Item1)));
+		internal void SetupDeconversion() {
+			Deconversion = new(Parent.Where(i => !NoDeconversion.Contains(i.Key)).Select(i => new KeyValuePair<int, int>(i.Key, i.Value.Item1)));
+		}
+		public Dictionary<int, int> Deconversion { get; private set; }
 		public HashSet<int> NoDeconversion = [];
 
 		public Dictionary<int, BitsByte> BreakIfConversionFail = new();
@@ -163,6 +166,8 @@ namespace AltLibrary.Core.Baking
 			// Mass Parenting
 			tileParentageData.Bake();
 			wallParentageData.Bake();
+			tileParentageData.SetupDeconversion();
+			wallParentageData.SetupDeconversion();
 		}
 
 		public static int GetUltimateParent(int baseTile)
