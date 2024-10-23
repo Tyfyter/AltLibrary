@@ -300,8 +300,8 @@ Mods: {
 		}
 
 		AltBiomes: {
-			// CrimsonBiome.DisplayName: Crimson Biome
-			// CorruptBiome.DisplayName: Corrupt Biome
+			// CrimsonBiome.DisplayName: Crimson
+			// CorruptBiome.DisplayName: Corruption
 		}
 	}
 }
