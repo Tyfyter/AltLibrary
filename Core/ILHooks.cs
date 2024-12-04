@@ -38,7 +38,7 @@ namespace AltLibrary.Core
 			JungleHuts.Init(); // TODO: redo?
 			TenthAnniversaryFix.Init();
 			DrunkCrimsonFix.Load();
-			BackgroundsAlternating.Inject();
+			//BackgroundsAlternating.Inject();//TODO: redo
 			EvilBiomeRangeTracker.Init();
 		}
 
@@ -65,7 +65,7 @@ namespace AltLibrary.Core
 			TenthAnniversaryFix.Unload();
 			GenPasses.Unload();
 			DrunkCrimsonFix.Unload();
-			BackgroundsAlternating.Uninit();
+			//BackgroundsAlternating.Uninit();
 		}
 
 		private static void Main_GUIChatDrawInner(Terraria.On_Main.orig_GUIChatDrawInner orig, Main self)

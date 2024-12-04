@@ -17,6 +17,7 @@ using Terraria.Utilities;
 
 namespace AltLibrary.Common
 {
+	[Obsolete("Not yet reimplemented, old implementation caused impressive instability")]
 	public interface IAlternatingSurfaceBackground
 	{
 		void AddIn(string fullName, Func<Player, UnifiedRandom, bool> whenTrue, Func<int> getBg, Action<Player, UnifiedRandom> randomizeBg, Action onEncounter) => BackgroundsAlternating._cacheIndexes.Add(fullName, (whenTrue, getBg, randomizeBg, onEncounter));
@@ -45,6 +46,8 @@ namespace AltLibrary.Common
 			private static MethodInfo SBSL_DrawMiddleTexture = null;
 			private static MethodInfo SBSL_DrawFarTexture = null;
 			private static MethodInfo SBSL_DrawCloseBackground = null;
+			private static FastFieldInfo<BackgroundChangeFlashInfo, float[]> _flashPower = new("_flashPower", BindingFlags.NonPublic | BindingFlags.Public);
+			private static FastFieldInfo<BackgroundChangeFlashInfo, int[]> _variations = new("_variations", BindingFlags.NonPublic | BindingFlags.Public);
 
 			internal static void Inject() {
 				if (Main.dedServ) return;
@@ -67,29 +70,27 @@ namespace AltLibrary.Common
 			internal static void Init()
 			{
 				if (Main.dedServ) return;
-
-				float[] _flashPower = (float[])ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_flashPower").Value.GetValue(WorldGen.BackgroundsCache);
-				int[] _variations = (int[])ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.GetValue(WorldGen.BackgroundsCache);
+				if (_flashPower is null || _variations is null) return;
 				
-				_oldFlashPower = _flashPower;
-				_oldVariations = _variations;
+				_oldFlashPower = _flashPower.GetValue(WorldGen.BackgroundsCache);
+				_oldVariations = _variations.GetValue(WorldGen.BackgroundsCache);
 
-				float[] newFlashPower = new float[_flashPower.Length + _cacheIndexes.Count];
-				int[] newVariations = new int[_variations.Length + _cacheIndexes.Count];
+				float[] newFlashPower = new float[_oldFlashPower.Length + _cacheIndexes.Count];
+				int[] newVariations = new int[_oldVariations.Length + _cacheIndexes.Count];
 
 				int _count = 0;
 
 				for (int i = 0; i < newFlashPower.Length; i++)
 				{
-					if (i >= _flashPower.Length)
+					if (i >= _oldFlashPower.Length)
 					{
 						newFlashPower[i] = 0f;
 						newVariations[i] = 0;
 						continue;
 					}
 
-					newFlashPower[i] = _flashPower[i];
-					newVariations[i] = _variations[i];
+					newFlashPower[i] = _oldFlashPower[i];
+					newVariations[i] = _oldVariations[i];
 					_latestFlash = i;
 				}
 				foreach (var v in _cacheIndexes)
@@ -100,15 +101,15 @@ namespace AltLibrary.Common
 					_count++;
 				}
 
-				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_flashPower").Value.SetValue(WorldGen.BackgroundsCache, newFlashPower);
-				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.SetValue(WorldGen.BackgroundsCache, newVariations);
+				_flashPower.SetValue(WorldGen.BackgroundsCache, newFlashPower);
+				_variations.SetValue(WorldGen.BackgroundsCache, newVariations);
 			}
 
 			public static void Uninit() {
 				if (Main.dedServ) return;
 
-				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_flashPower").Value.SetValue(WorldGen.BackgroundsCache, _oldFlashPower);
-				ReflectionDictionary.GetField("Terraria.GameContent.BackgroundChangeFlashInfo", "_variations").Value.SetValue(WorldGen.BackgroundsCache, _oldVariations);
+				_flashPower.SetValue(WorldGen.BackgroundsCache, _oldFlashPower);
+				_variations.SetValue(WorldGen.BackgroundsCache, _oldVariations);
 				
 				_oldFlashPower = null;
 				_oldVariations = null;
@@ -124,6 +125,9 @@ namespace AltLibrary.Common
 				SBSL_DrawCloseBackground = null;
 				SBSL_DrawMiddleTexture = null;
 				SBSL_DrawFarTexture = null;
+
+				_flashPower = null;
+				_variations = null;
 			}
 
 			private static void SurfaceBackgroundStylesLoader_DrawCloseBackground(ILContext il)

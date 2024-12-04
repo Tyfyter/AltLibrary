@@ -99,7 +99,7 @@ namespace AltLibrary
 			ALConvertInheritanceData.FillData();
 			ModSupport.ModSupport.HookAll();
 
-			BackgroundsAlternating.Init();
+			//BackgroundsAlternating.Init();//TODO: redo
 		}
 
 		public override object Call(params object[] args)
