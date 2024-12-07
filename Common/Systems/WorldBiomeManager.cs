@@ -349,7 +349,13 @@ namespace AltLibrary.Common.Systems {
 			AltLibraryConfig.Config.SetWorldData(tempDict);
 			AltLibraryConfig.Save(AltLibraryConfig.Config);
 		}
-
+		public override void SaveWorldHeader(TagCompound tag) {
+			tag.Add("WorldEvil", WorldEvilName);
+			tag.Add("WorldHallow", WorldHallowName);
+			tag.Add("WorldHell", WorldHell);
+			tag.Add("WorldJungle", WorldJungle);
+			tag.Add("DrunkEvil", drunkEvilName);
+		}
 		public override void LoadWorldData(TagCompound tag)
 		{
 			WorldEvilName = tag.GetString("AltLibrary:WorldEvil");

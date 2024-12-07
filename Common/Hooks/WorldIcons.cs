@@ -24,10 +24,10 @@ namespace AltLibrary.Common.Hooks
 
 		public static void Init()
 		{
-			Terraria.GameContent.UI.Elements.IL_UIWorldListItem.ctor += UIWorldListItem_ctor;
-			Terraria.GameContent.UI.Elements.IL_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf1;
-			Terraria.GameContent.UI.Elements.On_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf;
-			Terraria.GameContent.UI.Elements.On_AWorldListItem.GetIcon += UIWorldListItem_GetIcon;
+			IL_UIWorldListItem.ctor += UIWorldListItem_ctor;
+			IL_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf1;
+			On_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf;
+			On_AWorldListItem.GetIcon += UIWorldListItem_GetIcon;
 			WarnUpdate = 0;
 		}
 
@@ -35,7 +35,6 @@ namespace AltLibrary.Common.Hooks
 		{
 			WarnUpdate = 0;
 		}
-
 		//TODO: double check that this code makes sense to begin with
 		private static Asset<Texture2D> UIWorldListItem_GetIcon(Terraria.GameContent.UI.Elements.On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
 		{
@@ -232,7 +231,7 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static void UIWorldListItem_DrawSelf(Terraria.GameContent.UI.Elements.On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch)
+		private static void UIWorldListItem_DrawSelf(On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch)
 		{
 			orig(self, spriteBatch);
 			if (++WarnUpdate >= 120)

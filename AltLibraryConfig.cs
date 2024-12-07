@@ -19,6 +19,13 @@ namespace AltLibrary
 			public string worldHell;
 			public string worldJungle;
 			public string drunkEvil;
+			public void Validate() {
+				worldEvil ??= "";
+				worldHallow ??= "";
+				worldHell ??= "";
+				worldJungle ??= "";
+				drunkEvil ??= "";
+			}
 		}
 
 		[DefaultValue(true)]
