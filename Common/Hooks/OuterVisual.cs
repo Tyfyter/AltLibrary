@@ -134,7 +134,7 @@ namespace AltLibrary.Common.Hooks
 					break;
 
 					default:
-					asset = ALTextureAssets.BiomeOuter[worldGenStep - 3];
+					if (ALTextureAssets.BiomeOuter.IndexInRange(worldGenStep - 3)) asset = ALTextureAssets.BiomeOuter[worldGenStep - 3];
 					break;
 				}
 				spriteBatch.Draw(asset.Value, r.TopLeft(), Color.White);

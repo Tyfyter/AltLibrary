@@ -49,28 +49,19 @@ namespace AltLibrary.Common.Hooks
 		private static void WorldGen_AddUpAlignmentCounts(ILContext il)
 		{
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdcI4(200)))
-			{
-				AltLibrary.Instance.Logger.Info("2 $ 1");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(200)))
-			{
-				AltLibrary.Instance.Logger.Info("2 $ 2");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdsfld(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("2 $ 3");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld<WorldGen>(nameof(WorldGen.totalSolid2))))
+			if (!c.TryGotoNext(MoveType.Before, 
+				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.tileCounts)),
+				i => i.MatchLdcI4(0),
+				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.tileCounts)),
+				i => i.MatchLdlen(),
+				i => i.MatchConvI4(),
+				i => i.MatchCall<Array>(nameof(Array.Clear))
+				))
 			{
 				AltLibrary.Instance.Logger.Info("2 $ 4");
 				return;
 			}
-
-			c.Index++;
+			
 			c.EmitDelegate<Action>(() =>
 			{
 				WorldGen.totalGood2 += WorldGen.tileCounts[TileID.HallowHardenedSand] + WorldGen.tileCounts[TileID.HallowSandstone];

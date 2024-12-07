@@ -73,7 +73,7 @@ namespace AltLibrary
 			ALUtils.SteamID();
 			ALTextureAssets.Load();
 			ILHooks.OnInitialize();
-			AnimatedModIcon.Init();
+			//AnimatedModIcon.Init();
 			ALConvert.Load();
 			GuideHelpText.Load();
 			ExtractinatorOres.Load();
@@ -256,7 +256,7 @@ namespace AltLibrary
 
 		public override void Unload()
 		{
-			AnimatedModIcon.Unload();
+			//AnimatedModIcon.Unload();
 			ALTextureAssets.Unload();
 			ALConvert.Unload();
 			GuideHelpText.Unload();

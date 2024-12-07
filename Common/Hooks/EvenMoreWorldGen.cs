@@ -264,32 +264,10 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 
-			c.EmitDelegate<Func<int, int>>(dungeonSide =>
-			{
-				WorldBiomeGeneration.DungeonSide = dungeonSide;
-				return dungeonSide;
-			});
-
 			replaceValues(() => WorldBiomeManager.Copper, (-1, TileID.Copper), (-2, TileID.Tin), copper);
 			replaceValues(() => WorldBiomeManager.Iron, (-3, TileID.Iron), (-4, TileID.Lead), iron);
 			replaceValues(() => WorldBiomeManager.Silver, (-5, TileID.Silver), (-6, TileID.Tungsten), silver);
 			replaceValues(() => WorldBiomeManager.Gold, (-7, TileID.Gold), (-8, TileID.Platinum), gold);
-
-			for (int i = 0; i < 2; i++)
-			{
-				if (!c.TryGotoNext(i => i.MatchRet()))
-				{
-					AltLibrary.Instance.Logger.Info("f $ 15 " + i);
-					return;
-				}
-				c.Index--;
-				c.EmitDelegate<Func<int, int>>(dungeonLocation =>
-				{
-					WorldBiomeGeneration.DungeonLocation = dungeonLocation;
-					return dungeonLocation;
-				});
-				c.Index += 2;
-			}
 
 			void replaceValues(Func<int> type, ValueTuple<int, int> value1, ValueTuple<int, int> value2, FieldReference field)
 			{

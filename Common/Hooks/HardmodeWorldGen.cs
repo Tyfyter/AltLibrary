@@ -13,7 +13,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace AltLibrary.Common.Hooks
 {
-	internal static class HardmodeWorldGen
+	public static class HardmodeWorldGen
 	{
 		public static void Init()
 		{
@@ -26,7 +26,7 @@ namespace AltLibrary.Common.Hooks
 		{
 		}
 		//TODO: double check that this code makes sense to begin with
-
+		public static bool GERunnerRunning { get; private set; }
 		private static void WorldGen_GERunner1(Terraria.On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good)
 		{
 			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1) {
@@ -59,7 +59,12 @@ namespace AltLibrary.Common.Hooks
 					i %= Main.maxTilesX;
 				}
 			}
-			orig(i, j, speedX, speedY, good);
+			try {
+				GERunnerRunning = true;
+				orig(i, j, speedX, speedY, good);
+			} finally {
+				GERunnerRunning = false;
+			}
 		}
 
 		//TODO: double check that this code makes sense to begin with

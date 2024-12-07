@@ -40,16 +40,12 @@ namespace AltLibrary.Common.Systems {
 				);
 			}
 		}
-		public static int DungeonSide { get; internal set; } = 0;
-		public static int DungeonLocation { get; internal set; } = 0;
 		public static int WofKilledTimes { get; internal set; } = 0;
 		static List<Rectangle> _evilBiomeGenRanges = new();
 		public static ref List<Rectangle> EvilBiomeGenRanges => ref _evilBiomeGenRanges;
 
 		public override void Unload()
 		{
-			DungeonSide = 0;
-			DungeonLocation = 0;
 			EvilBiomeGenRanges = new();
 		}
 

@@ -53,45 +53,45 @@ namespace AltLibrary
 
 			for (int i = 0; i < AnimatedModIcon.Length; i++)
 			{
-				AnimatedModIcon[i] = ModContent.Request<Texture2D>($"AltLibrary/Assets/Icons/AMIcon_{i}", AssetRequestMode.ImmediateLoad);
+				AnimatedModIcon[i] = Asset<Texture2D>.Empty;//ModContent.Request<Texture2D>($"AltLibrary/Assets/Icons/AMIcon_{i}", AssetRequestMode.AsyncLoad);
 			}
-			Button = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Button", AssetRequestMode.ImmediateLoad);
-			Button2 = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Button2", AssetRequestMode.ImmediateLoad);
-			ButtonClose = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonClose", AssetRequestMode.ImmediateLoad);
-			ButtonCorrupt = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.ImmediateLoad);
-			ButtonHallow = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.ImmediateLoad);
-			ButtonJungle = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.ImmediateLoad);
-			ButtonHell = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.ImmediateLoad);
-			ButtonWarn = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonWarn", AssetRequestMode.ImmediateLoad);
-			OreIcons = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/OreIcons", AssetRequestMode.ImmediateLoad);
-			Empty = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Empty", AssetRequestMode.ImmediateLoad);
-			Random = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Random", AssetRequestMode.ImmediateLoad);
-			BestiaryIcons = Main.Assets.Request<Texture2D>("Images/UI/Bestiary/Icon_Tags_Shadow", AssetRequestMode.ImmediateLoad);
-			WorldIconNormal = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNormal", AssetRequestMode.ImmediateLoad);
-			WorldIconDrunk = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconDrunk", AssetRequestMode.ImmediateLoad);
-			WorldIconDrunkCrimson = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/DrunkBase/Crimson", AssetRequestMode.ImmediateLoad);
-			WorldIconDrunkCorrupt = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/DrunkBase/Corruption", AssetRequestMode.ImmediateLoad);
-			WorldIconForTheWorthy = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconForTheWorthy", AssetRequestMode.ImmediateLoad);
-			WorldIconNotTheBees = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNotTheBees", AssetRequestMode.ImmediateLoad);
-			WorldIconAnniversary = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconAnniversary", AssetRequestMode.ImmediateLoad);
-			WorldIconDontStarve = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconDontStarve", AssetRequestMode.ImmediateLoad);
-			WorldIconNoTraps = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNoTraps", AssetRequestMode.ImmediateLoad);
-			WorldIconRemix = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconRemix", AssetRequestMode.ImmediateLoad);
-			NullPreview = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/NullBiomePreview", AssetRequestMode.ImmediateLoad);
-			OuterTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Empty", AssetRequestMode.ImmediateLoad);
-			OuterLowerTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Lower Empty", AssetRequestMode.ImmediateLoad);
+			Button = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Button", AssetRequestMode.AsyncLoad);
+			Button2 = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Button2", AssetRequestMode.AsyncLoad);
+			ButtonClose = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonClose", AssetRequestMode.AsyncLoad);
+			ButtonCorrupt = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonCorrupt", AssetRequestMode.AsyncLoad);
+			ButtonHallow = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonHallow", AssetRequestMode.AsyncLoad);
+			ButtonJungle = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonJungle", AssetRequestMode.AsyncLoad);
+			ButtonHell = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonHell", AssetRequestMode.AsyncLoad);
+			ButtonWarn = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/ButtonWarn", AssetRequestMode.AsyncLoad);
+			OreIcons = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/OreIcons", AssetRequestMode.AsyncLoad);
+			Empty = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Empty", AssetRequestMode.AsyncLoad);
+			Random = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Random", AssetRequestMode.AsyncLoad);
+			BestiaryIcons = Main.Assets.Request<Texture2D>("Images/UI/Bestiary/Icon_Tags_Shadow", AssetRequestMode.AsyncLoad);
+			WorldIconNormal = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNormal", AssetRequestMode.AsyncLoad);
+			WorldIconDrunk = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconDrunk", AssetRequestMode.AsyncLoad);
+			WorldIconDrunkCrimson = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/DrunkBase/Crimson", AssetRequestMode.AsyncLoad);
+			WorldIconDrunkCorrupt = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/DrunkBase/Corruption", AssetRequestMode.AsyncLoad);
+			WorldIconForTheWorthy = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconForTheWorthy", AssetRequestMode.AsyncLoad);
+			WorldIconNotTheBees = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNotTheBees", AssetRequestMode.AsyncLoad);
+			WorldIconAnniversary = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconAnniversary", AssetRequestMode.AsyncLoad);
+			WorldIconDontStarve = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconDontStarve", AssetRequestMode.AsyncLoad);
+			WorldIconNoTraps = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconNoTraps", AssetRequestMode.AsyncLoad);
+			WorldIconRemix = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/IconRemix", AssetRequestMode.AsyncLoad);
+			NullPreview = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/NullBiomePreview", AssetRequestMode.AsyncLoad);
+			OuterTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Empty", AssetRequestMode.AsyncLoad);
+			OuterLowerTexture = ModContent.Request<Texture2D>("AltLibrary/Assets/Loading/Outer Lower Empty", AssetRequestMode.AsyncLoad);
 			UIWorldSeedIcon = new Asset<Texture2D>[2];
-			UIWorldSeedIcon[0] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon", AssetRequestMode.ImmediateLoad);
-			UIWorldSeedIcon[1] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon2", AssetRequestMode.ImmediateLoad);
+			UIWorldSeedIcon[0] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon", AssetRequestMode.AsyncLoad);
+			UIWorldSeedIcon[1] = ModContent.Request<Texture2D>("AltLibrary/Assets/WorldIcons/ShadowIcon2", AssetRequestMode.AsyncLoad);
 			PreviewSpecialSizes = new Asset<Texture2D>[8, 3];
-			PreviewSpecialSizes[0, 0] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeSmall", AssetRequestMode.ImmediateLoad);
-			PreviewSpecialSizes[0, 1] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeMedium", AssetRequestMode.ImmediateLoad);
-			PreviewSpecialSizes[0, 2] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeLarge", AssetRequestMode.ImmediateLoad);
+			PreviewSpecialSizes[0, 0] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeSmall", AssetRequestMode.AsyncLoad);
+			PreviewSpecialSizes[0, 1] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeMedium", AssetRequestMode.AsyncLoad);
+			PreviewSpecialSizes[0, 2] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeLarge", AssetRequestMode.AsyncLoad);
 			for (int i = 0; i < 7; i++)
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					PreviewSpecialSizes[i + 1, j] = ModContent.Request<Texture2D>($"AltLibrary/Assets/WorldPreviews/Preview_{i}_{j}", AssetRequestMode.ImmediateLoad);
+					PreviewSpecialSizes[i + 1, j] = ModContent.Request<Texture2D>($"AltLibrary/Assets/WorldPreviews/Preview_{i}_{j}", AssetRequestMode.AsyncLoad);
 				}
 			}
 		}
@@ -110,7 +110,7 @@ namespace AltLibrary
 				string path = null;
 				if (ModContent.RequestIfExists(biome.IconLarge, out Asset<Texture2D> asset))
 					path = biome.Mod.Name + "/" + asset.Name;
-				biomeLarge.Add(path != null ? ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad) : null);
+				biomeLarge.Add(path != null ? ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad) : null);
 			}
 			BiomeIconLarge = biomeLarge.ToArray();
 
@@ -121,7 +121,7 @@ namespace AltLibrary
 				string path = "AltLibrary/Assets/Menu/Empty";
 				if (biome.IconSmall != path && ModContent.RequestIfExists(biome.IconSmall, out Asset<Texture2D> asset))
 					path = biome.Mod.Name + "/" + asset.Name;
-				biomeSmall.Add(path != "AltLibrary/Assets/Menu/Empty" ? ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad) : null);
+				biomeSmall.Add(path != "AltLibrary/Assets/Menu/Empty" ? ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad) : null);
 			}
 			BiomeIconSmall = biomeSmall.ToArray();
 
@@ -132,7 +132,7 @@ namespace AltLibrary
 				string path = "AltLibrary/Assets/Loading/Outer Empty";
 				if (biome.OuterTexture != path && ModContent.RequestIfExists(biome.OuterTexture, out Asset<Texture2D> asset))
 					path = biome.Mod.Name + "/" + asset.Name;
-				biomeOuter.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad));
+				biomeOuter.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad));
 			}
 			BiomeOuter = biomeOuter.ToArray();
 
@@ -143,7 +143,7 @@ namespace AltLibrary
 				string path = "AltLibrary/Assets/Loading/Outer Lower Empty";
 				if (biome.LowerTexture != path && ModContent.RequestIfExists(biome.LowerTexture, out Asset<Texture2D> asset))
 					path = biome.Mod.Name + "/" + asset.Name;
-				biomeLower.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.ImmediateLoad));
+				biomeLower.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad));
 			}
 			BiomeLower = biomeLower.ToArray();
 		}
