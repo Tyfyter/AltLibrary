@@ -58,12 +58,11 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchCall<Array>(nameof(Array.Clear))
 				))
 			{
-				AltLibrary.Instance.Logger.Info("2 $ 4");
+				AltLibrary.Instance.Logger.Info($"Could not find {nameof(WorldGen.tileCounts)}.{nameof(Array.Clear)} in {nameof(WorldGen.AddUpAlignmentCounts)}");
 				return;
 			}
 			
-			c.EmitDelegate<Action>(() =>
-			{
+			c.EmitDelegate<Action>(() => {
 				WorldGen.totalGood2 += WorldGen.tileCounts[TileID.HallowHardenedSand] + WorldGen.tileCounts[TileID.HallowSandstone];
 				WorldGen.totalEvil2 += WorldGen.tileCounts[TileID.CorruptHardenedSand] + WorldGen.tileCounts[TileID.CorruptSandstone];
 				WorldGen.totalBlood2 += WorldGen.tileCounts[TileID.CrimsonHardenedSand] + WorldGen.tileCounts[TileID.CrimsonSandstone];

@@ -133,20 +133,9 @@ namespace AltLibrary.Common.Hooks
 		private static void WorldGen_ConvertSkyIslands(ILContext il)
 		{
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdcI4(109)))
-			{
-				AltLibrary.Instance.Logger.Info("p $ 1");
-				return;
-			}
 
-			ALUtils.ReplaceIDs<int>(il,
-				TileID.HallowedGrass,
-				(orig) => WorldBiomeManager.WorldHallowBiome.BiomeGrass ?? orig,
-				(orig) => WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass.HasValue);
-
-			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.Convert))))
-			{
-				AltLibrary.Instance.Logger.Info("p $ 2");
+			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.Convert)))) {
+				AltLibrary.Instance.Logger.Info($"Could not find {nameof(WorldGen.Convert)} call in WorldGen.ConvertSkyIslands");
 				return;
 			}
 			c.Index++;

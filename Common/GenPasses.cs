@@ -1,4 +1,5 @@
 ﻿using AltLibrary.Common.Systems;
+using Humanizer;
 using Mono.Cecil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
@@ -67,17 +68,16 @@ namespace AltLibrary.Common
 			SpreadingGrassInfo = GetGenPassInfo(_vanillaGenPasses, "Spreading Grass");
 
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchCall(typeof(Console).GetMethod(nameof(Console.WriteLine), BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(object[]) }))))
-			{
-				AltLibrary.Instance.Logger.Info("11 $ 1");
+			if (!c.TryGotoNext(i => i.MatchCall(typeof(Utils), nameof(Utils.LogAndChatAndConsoleInfoMessage)))) {
+				AltLibrary.Instance.Logger.Info($"Could not find {nameof(Utils.LogAndChatAndConsoleInfoMessage)} call in {nameof(WorldGen)}.{nameof(WorldGen.GenerateWorld)}");
 				return;
 			}
 
 			c.Index++;
 			c.EmitDelegate<Action>(() =>
 			{
-				Console.WriteLine("World alts: Evil - {0} {1}, Tropic - {2} {3}, Underworld - {4} {5}, Good - {6} {7}", new object[]
-				{
+				Utils.LogAndChatAndConsoleInfoMessage("World alts: Evil - {0} {1}, Tropic - {2} {3}, Underworld - {4} {5}, Good - {6} {7}".FormatWith(
+				[
 					WorldBiomeManager.WorldEvilBiome.Type < 0 ? (WorldBiomeManager.IsCrimson ? -666 : -333) : WorldBiomeManager.WorldEvilBiome.Type,
 					!WorldBiomeManager.IsAnyModdedEvil ? "NONE" : WorldBiomeManager.WorldEvilBiome.DisplayName,
 					WorldBiomeManager.WorldJungle == "" ? -1 : AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldJungle).Type,
@@ -86,7 +86,7 @@ namespace AltLibrary.Common
 					WorldBiomeManager.WorldHell == "" ? "NONE" : WorldBiomeManager.WorldHell,
 					WorldBiomeManager.WorldHallowName == "" ? -1 : WorldBiomeManager.WorldHallowBiome.Type,
 					WorldBiomeManager.WorldHallowName == "" ? "NONE" : WorldBiomeManager.WorldHallowBiome.DisplayName,
-				});
+				]));
 			});
 		}
 		public static void Unload()
