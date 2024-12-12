@@ -62,7 +62,7 @@ namespace AltLibrary.Core.Generation
 
 			List<EvilBiomeGenerationPass> EvilBiomes = new();
 
-			if (Main.drunkWorld)
+			if (WorldGen.drunkWorldGen)
 			{
 				EvilBiomes.Add(VanillaBiome.crimsonPass);
 				EvilBiomes.Add(VanillaBiome.corruptPass);
@@ -279,6 +279,12 @@ namespace AltLibrary.Core.Generation
 					JungleBoundMaxX--;
 					FoundEvilLocation = false;
 				}
+/*#if DEBUG
+				for (int i = 0; i <= tries; i++) {
+					Tile tile = Framing.GetTileSafely(evilBiomePosition, ((int)GenVars.worldSurfaceLow - 50) + i);
+					tile.ResetToType(TileID.LihzahrdBrick);
+				}
+#endif*/
 			}
 			//START GENERATING!
 		}

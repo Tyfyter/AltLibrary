@@ -373,13 +373,14 @@ namespace AltLibrary.Common.Hooks {
 		static void GenEvilOres() {
 			int minY = (int)Main.rockLayer;
 			int maxY = Main.maxTilesY;
+			bool isDrunk = WorldGen.drunkWorldGen || ModSupport.FargoSeeds.BothEvils();
 			double oreMult = 2.25E-05;
 			if (WorldGen.remixWorldGen) {
 				oreMult = 4.25E-05;
-				if (WorldGen.drunkWorldGen) {
+				if (isDrunk) {
 					oreMult += 2.25E-05;
 				}
-			}else if (WorldGen.drunkWorldGen) {
+			}else if (isDrunk) {
 				oreMult += 2.25E-05;
 			}
 			int oreType = WorldBiomeManager.GetWorldEvil(true, false).BiomeOre ?? TileID.Demonite;
@@ -391,7 +392,7 @@ namespace AltLibrary.Common.Hooks {
 				if (biome.BiomeType == BiomeType.Evil && biome.BiomeOre.HasValue) list.Add(biome.BiomeOre.Value);
 			}
 			for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * oreMult); i++) {
-				if (WorldGen.drunkWorldGen) {
+				if (isDrunk) {
 					oreType = WorldGen.genRand.Next(list);
 					if (WorldGen.remixWorldGen && i > Main.maxTilesX * Main.maxTilesY * oreMult * 0.5f) {
 						minY = (int)Main.worldSurface;

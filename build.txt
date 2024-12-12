@@ -1,9 +1,11 @@
 displayName = Alternatives Library
 author = Tyfyter (1.1 and onward), FoxXD_, RQXY // cace
-version = 1.1.0.5
+version = 1.1.0.6
 
 hideCode = false
 hideResources = true
 includeSource = false
 
 homepage = https://github.com/Tyfyter/AltLibrary
+
+weakReferences = FargoSeeds

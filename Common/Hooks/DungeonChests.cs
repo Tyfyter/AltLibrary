@@ -61,7 +61,7 @@ namespace AltLibrary.Common.Hooks
 				biomeChests.Add(chestData);
 			}
 
-			if (WorldGen.drunkWorldGen) {
+			if (WorldGen.drunkWorldGen || ModSupport.FargoSeeds.BothEvils()) {
 				if (altEvil is null) {
 					biomeChests.Add(!WorldGen.crimson ? (TileID.Containers, ItemID.VampireKnives, 25) : (TileID.Containers, ItemID.ScourgeoftheCorruptor, 24));
 				} else {
