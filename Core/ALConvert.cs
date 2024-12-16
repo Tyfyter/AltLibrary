@@ -5,6 +5,8 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,7 +21,10 @@ namespace AltLibrary.Core
 		{
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
 			//IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
-			IL_WorldGen.smCallBack += IL_WorldGen_smCallBack;
+			//IL_WorldGen.smCallBack += IL_WorldGen_smCallBack;
+			if (typeof(WorldGen).GetMethods().FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
+				MonoModHooks.Modify(method, IL_WorldGen_smCallBack_HardmodeGoodRemixTask);
+			}
 		}
 
 		internal static void Unload()
@@ -75,7 +80,7 @@ namespace AltLibrary.Core
 			}
 			return;
 		}
-		private static void IL_WorldGen_smCallBack(ILContext il) {
+		private static void IL_WorldGen_smCallBack_HardmodeGoodRemixTask(ILContext il) {
 			ILCursor c = new(il);
 			int count = 0;
 			while (c.TryGotoNext(MoveType.After,
