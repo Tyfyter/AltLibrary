@@ -41,21 +41,16 @@ namespace AltLibrary.Common.Hooks {
 		{
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void MiningExplosivesBiome_Place(ILContext il)
 		{
 			ILCursor c = new(il);
 
-			if (!c.TryGotoNext(i => i.MatchStloc(0)))
-			{
-				AltLibrary.Instance.Logger.Info("12 $ 1");
+			if (!c.TryGotoNext(MoveType.Before, i => i.MatchStloc(0))) {
+				AltLibrary.Instance.Logger.Info("Missing stloc.0 in MiningExplosivesBiome_Place");
 				return;
 			}
 
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 0);
-			c.EmitDelegate<Func<ushort, ushort>>((type) =>
-			{
+			c.EmitDelegate<Func<ushort, ushort>>((type) => {
 				type = Utils.SelectRandom(WorldGen.genRand, new ushort[]
 				{
 					(ushort)WorldGen.SavedOreTiers.Gold,
@@ -65,29 +60,17 @@ namespace AltLibrary.Common.Hooks {
 				});
 				return type;
 			});
-			c.Emit(OpCodes.Stloc, 0);
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassUnderworld(ILContext il)
 		{
 			ILCursor c = new(il);
 
-			if (!c.TryGotoNext(i => i.MatchCallvirt<GenerationProgress>("set_Message")))
-			{
-				AltLibrary.Instance.Logger.Info("d $ 1");
-				return;
+			if (c.TryGotoNext(MoveType.Before, i => i.MatchCallvirt<GenerationProgress>("set_Message"))) {
+				c.EmitDelegate<Func<string, string>>(message => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.GenPassName != null ? hell.GenPassName.Value : message);
+			} else {
+				AltLibrary.Instance.Logger.Info("Missing Message set in Underworld GenPass");
 			}
-
-			c.Index++;
-			c.Emit(OpCodes.Ldarg, 1);
-			c.EmitDelegate<Action<GenerationProgress>>((progress) =>
-			{
-				if (WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.GenPassName != null)
-				{
-					progress.Message = hell.GenPassName.Value;
-				}
-			});
 
 			ALUtils.ReplaceIDs(il, TileID.Ash,
 				(orig) => (ushort)WorldBiomeManager.GetWorldHell(false).TileConversions[TileID.Stone],
@@ -96,52 +79,35 @@ namespace AltLibrary.Common.Hooks {
 				(orig) => (ushort?)WorldBiomeManager.GetWorldHell(false).BiomeOre ?? orig,
 				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.BiomeOre.HasValue);
 
-			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.AddHellHouses))))
-			{
-				AltLibrary.Instance.Logger.Info("d $ 2");
+			if (!c.TryGotoNext(MoveType.AfterLabel, i => i.MatchCall<WorldGen>(nameof(WorldGen.AddHellHouses)))) {
+				AltLibrary.Instance.Logger.Info("Missing WorldGen.AddHellHouses call in Underworld GenPass");
 				return;
 			}
 
 			ILLabel label = c.DefineLabel();
-			c.EmitDelegate<Func<bool>>(() => WorldBiomeManager.WorldHell == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldHell == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 			c.Index++;
 			c.MarkLabel(label);
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void GenPasses_HookGenPassMicroBiomes(ILContext il)
 		{
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdstr("LivingTreeCount")))
-			{
-				AltLibrary.Instance.Logger.Info("c $ 1");
+			if (!c.TryGotoNext(i => i.MatchLdstr("..Long Minecart Tracks")) || !c.TryGotoPrev(MoveType.AfterLabel, i => i.MatchLdarg(1))) {
+				AltLibrary.Instance.Logger.Info("Missing Long Minecart Tracks micro-biome");
 				return;
 			}
-			if (!c.TryGotoPrev(i => i.MatchCallvirt<GenerationProgress>("Set")))
-			{
-				AltLibrary.Instance.Logger.Info("c $ 2");
+			ILLabel label = c.MarkLabel();
+			c.Index = 0;
+			if (!c.TryGotoNext(i => i.MatchLdstr("..Living Trees")) || !c.TryGotoPrev(MoveType.AfterLabel, i => i.MatchLdarg(1))) {
+				AltLibrary.Instance.Logger.Info("Missing Living Mahogany Trees micro-biome");
 				return;
 			}
-
-			var label = il.DefineLabel();
 
 			c.Index++;
-			c.EmitDelegate<Func<bool>>(() => WorldBiomeManager.WorldJungle == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
 			c.Emit(OpCodes.Brfalse_S, label);
-
-			if (!c.TryGotoNext(i => i.MatchLdstr("..Long Minecart Tracks")))
-			{
-				AltLibrary.Instance.Logger.Info("c $ 3");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdarg(1)))
-			{
-				AltLibrary.Instance.Logger.Info("c $ 4");
-				return;
-			}
-
-			c.MarkLabel(label);
 		}
 
 		//TODO: double check that this code makes sense to begin with
@@ -150,8 +116,7 @@ namespace AltLibrary.Common.Hooks {
 			ILCursor c = new(il);
 			ILLabel endNormalAltar = c.DefineLabel();
 			ILLabel startNormalAltar = c.DefineLabel();
-			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson))))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)))) {
 				AltLibrary.Instance.Logger.Info("e $ 1");
 				return;
 			}
@@ -159,8 +124,7 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Brfalse, startNormalAltar);
 			c.Emit(OpCodes.Ldloc, 3);
 			c.Emit(OpCodes.Ldloc, 4);
-			c.EmitDelegate<Action<int, int>>((int x, int y) =>
-			{
+			c.EmitDelegate<Action<int, int>>((int x, int y) => {
 				if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.AltarTile is int type)
 				{
 					if (!WorldGen.IsTileNearby(x, y, type, 3))
