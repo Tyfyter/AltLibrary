@@ -23,13 +23,11 @@ namespace AltLibrary.Common.Hooks
 			var UIMods = typeof(Main).Assembly.GetType("Terraria.ModLoader.UI.UIModItem");
 			OnInit = UIMods.GetMethod("OnInitialize", BindingFlags.Public | BindingFlags.Instance);
 			MonoModHooks.Modify(OnInit, AnimatedModIcon_ModifyOnInit);
-			NoSecretItems.Load();
 		}
 
 		internal static void Unload()
 		{
 			OnInit = null;
-			NoSecretItems.Unload();
 		}
 
 		private static void AnimatedModIcon_ModifyOnInit(ILContext il)

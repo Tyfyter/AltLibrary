@@ -4,42 +4,31 @@ using MonoMod.Cil;
 using System;
 using Terraria;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class MowingGrassTile
-	{
-		public static void Init()
-		{
-			Terraria.IL_Player.MowGrassTile += Player_MowGrassTile;
+namespace AltLibrary.Common.Hooks {
+	internal class MowingGrassTile {
+		public static void Init() {
+			IL_Player.MowGrassTile += Player_MowGrassTile;
 		}
 
-		public static void Unload()
-		{
+		public static void Unload() {
 		}
 
 		//TODO: double check that this code makes sense to begin with
-		private static void Player_MowGrassTile(ILContext il)
-		{
+		private static void Player_MowGrassTile(ILContext il) {
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdcI4(492)))
-			{
-				AltLibrary.Instance.Logger.Info("l $ 1");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdloc(2)))
-			{
-				AltLibrary.Instance.Logger.Info("l $ 2");
+			if (!c.TryGotoNext(MoveType.AfterLabel,
+				i => i.MatchLdloc(out _),
+				i => i.MatchLdcI4(0),
+				i => i.MatchCgtUn() || i.MatchBgtUn(out _)
+			)) {
+				AltLibrary.Instance.Logger.Info("Could not find num != 0 in Player_MowGrassTile");
 				return;
 			}
 
-			c.Index++;
 			c.Emit(OpCodes.Ldloc, 1);
-			c.EmitDelegate<Func<int, Tile, int>>((mowedTileType, tile) =>
-			{
-				foreach (AltBiome biome in AltLibrary.Biomes)
-				{
-					if (biome.BiomeGrass.HasValue && tile.TileType == biome.BiomeGrass.Value && biome.BiomeMowedGrass.HasValue)
-					{
+			c.EmitDelegate<Func<int, Tile, int>>((mowedTileType, tile) => {
+				foreach (AltBiome biome in AltLibrary.Biomes) {
+					if (biome.BiomeGrass.HasValue && tile.TileType == biome.BiomeGrass.Value && biome.BiomeMowedGrass.HasValue) {
 						return biome.BiomeMowedGrass.Value;
 					}
 				}

@@ -33,10 +33,6 @@ namespace AltLibrary.Common.Hooks {
 			//On_WorldGenRange.GetRandom += On_WorldGenRange_GetRandom;
 		}
 
-		private static int On_WorldGenRange_GetRandom(On_WorldGenRange.orig_GetRandom orig, WorldGenRange self, Terraria.Utilities.UnifiedRandom random) {
-			return random.Next(self.ScaledMinimum, self.ScaledMaximum + 1);
-		}
-
 		public static void Unload()
 		{
 		}
@@ -105,7 +101,6 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 
-			c.Index++;
 			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 		}

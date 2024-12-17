@@ -26,9 +26,8 @@ namespace AltLibrary.Core
 			UnderworldVisual.Init();
 			UIWorldCreationEdits.Init();
 			HardmodeWorldGen.Init();
-			TwinsRules.Init();
 			DungeonChests.Init();
-			SmashAltarInfection.Init();
+			SmashAltarMessage.Init();
 			MowingGrassTile.Init();
 			AltOreInsideBodies.Load();
 			ShimmerDecraft.Load();
@@ -52,9 +51,8 @@ namespace AltLibrary.Core
 			UnderworldVisual.Unload();
 			UIWorldCreationEdits.Unload();
 			HardmodeWorldGen.Unload();
-			TwinsRules.Unload();
 			DungeonChests.Unload();
-			SmashAltarInfection.Unload();
+			SmashAltarMessage.Unload();
 			MowingGrassTile.Unload();
 			AltOreInsideBodies.Unload();
 			ShimmerDecraft.Unload();

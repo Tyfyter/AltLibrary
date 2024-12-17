@@ -8,27 +8,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class TenthAnniversaryFix
-	{
-		public static void Init()
-		{
+namespace AltLibrary.Common.Hooks {
+	internal class TenthAnniversaryFix {
+		public static void Init() {
 			Terraria.IL_WorldGen.ConvertSkyIslands += WorldGen_ConvertSkyIslands;
 			Terraria.IL_WorldGen.IslandHouse += WorldGen_IslandHouse;
 		}
 
-		public static void Unload()
-		{
-		}
+		public static void Unload() { }
 		static int style = 0;
 		//TODO: double check that this code makes sense to begin with
-		private static void WorldGen_IslandHouse(ILContext il)
-		{
+		private static void WorldGen_IslandHouse(ILContext il) {
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(207)))
-			{
-				AltLibrary.Instance.Logger.Info("o $ 1");
+			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(207))) {
+				AltLibrary.Instance.Logger.Info("Could not find fountain placement in WorldGen_IslandHouse");
 				return;
 			}
 			c.Emit(OpCodes.Ldarg, 2);
@@ -49,9 +42,8 @@ namespace AltLibrary.Common.Hooks
 				}
 				return orig;
 			});
-			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdarg(2)))
-			{
-				AltLibrary.Instance.Logger.Info("o $ 2");
+			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdarg(2))) {
+				AltLibrary.Instance.Logger.Info("Missing islandStyle in WorldGen_IslandHouse fountain placement");
 				return;
 			}
 			c.EmitDelegate<Func<int, int>>((orig) => {
@@ -65,14 +57,12 @@ namespace AltLibrary.Common.Hooks
 				}
 				return orig;
 			});
-			if (!c.TryGotoNext(i => i.MatchCall(out _)))
-			{
+			if (!c.TryGotoNext(i => i.MatchCall(out _))) {
 				AltLibrary.Instance.Logger.Info("o $ 3");
 				return;
 			}
 			c.Remove();
-			c.EmitDelegate<Action<int, int, ushort, int>>((x, y, type, style) =>
-			{
+			c.EmitDelegate<Action<int, int, ushort, int>>((x, y, type, style) => {
 				short frameX = 0;
 				short frameY = 0;
 				AltBiome biome = null;
@@ -115,10 +105,8 @@ namespace AltLibrary.Common.Hooks
 			c.MarkLabel(label);*/
 		}
 
-		internal static void UselessCallThatDoesTechnicallyNothing(int x, int y, ushort type, int style = 0, short frameX = 0, short frameY = 0)
-		{
-			if (type != 0)
-			{
+		internal static void UselessCallThatDoesTechnicallyNothing(int x, int y, ushort type, int style = 0, short frameX = 0, short frameY = 0) {
+			if (type != 0) {
 				WorldGen.Place2xX(x, y, type, style);
 				if (type != 207 && Main.tile[x, y].HasTile) {
 					Main.tile[x, y].TileFrameX = frameX;
@@ -129,9 +117,7 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		//TODO: double check that this code makes sense to begin with
-		private static void WorldGen_ConvertSkyIslands(ILContext il)
-		{
+		private static void WorldGen_ConvertSkyIslands(ILContext il) {
 			ILCursor c = new(il);
 
 			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.Convert)))) {
@@ -141,19 +127,14 @@ namespace AltLibrary.Common.Hooks
 			c.Index++;
 			c.Emit(OpCodes.Ldloc, 4);
 			c.Emit(OpCodes.Ldloc, 5);
-			c.EmitDelegate<Action<int, int>>((i, j) =>
-			{
-				if (WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass is int biomeGrass)
-				{
+			c.EmitDelegate<Action<int, int>>((i, j) => {
+				if (WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass is int biomeGrass) {
 					int size = 1;
-					for (int l = i - size; l <= i + size; l++)
-					{
-						for (int k = j - size; k <= j + size; k++)
-						{
+					for (int l = i - size; l <= i + size; l++) {
+						for (int k = j - size; k <= j + size; k++) {
 							Tile tile = Main.tile[l, k];
 							int type = tile.TileType;
-							if (TileID.Sets.Conversion.Grass[type] && type == 109)
-							{
+							if (TileID.Sets.Conversion.Grass[type] && type == TileID.HallowedGrass) {
 								tile = Main.tile[l, k];
 								tile.TileType = (ushort)biomeGrass;
 								WorldGen.SquareTileFrame(l, k, true);
