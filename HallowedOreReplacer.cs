@@ -3,6 +3,7 @@ using AltLibrary.Common.Systems;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AltLibrary
@@ -18,6 +19,15 @@ namespace AltLibrary
 			{
 				AltBiome biome = WorldBiomeManager.WorldHallowBiome;
 				if (biome.BiomeOre != null) item.SetDefaults(biome.MechDropItemType.Value);
+			}
+		}
+		public override bool IsAnglerQuestAvailable(int type) {
+			switch (type) {
+				case ItemID.Cursedfish or ItemID.EaterofPlankton or ItemID.InfectedScabbardfish:
+				case ItemID.Ichorfish or ItemID.BloodyManowar:
+				return !WorldBiomeManager.IsAnyModdedEvil;
+				default:
+				return true;
 			}
 		}
 
