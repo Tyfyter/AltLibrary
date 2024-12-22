@@ -166,40 +166,6 @@ namespace AltLibrary
 							throw new ArgumentException("Arguments cannot be less or more than 5 or 6 in length for Convert");
 						}
 						return "Success";
-#if CONTENT
-					case "addanalystitem":
-						{
-							if (args.Length == 4)
-							{
-								if (args[1] is not int itemid)
-									throw new ArgumentException("Second argument (itemid) is not int!");
-								if (args[2] is not AltBiome biome)
-									throw new ArgumentException("Third argument (biome) is not AltBiome!");
-								if (args[3] is not float percentage)
-									throw new ArgumentException("Fourth argument (percentage) is not float!");
-								AnalystShopLoader.AddAnalystItem(new AnalystItem(itemid, biome, percentage));
-							}
-							else if (args.Length == 3)
-							{
-								if (args[1] is not int itemid)
-									throw new ArgumentException("Second argument (itemid) is not int!");
-								if (args[2] is not Func<bool> availability)
-									throw new ArgumentException("Third argument (availability) is not availability!");
-								AnalystShopLoader.AddAnalystItem(new AnalystItem(itemid, availability));
-							}
-							else if (args.Length == 2)
-							{
-								if (args[1] is not int itemid)
-									throw new ArgumentException("Second argument (itemid) is not int!");
-								AnalystShopLoader.AddAnalystItem(new AnalystItem(itemid));
-							}
-							else
-							{
-								throw new ArgumentException("Arguments cannot be less or more than in range of 2 to 4 in length for Convert");
-							}
-						}
-						return "Success";
-#endif
 					case "getbiomepercentage":
 						{
 							if (args[1] is string type)
@@ -230,23 +196,20 @@ namespace AltLibrary
 							}
 							throw new ArgumentException("Second argument (type) is not string or AltBiome!");
 						}
-					case "addinmimiclist":
-						{
-							if (args.Length == 4 && args[1] is string uniqueid)
-							{
-								if (args[2] is ValueTuple<int, int> mimicType)
-								{
-									if (args[3] is Func<bool> condition)
-									{
-										MimicSummon.MimicPairs.TryAdd(uniqueid, new(mimicType.Item1, mimicType.Item2, condition));
-										return "Success";
-									}
-									throw new ArgumentException("Fourth argument (condition) is not Func<bool>!");
+					case "addinmimiclist": {
+						if (args.Length == 3) {
+							if (args[1] is ValueTuple<int, int> mimicType) {
+								if (args[2] is Func<bool> condition) {
+									if (!MimicSummon.Mimics.TryGetValue(mimicType.Item1, out List<(Func<bool> condition, int npcID)> keyMimics)) MimicSummon.Mimics.TryAdd(mimicType.Item1, keyMimics ??= []);
+									keyMimics.Add((condition, mimicType.Item2));
+									return "Success";
 								}
-								throw new ArgumentException("Third argument (mimicType) is not ValueTuple<int, int>!");
+								throw new ArgumentException("Third argument (condition) is not Func<bool>!");
 							}
-							throw new ArgumentException("Second argument (uniqueid) is not string!");
+							throw new ArgumentException("Second argument (mimicType) is not ValueTuple<int, int>!");
 						}
+						throw new ArgumentException("Incorrect argument count");
+					}
 					default:
 						throw new ArgumentException("Invalid option!");
 				}

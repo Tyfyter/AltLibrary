@@ -3,218 +3,103 @@ using AltLibrary.Common.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class MimicSummon
-	{
-		internal static Dictionary<string, Struct_31213> MimicPairs;
+namespace AltLibrary.Common.Hooks {
+	internal class MimicSummon {
+		public static Dictionary<int, List<(Func<bool> condition, int npcID)>> Mimics { get; private set; }
 
-		public static void Init()
-		{
-			Terraria.On_NPC.BigMimicSummonCheck += NPC_BigMimicSummonCheck;
+		public static void Init() {
+			On_NPC.BigMimicSummonCheck += NPC_BigMimicSummonCheck;
 		}
 
-		public static void SetupContent()
-		{
+		public static void SetupContent() { }
+		private static Func<bool> Condition(AltBiome biome) {
+			if (biome.BiomeType == BiomeType.Evil) return () => WorldBiomeManager.GetWorldEvil(true, true) == biome;
+			return () => WorldBiomeManager.GetWorldHallow(true) == biome;
 		}
 
-		private static bool Cond(AltBiome biome, bool isEvil)
-		{
-			return isEvil ? !WorldGen.crimson && WorldBiomeManager.WorldEvilBiome.Type == biome.Type : (!AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallowBiome.Type == biome.Type);
-		}
-
-		public static void Unload()
-		{
-			MimicPairs = null;
-		}
-
-		internal struct Struct_31213
-		{
-			internal int field_74123;
-			internal int field_30363;
-			internal Func<bool> condition;
-
-			public Struct_31213(int key, int mimic)
-			{
-				field_74123 = key;
-				field_30363 = mimic;
-				condition = () => true;
-			}
-
-			public Struct_31213(int key, int mimic, Func<bool> cond)
-			{
-				field_74123 = key;
-				field_30363 = mimic;
-				condition = cond ?? throw new ArgumentNullException(nameof(cond));
-			}
+		public static void Unload() {
+			Mimics = null;
 		}
 
 		private static bool NPC_BigMimicSummonCheck(On_NPC.orig_BigMimicSummonCheck orig, int x, int y, Player user) {
-			//This is a convenient place for benchmarks since it's easy to trigger on-demand
-			/*
-			bool crim;
-			int crims = 0;
-			var s = new System.Diagnostics.Stopwatch();
-			for (int i = 0; i < 1000; i++) {
-				s.Start();
-				crim = WorldBiomeManager.GetWorldHallow(false) is AltBiome altHallow;
-				s.Stop();
-				crims += crim ? 1 : -1;
-			}
-			AltLibrary.Instance.Logger.Info($"{s.ElapsedTicks}: {crims}");
-			s.Reset();
-			for (int i = 0; i < 1000; i++) {
-				s.Start();
-				crim = ModContent.TryFind(WorldBiomeManager.WorldHallow, out AltBiome altEvil);
-				s.Stop();
-				crims += crim ? 1 : -1;
-			}
-			AltLibrary.Instance.Logger.Info($"{s.ElapsedTicks}: {crims}");
-			//*/
-			if (MimicPairs == null)
-			{
-				MimicPairs = new()
-				{
-					["Corruption"] = new(ItemID.NightKey, NPCID.BigMimicCorruption, () => WorldBiomeManager.IsCorruption),
-					["Crimson"] = new(ItemID.NightKey, NPCID.BigMimicCrimson, () => WorldBiomeManager.IsCrimson),
-					["Hallow"] = new(ItemID.LightKey, NPCID.BigMimicHallow, () => !AltLibrary.Biomes.Any(x => x.MimicKeyType == ItemID.LightKey) || WorldBiomeManager.WorldHallowName == ""),
+			if (Mimics is null) {
+				Mimics = new() {
+					[ItemID.NightKey] = [
+						(() => WorldBiomeManager.IsCorruption, NPCID.BigMimicCorruption),
+						(() => WorldBiomeManager.IsCrimson, NPCID.BigMimicCrimson)
+					],
+					[ItemID.LightKey] = [
+						(() => WorldBiomeManager.WorldHallowName == "", NPCID.BigMimicHallow)
+					]
 				};
-				foreach (AltBiome biome in AltLibrary.Biomes)
-				{
-					if (biome.BiomeType <= BiomeType.Hallow && biome.MimicKeyType.HasValue && biome.MimicType.HasValue)
-					{
+				foreach (AltBiome biome in AltLibrary.Biomes) {
+					if (biome.BiomeType <= BiomeType.Hallow && biome.MimicType.HasValue) {
 						bool isEvil = biome.BiomeType == BiomeType.Evil;
-						MimicPairs.TryAdd($"{biome.FullName}", new(biome.MimicKeyType.Value, biome.MimicType.Value, () => Cond(biome, isEvil)));
+						int keyType = biome.MimicKeyType ?? (isEvil ? ItemID.NightKey : ItemID.LightKey);
+						if (!Mimics.TryGetValue(keyType, out List<(Func<bool> condition, int npcID)> keyMimics)) Mimics.TryAdd(keyType, keyMimics ??= []);
+						keyMimics.Add((Condition(biome), biome.MimicType.Value));
 					}
 				}
 			}
 
-			if (Main.netMode == NetmodeID.MultiplayerClient || !Main.hardMode)
-				return false;
+			if (Main.netMode == NetmodeID.MultiplayerClient || !Main.hardMode) return false;
 
 			int chestIndex = Chest.FindChest(x, y);
-			if (chestIndex < 0)
-				return false;
+			if (chestIndex < 0) return false;
 
-			//TODO: double check that this code makes sense to begin with
-
-			List<AltBiome> EvilHallow = new();
-			AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hallow || x.BiomeType == BiomeType.Evil)
-				.ToList().ForEach(x => EvilHallow.Add(x));
-			Dictionary<string, (int, int)> keys = new()
-			{
-				{ "Terraria/Hallow", (NPCID.BigMimicHallow, 0) },
-				{ "Terraria/Evil", (MimicPairs["Crimson"].condition() ? NPCID.BigMimicCrimson : NPCID.BigMimicCorruption, 0) }
-			};
-			foreach (AltBiome biome in EvilHallow)
-			{
-				keys.TryAdd(biome.FullName, (biome.MimicType.GetValueOrDefault(), 0));
-			}
-
-			int emptiness = 0;
-			int leading = 0;
-			for (int i = 0; i < 40; i++)
-			{
-				ushort chestTile = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileType;
-				int chestFrame = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileFrameX / 36;
-				if (TileID.Sets.BasicChest[chestTile] && (chestTile != 21 || chestFrame < 5 || chestFrame > 6) && Main.chest[chestIndex].item[i] != null && Main.chest[chestIndex].item[i].type > ItemID.None)
-				{
-					foreach (var pair in from KeyValuePair<string, Struct_31213> pair in MimicPairs
-										 where pair.Value.condition() && pair.Key != "Corruption" && pair.Key != "Crimson" && pair.Key != "Hallow"
-											&& Main.chest[chestIndex].item[i].type == pair.Value.field_74123
-										 select pair)
-					{
-						(int, int) p = keys[pair.Key];
-						p.Item2 += Main.chest[chestIndex].item[i].stack;
-						keys[pair.Key] = p;
-						leading = Main.chest[chestIndex].item[i].type;
-					}
-
-					if (Main.chest[chestIndex].item[i].type == ItemID.LightKey)
-					{
-						(int, int) p = keys["Terraria/Hallow"];
-						p.Item2 += Main.chest[chestIndex].item[i].stack;
-						keys["Terraria/Hallow"] = p;
-						leading = Main.chest[chestIndex].item[i].type;
-					}
-					else if (Main.chest[chestIndex].item[i].type == ItemID.NightKey)
-					{
-						(int, int) p = keys["Terraria/Evil"];
-						p.Item2 += Main.chest[chestIndex].item[i].stack;
-						keys["Terraria/Evil"] = p;
-						leading = Main.chest[chestIndex].item[i].type;
-					}
-					else if (leading == 0)
-					{
-						emptiness++;
+			ushort chestTile = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileType;
+			int chestFrame = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileFrameX / 36;
+			if (!TileID.Sets.BasicChest[chestTile] || (chestTile != 21 || chestFrame < 5 || chestFrame > 6)) ;
+			int selectedKey = -1;
+			for (int i = 0; i < 40; i++) {
+				Item item = Main.chest[chestIndex].item[i];
+				if (!(item?.IsAir ?? true)) {
+					if (selectedKey != -1) return false;
+					if (item.stack > 1) return false;
+					if (Mimics.ContainsKey(item.type)) {
+						selectedKey = item.type;
 					}
 				}
 			}
-
-			int total = 0;
-			string index = null;
-			foreach (KeyValuePair<string, (int, int)> p in keys)
-			{
-				total += keys[p.Key].Item2;
+			if (!Mimics.TryGetValue(selectedKey, out List<(Func<bool> condition, int npcID)> mimics)) return false;
+			List<int> options = [];
+			for (int i = 0; i < mimics.Count; i++) {
+				if (mimics[i].condition()) options.Add(mimics[i].npcID);
 			}
-			if (total == 1)
-			{
-				foreach (KeyValuePair<string, Struct_31213> pair in MimicPairs)
-				{
-					if (pair.Value.field_74123 == leading)
-					{
-						index = pair.Key;
-					}
-				}
-			}
-
-			if (emptiness == 0 && index != null)
-			{
-				if (TileID.Sets.BasicChest[Main.tile[x, y].TileType])
-				{
-					if (Main.tile[x, y].TileFrameX % 36 != 0)
-					{
-						x--;
-					}
-					if (Main.tile[x, y].TileFrameY % 36 != 0)
-					{
-						y--;
-					}
+			if (options.Count > 0) {
+				int selectedOption = Main.rand.Next(options);
+				if (selectedOption < NPCID.Count) return orig(x, y, user);
+				if (TileID.Sets.BasicChest[Main.tile[x, y].TileType]) {
+					if (Main.tile[x, y].TileFrameX % 36 != 0) x--;
+					if (Main.tile[x, y].TileFrameY % 36 != 0) y--;
 					int number = Chest.FindChest(x, y);
-					for (int j = 0; j < 40; j++)
-					{
+					for (int j = 0; j < 40; j++) {
 						Main.chest[chestIndex].item[j] = new Item();
 					}
 					Chest.DestroyChest(x, y);
-					for (int k = x; k <= x + 1; k++)
-					{
-						for (int l = y; l <= y + 1; l++)
-						{
-							if (TileID.Sets.BasicChest[Main.tile[k, l].TileType])
-							{
+					for (int k = x; k <= x + 1; k++) {
+						for (int l = y; l <= y + 1; l++) {
+							if (TileID.Sets.BasicChest[Main.tile[k, l].TileType]) {
 								Main.tile[k, l].ClearTile();
 							}
 						}
 					}
 					int number2 = 1;
-					if (Main.tile[x, y].TileType == 467)
-					{
+					if (Main.tile[x, y].TileType == TileID.Containers2) {
 						number2 = 5;
 					}
-					if (Main.tile[x, y].TileType >= 625)
-					{
+					if (Main.tile[x, y].TileType >= TileID.VioletMoss) {
 						number2 = 101;
 					}
 					NetMessage.SendData(MessageID.ChestUpdates, -1, -1, null, number2, x, y, 0f, number, Main.tile[x, y].TileType, 0);
 					NetMessage.SendTileSquare(-1, x, y, 3);
 				}
-				int mimicID = MimicPairs[index].field_30363;
-				int mimicIndex = NPC.NewNPC(user.GetSource_TileInteraction(x, y), x * 16 + 16, y * 16 + 32, mimicID, 0, 0f, 0f, 0f, 0f, 255);
-				Main.npc[mimicIndex].whoAmI = mimicIndex;
+				int mimicIndex = NPC.NewNPC(user.GetSource_TileInteraction(x, y), x * 16 + 16, y * 16 + 32, selectedOption, 0, 0f, 0f, 0f, 0f, 255);
 				NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, mimicIndex, 0f, 0f, 0f, 0, 0, 0);
 				Main.npc[mimicIndex].BigMimicSpawnSmoke();
 			}
