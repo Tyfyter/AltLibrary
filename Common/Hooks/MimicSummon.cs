@@ -63,7 +63,7 @@ namespace AltLibrary.Common.Hooks {
 					if (item.stack > 1) return false;
 					if (Mimics.ContainsKey(item.type)) {
 						selectedKey = item.type;
-					}
+					} else return false;
 				}
 			}
 			if (!Mimics.TryGetValue(selectedKey, out List<(Func<bool> condition, int npcID)> mimics)) return false;
