@@ -37,7 +37,7 @@ namespace AltLibrary.Common.Systems
 								  "EvilOres",
 								  ItemID.CrimtaneOre);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.Magiluminescence },
+								  new int[] { ItemID.Magiluminescence, ItemID.ShadowCandle },
 								  new int[] { ItemID.DemoniteBar },
 								  "EvilBars",
 								  ItemID.CrimtaneBar);
