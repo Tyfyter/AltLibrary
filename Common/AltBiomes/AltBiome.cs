@@ -47,6 +47,10 @@ namespace AltLibrary.Common.AltBiomes
 		/// The message that will appear during world generation. Used by Underworld and Jungle alts. Yet.
 		/// </summary>
 		public LocalizedText GenPassName => this.GetLocalization("GenPassName", PrettyPrintName);
+		/// <summary>
+		/// The descriptor the dryad will use when saying how much of the world is this biome
+		/// </summary>
+		public virtual LocalizedText DryadTextDescriptor => this.GetLocalization("DryadTextDescriptor", PrettyPrintName);
 
 		/// <summary>
 		/// Set this to something if for some reason you need RNG generation types or something
@@ -385,19 +389,15 @@ namespace AltLibrary.Common.AltBiomes
 		{
 			ModTypeLookup<AltBiome>.Register(this);
 			if (this is VanillaBiome) {
-				//Type = -1;
+				AltLibrary.VanillaBiomes.Add(this);
 				return;
 			}
 			AltLibrary.Biomes.Add(this);
 			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);
-			if (BiomeType == BiomeType.Jungle)
-			{
-				if (BiomeGrass != null)
-				{
+			if (BiomeType == BiomeType.Jungle) {
+				if (BiomeGrass != null) {
 					AltLibrary.jungleGrass.Add((int)BiomeGrass);
-				}
-				else
-				{
+				} else {
 					if (BiomeJungleGrass != null) AltLibrary.jungleGrass.Add((int)BiomeJungleGrass);
 				}
 				if (BiomeMowedGrass != null) AltLibrary.jungleGrass.Add((int)BiomeGrass);
@@ -405,8 +405,7 @@ namespace AltLibrary.Common.AltBiomes
 				if (BiomeOre != null) AltLibrary.evilStoppingOres.Add((int)BiomeOre);
 				if (BiomeOreBrick != null) AltLibrary.evilStoppingOres.Add((int)BiomeOreBrick);
 			}
-			if (BiomeType == BiomeType.Hell && AltUnderworldBackgrounds != null && AltUnderworldBackgrounds.Length != TextureAssets.Underworld.Length)
-			{
+			if (BiomeType == BiomeType.Hell && AltUnderworldBackgrounds != null && AltUnderworldBackgrounds.Length != TextureAssets.Underworld.Length) {
 				throw new IndexOutOfRangeException(nameof(AltUnderworldBackgrounds) + " length isn't same as Underworld's! (" + TextureAssets.Underworld.Length + ")");
 			}
 			Type = AltLibrary.Biomes.Count;

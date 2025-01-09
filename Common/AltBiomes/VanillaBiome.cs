@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltBiomes
@@ -46,6 +47,7 @@ namespace AltLibrary.Common.AltBiomes
 	public class CorruptionAltBiome : VanillaBiome {
 		public override EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => corruptPass;
 		public override int ConversionType => 1;
+		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCorrupt");
 		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false) { }
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.DemoniteOre;
@@ -98,6 +100,7 @@ namespace AltLibrary.Common.AltBiomes
 	public class CrimsonAltBiome : VanillaBiome {
 		public override EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => crimsonPass;
 		public override int ConversionType => 1;
+		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCrimson");
 		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true) { }
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.CrimtaneOre;
@@ -144,6 +147,7 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class HallowAltBiome : VanillaBiome {
+		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusHallow");
 		public HallowAltBiome() : base("HallowBiome", BiomeType.Hallow, -3, Color.HotPink) { }
 		public override int ConversionType => 2;
 		public override void SetStaticDefaults() {
@@ -160,7 +164,7 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.HallowHardenedSand, TileID.HardenedSand);
 			AddTileConversion(TileID.HallowSandstone, TileID.Sandstone);
 
-			AddTileConversion(TileID.JungleThorns, -2);
+			AddTileConversion(-2, TileID.JungleThorns);
 
 			AddWallConversions(WallID.HallowedGrassUnsafe, WallID.Sets.Conversion.Grass);
 			AddWallConversions(WallID.PearlstoneBrickUnsafe, WallID.Sets.Conversion.Stone);
@@ -192,7 +196,7 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	public class DeconvertAltBiome : VanillaBiome {
 		public override int ConversionType => 0;
-		public DeconvertAltBiome() : base("Deconvert", BiomeType.None, -1, Color.Green) {}
+		public DeconvertAltBiome() : base("Deconvert", BiomeType.None, int.MinValue, Color.Green) {}
 		public override int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
 			return ALConvertInheritanceData.tileParentageData.Deconversion.TryGetValue(BaseBlock, out int val) ? val : -1;
 		}

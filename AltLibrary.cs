@@ -9,6 +9,7 @@ using AltLibrary.Core.States;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Terraria;
 using Terraria.GameContent.Personalities;
@@ -25,6 +26,7 @@ namespace AltLibrary
 		public static AltLibrary Instance { get => instance; internal set => instance = value; }
 
 		internal static List<AltBiome> Biomes = new();
+		internal static List<AltBiome> VanillaBiomes = [];
 
 		internal static List<AltOre> Ores = new();
 
@@ -226,9 +228,6 @@ namespace AltLibrary
 			UIChanges.Unapply();
 			ExtractinatorOres.Unload();
 			ALReflection.Unload();
-#if CONTENT
-			AnalystShopLoader.Unload();
-#endif
 			AltLibraryConfig.Config = null;
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
@@ -238,6 +237,7 @@ namespace AltLibrary
 				Instance = null;
 			}
 			Biomes = null;
+			VanillaBiomes = null;
 			Ores = null;
 			GlobalBiomes = null;
 			planteraBulbs = null;
@@ -260,7 +260,7 @@ namespace AltLibrary
 
 
 		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
-		public static AltBiome GetAltBiome(int type) => Biomes.Find(x => x.Type == type);
+		public static AltBiome GetAltBiome(int type) => Biomes.FirstOrDefault(x => x.Type == type) ?? VanillaBiomes.FirstOrDefault(x => x.Type == type);
 
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
 

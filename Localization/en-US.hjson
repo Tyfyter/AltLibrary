@@ -192,6 +192,13 @@ Mods: {
 			WorldStatusGoodEvil: "{0} is {1}% good and {2}% evil."
 			WorldStatusGood: "{0} is {1}% good."
 			WorldStatusEvil: "{0} is {1}% evil."
+			WorldStatusCorrupt: corrupt
+			WorldStatusCrimson: crimson
+			WorldStatusHallow: hallow
+			WorldStatusPart: "{0}% {1}"
+			WorldStatusConnection: ", "
+			WorldStatusLastConnection: ", and "
+			WorldStatus: "{0} is {1}."
 		}
 
 		DropRule.Base: Drops in worlds with {0}

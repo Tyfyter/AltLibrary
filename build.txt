@@ -1,5 +1,5 @@
 displayName = Alternatives Library
-author = Tyfyter (1.1 and onward), FoxXD_, RQXY // cace
+author = Tyfyter (1.1 and onward), formerly FoxXD_ and RQXY // cace
 version = 1.1.0.9
 
 hideCode = false

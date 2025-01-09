@@ -194,6 +194,9 @@ namespace AltLibrary.Common.Systems {
 			drunkEvilGen = 0;
 		}
 
+		public static Dictionary<int, int> biomeCountsWorking = [];
+		public static Dictionary<int, int> biomeCountsFinished = [];
+		public static Dictionary<int, byte> biomePercents = [];
 		public override void OnWorldLoad()
 		{
 			AltBiomePercentages = new float[AltLibrary.Biomes.Count + 5];

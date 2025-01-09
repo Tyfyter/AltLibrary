@@ -192,6 +192,13 @@ Mods: {
 			WorldStatusGoodEvil: "{0} - на {1}% святой и {2}% испорчен."
 			WorldStatusGood: "{0} - на {1}% святой."
 			WorldStatusEvil: "{0} - на {1}% испорчен."
+			// WorldStatusCorrupt: corrupt
+			// WorldStatusCrimson: crimson
+			// WorldStatusHallow: hallow
+			// WorldStatusPart: "{0}% {1}"
+			// WorldStatusConnection: ", "
+			// WorldStatusLastConnection: ", and "
+			// WorldStatus: "{0} is {1}."
 		}
 
 		DropRule.Base: Выпадает в мирах с {0}
