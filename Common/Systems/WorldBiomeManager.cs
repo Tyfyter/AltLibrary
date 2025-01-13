@@ -9,7 +9,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using PieData = AltLibrary.Core.UIs.ALUIPieChart.PieData;
 using static Terraria.ModLoader.ModContent;
 using System;
 
@@ -148,9 +147,6 @@ namespace AltLibrary.Common.Systems {
 				}
 			}
 		}
-		internal static int drunkIndex = 0;
-		internal static int drunkGoodGen = -1;
-		internal static int drunkEvilGen = -1;
 		public static int Copper { get; internal set; } = 0;
 		public static int Iron { get; internal set; } = 0;
 		public static int Silver { get; internal set; } = 0;
@@ -169,7 +165,6 @@ namespace AltLibrary.Common.Systems {
 		internal static AltOre[] drunkMythrilCycle;
 		internal static AltOre[] drunkAdamantiteCycle;
 
-		internal static PieData[] AltBiomeData;
 		internal static float[] AltBiomePercentages;
 		public static float PurityBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[0];
 		public static float CorruptionBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[1];
@@ -203,7 +198,6 @@ namespace AltLibrary.Common.Systems {
 
 		public override void OnWorldUnload()
 		{
-			AltBiomeData = null;
 			AltBiomePercentages = null;
 		}
 
@@ -308,12 +302,10 @@ namespace AltLibrary.Common.Systems {
 			Cobalt = 0;
 			Mythril = 0;
 			Adamantite = 0;
-			drunkIndex = 0;
 			hmOreIndex = 0;
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
 			drunkAdamantiteCycle = null;
-			AltBiomeData = null;
 			AltBiomePercentages = null;
 		}
 
@@ -331,7 +323,6 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:Cobalt", Cobalt);
 			tag.Add("AltLibrary:Mythril", Mythril);
 			tag.Add("AltLibrary:Adamantite", Adamantite);
-			tag.Add("AltLibrary:DrunkIndex", drunkIndex);
 			tag.Add("AltLibrary:HardmodeOreIndex", hmOreIndex);
 
 			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
@@ -369,7 +360,6 @@ namespace AltLibrary.Common.Systems {
 			Cobalt = tag.GetInt("AltLibrary:Cobalt");
 			Mythril = tag.GetInt("AltLibrary:Mythril");
 			Adamantite = tag.GetInt("AltLibrary:Adamantite");
-			drunkIndex = tag.GetInt("AltLibrary:DrunkIndex");
 			hmOreIndex = tag.GetInt("AltLibrary:HardmodeOreIndex");
 			DrunkEvil = null;
 
@@ -393,7 +383,6 @@ namespace AltLibrary.Common.Systems {
 			writer.Write(Cobalt);
 			writer.Write(Mythril);
 			writer.Write(Adamantite);
-			writer.Write(drunkIndex);
 			writer.Write(hmOreIndex);
 		}
 
@@ -413,7 +402,6 @@ namespace AltLibrary.Common.Systems {
 			Cobalt = reader.ReadInt32();
 			Mythril = reader.ReadInt32();
 			Adamantite = reader.ReadInt32();
-			drunkIndex = reader.ReadInt32();
 			hmOreIndex = reader.ReadInt32();
 		}
 	}

@@ -1,10 +1,8 @@
 ﻿using AltLibrary.Core;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.AltOres
-{
-	internal sealed class VanillaOre : AltOre
-	{
+namespace AltLibrary.Common.AltOres {
+	internal sealed class VanillaOre : AltOre {
 		public override string Texture => oreTexture;
 		public override string Name => oreTexture;
 
@@ -21,14 +19,7 @@ namespace AltLibrary.Common.AltOres
 			OreType = oreType;
 		}
 
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault(name);
-			// Description.SetDefault(desc);
-		}
-
-		public override bool IsLoadingEnabled(Mod mod)
-		{
+		public override bool IsLoadingEnabled(Mod mod) {
 			return false;
 		}
 	}

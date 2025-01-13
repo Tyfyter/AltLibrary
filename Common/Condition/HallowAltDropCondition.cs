@@ -3,32 +3,22 @@ using AltLibrary.Common.Systems;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Localization;
 
-namespace AltLibrary.Common.Conditions
-{
-	internal class HallowAltDropCondition : IItemDropRuleCondition
-	{
-		public AltBiome BiomeType;
-		public HallowAltDropCondition(AltBiome biomeType)
-		{
-			BiomeType = biomeType;
-		}
+namespace AltLibrary.Common.Conditions {
+	public class HallowAltDropCondition(AltBiome biomeType) : IItemDropRuleCondition {
+		public AltBiome BiomeType = biomeType;
 
-		public bool CanDrop(DropAttemptInfo info)
-		{
-			if (!info.IsInSimulation)
-			{
+		public bool CanDrop(DropAttemptInfo info) {
+			if (!info.IsInSimulation) {
 				return WorldBiomeManager.GetWorldHallow(true) == BiomeType;
 			}
 			return false;
 		}
 
-		public bool CanShowItemDropInUI()
-		{
+		public bool CanShowItemDropInUI() {
 			return WorldBiomeManager.GetWorldHallow(true) == BiomeType;
 		}
 
-		public string GetConditionDescription()
-		{
+		public string GetConditionDescription() {
 			return Language.GetTextValue("Mods.AltLibrary.DropRule.Base", BiomeType.DisplayName.Value);
 		}
 	}

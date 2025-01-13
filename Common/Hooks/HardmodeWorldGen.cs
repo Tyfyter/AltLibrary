@@ -23,6 +23,10 @@ namespace AltLibrary.Common.Hooks {
 
 		public static void Unload() { }
 		public static bool GERunnerRunning { get; private set; }
+		/// <summary>
+		/// In Not the bees! worlds, hive and crispy honey blocks are replaced with 
+		/// </summary>
+		public static bool ShouldConvertBeeTiles { get; private set; }
 		private static void WorldGen_GERunner1(On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good) {
 			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1) {
 				int addX = WorldGen.genRand.Next(300, 400) * WorldBiomeGeneration.WofKilledTimes;
@@ -37,6 +41,18 @@ namespace AltLibrary.Common.Hooks {
 				}
 			}
 			try {
+				ShouldConvertBeeTiles = false;
+				int num = 0;
+				for (int k = 20; k < Main.maxTilesX - 20; k++) {
+					for (int l = 20; l < Main.maxTilesY - 20; l++) {
+						if (Main.tile[k, l].HasTile && Main.tile[k, l].TileType == TileID.Hive) {
+							if (++num > 200000) {
+								ShouldConvertBeeTiles = true;
+								break;
+							}
+						}
+					}
+				}
 				GERunnerRunning = true;
 				AltBiome biome = good ? WorldBiomeManager.GetWorldHallow(false) : WorldBiomeManager.GetWorldEvil(false, true);
 				if (biome is null) {
@@ -46,6 +62,7 @@ namespace AltLibrary.Common.Hooks {
 				}
 			} finally {
 				GERunnerRunning = false;
+				ShouldConvertBeeTiles = false;
 			}
 		}
 		private static void GenPasses_HookGenPassHardmodeWalls(ILContext il) {
@@ -96,6 +113,17 @@ namespace AltLibrary.Common.Hooks {
 						}
 						Tile tile = Main.tile[x, y];
 						int tileConversion = biome.GetAltBlock(tile.TileType, x, y, true);
+						if (tileConversion == -1 && ShouldConvertBeeTiles) {
+							switch (tile.TileType) {
+								case TileID.Hive:
+								tileConversion = biome.GetAltBlock(TileID.Stone, x, y, true);
+								break;
+
+								case TileID.CrispyHoneyBlock:
+								tileConversion = biome.GetAltBlock(TileID.HardenedSand, x, y, true);
+								break;
+							}
+						}
 						if (tileConversion != -1) {
 							if (tileConversion == -2) {
 								tile.HasTile = false;

@@ -1,43 +1,38 @@
-﻿namespace AltLibrary.Common.AltBiomes
-{
-	public class AltMaterialContext
-	{
-		internal int EvilOre = -1;
-		internal int EvilBar = -1;
-		internal int LightBar = -1;
-		internal int UnderworldBar = -1;
-		internal int TropicalBar = -1;
-		internal int MushroomBar = -1;
-		internal int EvilSword = -1;
-		internal int LightSword = -1;
-		internal int UnderworldSword = -1;
-		internal int TropicalSword = -1;
-		internal int CombinationSword = -1;
-		internal int TrueCombinationSword = -1;
-		internal int TrueLightSword = -1;
-		internal int VileInnard = -1;
-		internal int LightResidue = -1;
-		internal int LightInnard = -1;
-		internal int LightComponent = -1;
-		internal int VileComponent = -1;
-		internal int EvilBossDrop = -1;
-		internal int TropicalComponent = -1;
-		internal int EvilHerb = -1;
-		internal int UnderworldHerb = -1;
-		internal int TropicalHerb = -1;
-		internal int UnderworldForge = -1;
+﻿namespace AltLibrary.Common.AltBiomes {
+	public class AltMaterialContext {
+		public int EvilOre { get; set; } = -1;
+		public int EvilBar { get; set; } = -1;
+		public int LightBar { get; set; } = -1;
+		public int UnderworldBar { get; set; } = -1;
+		public int TropicalBar { get; set; } = -1;
+		public int MushroomBar { get; set; } = -1;
+		public int EvilSword { get; set; } = -1;
+		public int LightSword { get; set; } = -1;
+		public int UnderworldSword { get; set; } = -1;
+		public int TropicalSword { get; set; } = -1;
+		public int CombinationSword { get; set; } = -1;
+		public int TrueCombinationSword { get; set; } = -1;
+		public int TrueLightSword { get; set; } = -1;
+		public int VileInnard { get; set; } = -1;
+		public int LightResidue { get; set; } = -1;
+		public int LightInnard { get; set; } = -1;
+		public int LightComponent { get; set; } = -1;
+		public int VileComponent { get; set; } = -1;
+		public int EvilBossDrop { get; set; } = -1;
+		public int TropicalComponent { get; set; } = -1;
+		public int EvilHerb { get; set; } = -1;
+		public int UnderworldHerb { get; set; } = -1;
+		public int TropicalHerb { get; set; } = -1;
+		public int UnderworldForge { get; set; } = -1;
 
-		public AltMaterialContext()
-		{
-		}
+		public AltMaterialContext() { }
 
 		/// <summary>
 		/// For Evil alts.<br/>Vanilla values: Demonite Ore, Crimtane Ore
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetEvilOre(int value)
-		{
+		public AltMaterialContext SetEvilOre(int value) {
 			EvilOre = value;
 			return this;
 		}
@@ -47,8 +42,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetEvilBar(int value)
-		{
+		public AltMaterialContext SetEvilBar(int value) {
 			EvilBar = value;
 			return this;
 		}
@@ -58,8 +52,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetLightBar(int value)
-		{
+		public AltMaterialContext SetLightBar(int value) {
 			LightBar = value;
 			return this;
 		}
@@ -69,8 +62,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetUnderworldBar(int value)
-		{
+		public AltMaterialContext SetUnderworldBar(int value) {
 			UnderworldBar = value;
 			return this;
 		}
@@ -80,8 +72,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTropicalBar(int value)
-		{
+		public AltMaterialContext SetTropicalBar(int value) {
 			TropicalBar = value;
 			return this;
 		}
@@ -91,8 +82,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetMushroomBar(int value)
-		{
+		public AltMaterialContext SetMushroomBar(int value) {
 			MushroomBar = value;
 			return this;
 		}
@@ -102,8 +92,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetEvilSword(int value)
-		{
+		public AltMaterialContext SetEvilSword(int value) {
 			EvilSword = value;
 			return this;
 		}
@@ -113,8 +102,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetLightSword(int value)
-		{
+		public AltMaterialContext SetLightSword(int value) {
 			LightSword = value;
 			return this;
 		}
@@ -124,8 +112,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetUnderworldSword(int value)
-		{
+		public AltMaterialContext SetUnderworldSword(int value) {
 			UnderworldSword = value;
 			return this;
 		}
@@ -135,8 +122,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTropicalSword(int value)
-		{
+		public AltMaterialContext SetTropicalSword(int value) {
 			TropicalSword = value;
 			return this;
 		}
@@ -146,8 +132,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetCombinationSword(int value)
-		{
+		public AltMaterialContext SetCombinationSword(int value) {
 			CombinationSword = value;
 			return this;
 		}
@@ -157,8 +142,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTrueCombinationSword(int value)
-		{
+		public AltMaterialContext SetTrueCombinationSword(int value) {
 			TrueCombinationSword = value;
 			return this;
 		}
@@ -168,8 +152,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTrueLightSword(int value)
-		{
+		public AltMaterialContext SetTrueLightSword(int value) {
 			TrueLightSword = value;
 			return this;
 		}
@@ -179,8 +162,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetVileInnard(int value)
-		{
+		public AltMaterialContext SetVileInnard(int value) {
 			VileInnard = value;
 			return this;
 		}
@@ -190,8 +172,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetLightResidue(int value)
-		{
+		public AltMaterialContext SetLightResidue(int value) {
 			LightResidue = value;
 			return this;
 		}
@@ -201,8 +182,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetLightInnard(int value)
-		{
+		public AltMaterialContext SetLightInnard(int value) {
 			LightInnard = value;
 			return this;
 		}
@@ -212,8 +192,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetLightComponent(int value)
-		{
+		public AltMaterialContext SetLightComponent(int value) {
 			LightComponent = value;
 			return this;
 		}
@@ -223,8 +202,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetVileComponent(int value)
-		{
+		public AltMaterialContext SetVileComponent(int value) {
 			VileComponent = value;
 			return this;
 		}
@@ -234,8 +212,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetEvilBossDrop(int value)
-		{
+		public AltMaterialContext SetEvilBossDrop(int value) {
 			EvilBossDrop = value;
 			return this;
 		}
@@ -245,8 +222,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTropicalComponent(int value)
-		{
+		public AltMaterialContext SetTropicalComponent(int value) {
 			TropicalComponent = value;
 			return this;
 		}
@@ -256,8 +232,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetEvilHerb(int value)
-		{
+		public AltMaterialContext SetEvilHerb(int value) {
 			EvilHerb = value;
 			return this;
 		}
@@ -267,8 +242,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetUnderworldHerb(int value)
-		{
+		public AltMaterialContext SetUnderworldHerb(int value) {
 			UnderworldHerb = value;
 			return this;
 		}
@@ -278,8 +252,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetTropicalHerb(int value)
-		{
+		public AltMaterialContext SetTropicalHerb(int value) {
 			TropicalHerb = value;
 			return this;
 		}
@@ -289,8 +262,7 @@
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public AltMaterialContext SetUnderworldForge(int value)
-		{
+		public AltMaterialContext SetUnderworldForge(int value) {
 			UnderworldForge = value;
 			return this;
 		}

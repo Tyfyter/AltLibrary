@@ -29,14 +29,12 @@ namespace AltLibrary.Core
 			DungeonChests.Init();
 			SmashAltarMessage.Init();
 			MowingGrassTile.Init();
-			AltOreInsideBodies.Load();
 			ShimmerDecraft.Load();
 			MimicSummon.Init();
 			SimpleReplacements.Load();
 			DryadText.Init();
 			JungleHuts.Init(); // TODO: redo?
 			TenthAnniversaryFix.Init();
-			DrunkCrimsonFix.Load();
 			//BackgroundsAlternating.Inject();//TODO: redo
 			EvilBiomeRangeTracker.Init();
 		}
@@ -54,7 +52,6 @@ namespace AltLibrary.Core
 			DungeonChests.Unload();
 			SmashAltarMessage.Unload();
 			MowingGrassTile.Unload();
-			AltOreInsideBodies.Unload();
 			ShimmerDecraft.Unload();
 			MimicSummon.Unload();
 			SimpleReplacements.Unload();
@@ -62,7 +59,6 @@ namespace AltLibrary.Core
 			JungleHuts.Unload();
 			TenthAnniversaryFix.Unload();
 			GenPasses.Unload();
-			DrunkCrimsonFix.Unload();
 			//BackgroundsAlternating.Uninit();
 		}
 

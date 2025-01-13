@@ -4,8 +4,7 @@ using System.Text.RegularExpressions;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.AltOres
-{
+namespace AltLibrary.Common.AltOres {
 	public abstract class AltOre : ModTexturedType, ILocalizedModType {
 		/// <summary>
 		/// The TileID of the ore that will generate in the world.
@@ -58,11 +57,9 @@ namespace AltLibrary.Common.AltOres
 		/// Override if you want custom selection
 		/// </summary>
 		/// <param name="list"></param>
-		public virtual void CustomSelection(List<AltOre> list)
-		{
+		public virtual void CustomSelection(List<AltOre> list) {
 			int index = list.FindLastIndex(x => x.OreType == OreType);
-			if (index != -1)
-			{
+			if (index != -1) {
 				list.Insert(index + 1, this);
 			}
 		}
@@ -70,9 +67,7 @@ namespace AltLibrary.Common.AltOres
 		/// <summary>
 		/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
 		/// </summary>
-		public virtual void OnInitialize()
-		{
-		}
+		public virtual void OnInitialize() { }
 
 		/// <summary>
 		/// If you want custom action on click, then use this. Useful for "RandomX" options and custom tiers.
@@ -81,24 +76,19 @@ namespace AltLibrary.Common.AltOres
 		/// </summary>
 		public virtual bool OnClick() => false;
 
-		public virtual void OnCreating()
-		{
+		public virtual void OnCreating() { }
+
+		public virtual void AddOreOnScreenIcon(List<ALDrawingStruct<AltOre>> list) {
 		}
 
-		public virtual void AddOreOnScreenIcon(List<ALDrawingStruct<AltOre>> list)
-		{
-		}
-
-		protected sealed override void Register()
-		{
+		protected sealed override void Register() {
 			ModTypeLookup<AltOre>.Register(this);
 
 			AltLibrary.Ores.Add(this);
 			Type = AltLibrary.Ores.Count;
 		}
 
-		public sealed override void SetupContent()
-		{
+		public sealed override void SetupContent() {
 			SetStaticDefaults();
 		}
 	}

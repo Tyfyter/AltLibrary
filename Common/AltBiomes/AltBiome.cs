@@ -18,8 +18,7 @@ using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
-namespace AltLibrary.Common.AltBiomes
-{
+namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
 		internal int SpecialValueForWorldUIDoNotTouchElseYouCanBreakStuff { get; set; }
 		internal bool? IsForCrimsonOrCorruptWorldUIFix { get; set; }
@@ -166,7 +165,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// For Evil and Hallow alts. The list of tiles that can spread this biome. 
 		/// This should generally include the biomeGrass, biomeStone, etc blocks, but they can be omitted if you for some reason do not wish for those blocks to spread the biome.
 		/// </summary>
-		public virtual List<int> SpreadingTiles { get; }  = new();
+		public virtual List<int> SpreadingTiles { get; } = [];
 
 		/// <summary>
 		/// For Evil alts, this is the TileID of this biome's equivalent to Demon Altars.
@@ -344,17 +343,19 @@ namespace AltLibrary.Common.AltBiomes
 		/// If your Hallow alt's water fountain is part of a larger tilesheet, specify the y frame of the appropriate active water fountain here.
 		/// </summary>
 		public int? FountainActiveFrameY = null;
+
 		/// <summary>
-		/// If your Hallow alt's water fountain is part of a larger tilesheet, specify the y frame of the appropriate active water fountain here.
+		/// If this is set to true, none of this biome's conversions will be reversed by purification powder or green solution
 		/// </summary>
 		public bool NoDeconversion = false;
-
+		/// <summary>
+		/// For Underworld alts, the generation pass that will be inserted after the vanilla underworld pass
+		/// </summary>
 		public PassLegacy WorldGenPassLegacy = null;
 		public virtual Color AltUnderworldColor => Color.Black;
 		public virtual Asset<Texture2D>[] AltUnderworldBackgrounds => new Asset<Texture2D>[14];
 		public virtual AltMaterialContext MaterialContext => null;
-		public sealed override void SetupContent()
-		{
+		public sealed override void SetupContent() {
 			if (NPCsHate && Biome is not null) ShopHelper_EvilBiomes.DangerousBiomes.Add(Biome);
 			SetStaticDefaults();
 		}
@@ -384,11 +385,10 @@ namespace AltLibrary.Common.AltBiomes
 			return WallConversions.TryGetValue(BaseWall, out int val) ? val : (GERunner && GERunnerWallConversions.TryGetValue(BaseWall, out val) ? val : -1);
 		}
 		public bool HasAllTileConversions(params int[] tiles) {
-			for (int i = 0; i < tiles.Length; i++) if(!TileConversions.ContainsKey(tiles[i])) return false;
+			for (int i = 0; i < tiles.Length; i++) if (!TileConversions.ContainsKey(tiles[i])) return false;
 			return true;
 		}
-		protected sealed override void Register()
-		{
+		protected sealed override void Register() {
 			ModTypeLookup<AltBiome>.Register(this);
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
@@ -403,7 +403,6 @@ namespace AltLibrary.Common.AltBiomes
 					if (BiomeJungleGrass != null) AltLibrary.jungleGrass.Add((int)BiomeJungleGrass);
 				}
 				if (BiomeMowedGrass != null) AltLibrary.jungleGrass.Add((int)BiomeGrass);
-				if (BiomeThornBush != null) AltLibrary.jungleThorns.Add((int)BiomeGrass);
 				if (BiomeOre != null) AltLibrary.evilStoppingOres.Add((int)BiomeOre);
 				if (BiomeOreBrick != null) AltLibrary.evilStoppingOres.Add((int)BiomeOreBrick);
 			}
@@ -417,11 +416,9 @@ namespace AltLibrary.Common.AltBiomes
 		/// Override if you want custom selection
 		/// </summary>
 		/// <param name="list"></param>
-		public virtual void CustomSelection(List<AltBiome> list)
-		{
+		public virtual void CustomSelection(List<AltBiome> list) {
 			int index = list.FindLastIndex(x => x.BiomeType == BiomeType);
-			if (index != -1)
-			{
+			if (index != -1) {
 				list.Insert(index + 1, this);
 			}
 		}
@@ -429,8 +426,7 @@ namespace AltLibrary.Common.AltBiomes
 		/// <summary>
 		/// Override if you want to have random value whenever creating new world. Should be used just for custom tiers.
 		/// </summary>
-		public virtual void OnInitialize()
-		{
+		public virtual void OnInitialize() {
 		}
 
 		/// <summary>
@@ -440,12 +436,10 @@ namespace AltLibrary.Common.AltBiomes
 		/// </summary>
 		public virtual bool OnClick() => false;
 
-		public virtual void OnCreating()
-		{
+		public virtual void OnCreating() {
 		}
 
-		public virtual void AddBiomeOnScreenIcon(List<ALDrawingStruct<AltBiome>> list)
-		{
+		public virtual void AddBiomeOnScreenIcon(List<ALDrawingStruct<AltBiome>> list) {
 		}
 
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
@@ -540,5 +534,7 @@ namespace AltLibrary.Common.AltBiomes
 				return GetType().GetHashCode();
 			}
 		}
+		internal Condition ActiveShopCondition = null;
+		internal Condition InactiveShopCondition = null;
 	}
 }

@@ -8,75 +8,52 @@ using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class DrunkCrimsonFix
-	{
-		public static void Load()
-		{
+namespace AltLibrary.Common.Hooks {
+	internal class DrunkCrimsonFix : ILoadable {
+		public void Load(Mod mod) {
 			Terraria.IL_Main.UpdateTime_StartDay += Main_UpdateTime_StartDay;
 		}
-
-		public static void Unload()
-		{
-		}
-
-		private static void Main_UpdateTime_StartDay(ILContext il)
-		{
+		public void Unload() { }
+		private static void Main_UpdateTime_StartDay(ILContext il) {
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdsfld<Main>(nameof(Main.drunkWorld))))
-			{
-				AltLibrary.Instance.Logger.Info("7 $ 1");
+			Func<Instruction, bool>[] predicates = [
+				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)),
+				i => i.MatchLdcI4(0),
+				i => i.MatchCeq(),
+				i => i.MatchStsfld<WorldGen>(nameof(WorldGen.crimson))
+			];
+			if (!c.TryGotoNext(MoveType.Before, predicates)) {
+				AltLibrary.Instance.Logger.Info("Could not find WorldGen.crimson = !WorldGen.crimson in Main.UpdateTime_StartDay");
 				return;
 			}
-
-			ILLabel skipVanilla = c.DefineLabel();
-
-			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson))))
-			{
-				AltLibrary.Instance.Logger.Info("7 $ 2");
-				return;
-			}
-
-			c.Emit(OpCodes.Br, skipVanilla);
-
-			if (!c.TryGotoNext(i => i.MatchStsfld<WorldGen>(nameof(WorldGen.crimson))))
-			{
-				AltLibrary.Instance.Logger.Info("7 $ 2");
-				return;
-			}
-
-			c.Index++;
-			c.MarkLabel(skipVanilla);
-			c.EmitDelegate<Action>(() =>
-			{
-				List<int> AllBiomes = new() { -333, -666 };
-				AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().ForEach(x => AllBiomes.Add(x.Type));
-				int gotIndex = AllBiomes[WorldBiomeManager.drunkIndex % AllBiomes.Count];
-				if (gotIndex < 0)
-				{
-					WorldBiomeManager.WorldEvilName = "";
+			c.EmitDelegate(() => {
+				AltBiome currentEvil = WorldBiomeManager.GetDrunkEvil();
+				bool foundCurrent = false;
+				bool shouldContinue = true;
+				for (int i = 0; shouldContinue && i < AltLibrary.AllBiomes.Count; i++) {
+					AltBiome otherBiome = AltLibrary.AllBiomes[i];
+					if (otherBiome.BiomeType == BiomeType.Evil) {
+						if (foundCurrent) {
+							WorldBiomeManager.DrunkEvil = otherBiome;
+							shouldContinue = false;
+						} else if (otherBiome == currentEvil) {
+							foundCurrent = true;
+						}
+					}
 				}
-				else
-				{
-					WorldBiomeManager.WorldEvilBiome = AltLibrary.Biomes.Find(x => x.Type == gotIndex);
+				for (int i = 0; shouldContinue && i < AltLibrary.AllBiomes.Count; i++) {
+					AltBiome otherBiome = AltLibrary.AllBiomes[i];
+					if (otherBiome.BiomeType == BiomeType.Evil) {
+						WorldBiomeManager.DrunkEvil = otherBiome;
+						shouldContinue = false;
+					}
 				}
-				WorldGen.crimson = gotIndex == -666;
-				gotIndex = AllBiomes[(WorldBiomeManager.drunkIndex + 1) % AllBiomes.Count];
-				if (gotIndex < 0)
-				{
-					WorldBiomeManager.DrunkEvil = gotIndex == -666 ? ModContent.GetInstance<CrimsonAltBiome>() : ModContent.GetInstance<CorruptionAltBiome>();
-				}
-				else
-				{
-					WorldBiomeManager.DrunkEvil = AltLibrary.Biomes.Find(x => x.Type == gotIndex);
-				}
-				WorldBiomeManager.drunkIndex++;
-				if (WorldBiomeManager.drunkIndex >= AllBiomes.Count)
-				{
-					WorldBiomeManager.drunkIndex = 0;
-				}
+				WorldGen.crimson = WorldBiomeManager.DrunkEvil is CrimsonAltBiome;
 			});
+			ILLabel skipVanilla = c.DefineLabel();
+			c.Emit(OpCodes.Br, skipVanilla);
+			c.Index += predicates.Length;
+			c.MarkLabel(skipVanilla);
 		}
 	}
 }

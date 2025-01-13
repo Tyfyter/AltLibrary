@@ -20,34 +20,11 @@ namespace AltLibrary.Core.Baking {
 			public void Load(Mod mod) {
 				prehmOreData = new();
 				biomeData = new();
-
-				List<int> ores = new()
-				{
-					ItemID.CopperOre,
-					ItemID.TinOre,
-
-					ItemID.IronOre,
-					ItemID.LeadOre,
-
-					ItemID.SilverOre,
-					ItemID.TungstenOre,
-
-					ItemID.GoldOre,
-					ItemID.PlatinumOre
-				};
-
-				foreach (var ore in AltLibrary.Ores.Where(x => x.OreType < OreType.Cobalt)) {
-					ores.Add(TileLoader.GetItemDropFromTypeAndStyle(ore.ore));
-				}
-
-				AltOreInsideBodies.ores = ores;
 			}
 
 			public void Unload() {
 				prehmOreData = null;
 				biomeData = null;
-
-				AltOreInsideBodies.ores = null;
 			}
 		}
 

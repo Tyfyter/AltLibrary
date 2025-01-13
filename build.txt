@@ -8,4 +8,5 @@ includeSource = false
 
 homepage = https://github.com/Tyfyter/AltLibrary
 
+modReferences = PegasusLib
 weakReferences = FargoSeeds

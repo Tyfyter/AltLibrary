@@ -18,14 +18,6 @@ namespace AltLibrary.Common.AltOres
 			OreType = oreType;
 		}
 
-		public override void SetStaticDefaults()
-		{
-			if (display != "")
-			{
-				// DisplayName.SetDefault(display);
-			}
-		}
-
 		public override bool IsLoadingEnabled(Mod mod) => false;
 	}
 }

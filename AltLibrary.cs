@@ -5,7 +5,6 @@ using AltLibrary.Common.Hooks;
 using AltLibrary.Common.Systems;
 using AltLibrary.Core;
 using AltLibrary.Core.Baking;
-using AltLibrary.Core.States;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,8 +19,9 @@ namespace AltLibrary {
 	public partial class AltLibrary : Mod {
 		public static AltLibrary Instance { get; internal set; }
 
-		internal static List<AltBiome> Biomes = [];
-		internal static List<AltBiome> VanillaBiomes = [];
+		internal static List<AltBiome> Biomes { get; private set; } = [];
+		internal static List<AltBiome> VanillaBiomes { get; private set; } = [];
+		internal static MultiList<AltBiome> AllBiomes { get; private set; }
 
 		internal static List<AltOre> Ores = [];
 
@@ -34,7 +34,6 @@ namespace AltLibrary {
 		// Spreading related lists.
 		internal static List<int> planteraBulbs = [TileID.PlanteraBulb];
 		internal static List<int> jungleGrass = [TileID.JungleGrass];
-		internal static List<int> jungleThorns = [TileID.JungleThorns];
 		internal static List<int> evilStoppingOres = [TileID.Chlorophyte, TileID.ChlorophyteBrick];
 
 		internal static Dictionary<int, int> baseTiles = [];
@@ -42,7 +41,9 @@ namespace AltLibrary {
 		internal static int TimeHoveringOnIcon;
 		internal static bool HallowBunnyUnlocked;
 		internal static int ModIconVariation;
-
+		static AltLibrary() {
+			AllBiomes = [VanillaBiomes, Biomes];
+		}
 		public AltLibrary() {
 			ALReflection.Init();
 			Instance = this;
@@ -68,6 +69,7 @@ namespace AltLibrary {
 			MimicSummon.SetupContent();
 			ALConvertInheritanceData.FillData();
 			ModSupport.ModSupport.HookAll();
+			AltOreInsideBodies.Setup();
 
 			//BackgroundsAlternating.Init();//TODO: redo
 		}
@@ -205,11 +207,11 @@ namespace AltLibrary {
 			}
 			Biomes = null;
 			VanillaBiomes = null;
+			AllBiomes = null;
 			Ores = null;
 			GlobalBiomes = null;
 			planteraBulbs = null;
 			jungleGrass = null;
-			jungleThorns = null;
 			evilStoppingOres = null;
 			baseTiles = null;
 			ILHooks.Unload();

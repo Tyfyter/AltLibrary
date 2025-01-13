@@ -8,6 +8,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltBiomes {
+	/// <summary>
+	/// TODO: use <see cref="Terraria.ModLoader.Core.GlobalHookList{GlobalBiome}"/>
+	/// </summary>
 	public abstract class GlobalBiome : ModType {
 		protected sealed override void Register() {
 			ModTypeLookup<GlobalBiome>.Register(this);
@@ -65,7 +68,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// Called after a tile is converted
 		/// </summary>
 		public static void PostConvertTile(AltBiome oldBiome, AltBiome newBiome, int i, int j) {
-			foreach (var global in AltLibrary.GlobalBiomes) {
+			foreach (GlobalBiome global in AltLibrary.GlobalBiomes) {
 				global.PostConvertTile(oldBiome, newBiome, i, j);
 			}
 		}

@@ -347,7 +347,7 @@ namespace AltLibrary.Common.Hooks {
 				TileID.Demonite,
 				TileID.Crimtane
 			};
-			foreach (var biome in AltLibrary.Biomes) {
+			foreach (AltBiome biome in AltLibrary.Biomes) {
 				if (biome.BiomeType == BiomeType.Evil && biome.BiomeOre.HasValue) list.Add(biome.BiomeOre.Value);
 			}
 			for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * oreMult); i++) {

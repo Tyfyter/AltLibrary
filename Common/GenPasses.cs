@@ -12,10 +12,8 @@ using Terraria.GameContent.Generation;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
-namespace AltLibrary.Common
-{
-	internal static class GenPasses
-	{
+namespace AltLibrary.Common {
+	internal static class GenPasses {
 		private static MethodBase ResetInfo;
 		private static MethodBase ShiniesInfo;
 		private static MethodBase UnderworldInfo;
@@ -25,38 +23,32 @@ namespace AltLibrary.Common
 		static FieldInfo _vanillaGenPassesField;
 		static FieldInfo _method;
 
-		internal static event ILContext.Manipulator HookGenPassReset
-		{
+		internal static event ILContext.Manipulator HookGenPassReset {
 			add => MonoModHooks.Modify(ResetInfo, value);
 			remove { }
 		}
 
-		internal static event ILContext.Manipulator HookGenPassShinies
-		{
+		internal static event ILContext.Manipulator HookGenPassShinies {
 			add => MonoModHooks.Modify(ShiniesInfo, value);
 			remove { }
 		}
 
-		internal static event ILContext.Manipulator HookGenPassUnderworld
-		{
+		internal static event ILContext.Manipulator HookGenPassUnderworld {
 			add => MonoModHooks.Modify(UnderworldInfo, value);
 			remove { }
 		}
 
-		internal static event ILContext.Manipulator HookGenPassAltars
-		{
+		internal static event ILContext.Manipulator HookGenPassAltars {
 			add => MonoModHooks.Modify(AltarsInfo, value);
 			remove { }
 		}
 
-		internal static event ILContext.Manipulator HookGenPassMicroBiomes
-		{
+		internal static event ILContext.Manipulator HookGenPassMicroBiomes {
 			add => MonoModHooks.Modify(MicroBiomesInfo, value);
 			remove { }
 		}
 
-		internal static void ILGenerateWorld(ILContext il)
-		{
+		internal static void ILGenerateWorld(ILContext il) {
 			_vanillaGenPassesField = typeof(WorldGen).GetField("_vanillaGenPasses", BindingFlags.NonPublic | BindingFlags.Static);
 			Dictionary<string, GenPass> _vanillaGenPasses = (Dictionary<string, GenPass>)_vanillaGenPassesField.GetValue(null);
 			_method = typeof(PassLegacy).GetField("_method", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -74,8 +66,7 @@ namespace AltLibrary.Common
 			}
 
 			c.Index++;
-			c.EmitDelegate<Action>(() =>
-			{
+			c.EmitDelegate<Action>(() => {
 				Utils.LogAndChatAndConsoleInfoMessage("World alts: Evil - {0} {1}, Tropic - {2} {3}, Underworld - {4} {5}, Good - {6} {7}".FormatWith(
 				[
 					WorldBiomeManager.WorldEvilBiome.Type < 0 ? (WorldBiomeManager.IsCrimson ? -666 : -333) : WorldBiomeManager.WorldEvilBiome.Type,
@@ -89,8 +80,7 @@ namespace AltLibrary.Common
 				]));
 			});
 		}
-		public static void Unload()
-		{
+		public static void Unload() {
 			ResetInfo = null;
 			ShiniesInfo = null;
 			UnderworldInfo = null;
@@ -99,17 +89,23 @@ namespace AltLibrary.Common
 			SpreadingGrassInfo = null;
 		}
 
-		private static MethodBase GetGenPassInfo(Dictionary<string, GenPass> _vanillaGenPasses, string name)
-		{
+		private static MethodInfo GetGenPassInfo(Dictionary<string, GenPass> _vanillaGenPasses, string name) {
 			try {
 				return (_method.GetValue(_vanillaGenPasses[name] as PassLegacy) as Delegate).GetMethodInfo();
-			}
-			catch (KeyNotFoundException e) {
+			} catch (KeyNotFoundException e) {
 				AltLibrary.Instance.Logger.Error($"Could not find GenPass with name {name}", e);
+#if DEBUG
+				throw;
+#else
 				return null;
+#endif
 			} catch (NullReferenceException e) {
 				AltLibrary.Instance.Logger.Error($"GenPass {name} is not a legacy pass", e);
+#if DEBUG
+				throw;
+#else
 				return null;
+#endif
 			}
 		}
 	}

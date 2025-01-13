@@ -1,6 +1,7 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Conditions;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -13,44 +14,45 @@ namespace AltLibrary.Common
 		//TODO: double check that this code makes sense to begin with
 		public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
 		{
-			List<AltBiome> HallowList = new() {
+			List<AltBiome> HallowList = [
 				GetInstance<HallowAltBiome>()
-			};
-			List<AltBiome> HellList = new() {
+			];
+			List<AltBiome> HellList = [
 				GetInstance<UnderworldAltBiome>()
-			};
-			List<AltBiome> JungleList = new() {
+			];
+			List<AltBiome> JungleList = [
 				GetInstance<JungleAltBiome>()
-			};
-			List<AltBiome> EvilList = new() {
+			];
+			List<AltBiome> EvilList = [
 				GetInstance<CorruptionAltBiome>(),
 				GetInstance<CrimsonAltBiome>()
-			};
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				switch (biome.BiomeType)
-				{
+			];
+			foreach (AltBiome biome in AltLibrary.Biomes) {
+				switch (biome.BiomeType) {
 					case BiomeType.Evil:
-						EvilList.Add(biome);
-						break;
+					EvilList.Add(biome);
+					break;
+
 					case BiomeType.Hallow:
-						HallowList.Add(biome);
-						break;
+					HallowList.Add(biome);
+					break;
+
 					case BiomeType.Hell:
-						HellList.Add(biome);
-						break;
+					HellList.Add(biome);
+					break;
+
 					case BiomeType.Jungle:
-						JungleList.Add(biome);
-						break;
+					JungleList.Add(biome);
+					break;
 				}
 			}
 
-			var entries = itemLoot.Get(false);
+			List<IItemDropRule> entries = itemLoot.Get(false);
 			switch (item.type)
 			{
 				case ItemID.EyeOfCthulhuBossBag:
 					{
-						foreach (var entry in entries)
+						foreach (IItemDropRule entry in entries)
 						{
 							if (entry is ItemDropWithConditionRule conditionRule)
 							{
@@ -64,7 +66,7 @@ namespace AltLibrary.Common
 						}
 						foreach (AltBiome biome in EvilList)
 						{
-							var biomeDropRule = new LeadingConditionRule(new EvilAltDropCondition(biome));
+							LeadingConditionRule biomeDropRule = new LeadingConditionRule(new EvilAltDropCondition(biome));
 							if (biome.BiomeOreItem != null) biomeDropRule.OnSuccess(ItemDropRule.Common((int)biome.BiomeOreItem, 1, 30, 90));
 							if (biome.SeedType != null) biomeDropRule.OnSuccess(ItemDropRule.Common((int)biome.SeedType, 1, 1, 3));
 							if (biome.ArrowType != null) biomeDropRule.OnSuccess(ItemDropRule.Common((int)biome.ArrowType, 1, 20, 50));
@@ -73,43 +75,33 @@ namespace AltLibrary.Common
 
 						break;
 					}
-				case ItemID.WallOfFleshBossBag:
-					{
-						foreach (var entry in entries)
-						{
-							if (entry is CommonDrop rule && rule.itemId == ItemID.Pwnhammer)
-							{
-								itemLoot.Remove(rule);
-							}
-						}
-						foreach (AltBiome biome in HallowList)
-						{
-							var biomeDropRule = new LeadingConditionRule(new HallowAltDropCondition(biome));
-							biomeDropRule.OnSuccess(ItemDropRule.Common(biome.HammerType));
-							itemLoot.Add(biomeDropRule);
-						}
-						break;
-					}
-				case ItemID.TwinsBossBag:
+				case ItemID.WallOfFleshBossBag: {
+					itemLoot.ReplaceDrops((CommonDrop commonRule) => {
+						if (commonRule.itemId != ItemID.Pwnhammer) return commonRule;
+						FirstMatchingRule rules = new([
+							..HallowList.Select(biome => ItemDropRule.ByCondition(new HallowAltDropCondition(biome), biome.HammerType)),
+							ItemDropRule.Common(ItemID.Pwnhammer)
+						]);
+						rules.ChainedRules.AddRange(commonRule.ChainedRules);
+						return rules.CopyConditions(commonRule);
+					});
+					break;
+				}
 				case ItemID.DestroyerBossBag:
 				case ItemID.SkeletronPrimeBossBag:
-					{
-						foreach (var entry in entries)
-						{
-							if (entry is ItemDropWithConditionRule conditionRule && conditionRule.itemId == ItemID.HallowedBar)
-							{
-								itemLoot.Remove(entry);
-								break;
-							}
-						}
-						foreach (AltBiome biome in HallowList)
-						{
-							var biomeDropRule = new LeadingConditionRule(new HallowAltDropCondition(biome));
-							biomeDropRule.OnSuccess(ItemDropRule.Common(biome.MechDropItemType ?? ItemID.HallowedBar, 1, 15, 30));
-							itemLoot.Add(biomeDropRule);
-						}
-						break;
-					}
+				case ItemID.TwinsBossBag: {
+					itemLoot.ReplaceDrops((CommonDrop commonRule) => {
+						if (commonRule.itemId != ItemID.HallowedBar) return commonRule;
+						FirstMatchingRule rules = new([
+							..HallowList.Where(biome => biome.MechDropItemType.HasValue)
+								.Select(biome => ItemDropRule.ByCondition(new HallowAltDropCondition(biome), biome.MechDropItemType.Value, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum)),
+							ItemDropRule.Common(ItemID.HallowedBar, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum)
+						]);
+						rules.ChainedRules.AddRange(commonRule.ChainedRules);
+						return rules.CopyConditions(commonRule);
+					});
+					break;
+				}
 			}
 		}
 	}
