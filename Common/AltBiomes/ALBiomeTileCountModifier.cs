@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.AltBiomes
 {
+	[Obsolete("If you're seeing this message because you're porting a mod back to AltLibrary, please tell me what this is for so I can implement it better")]
 	public abstract class ALBiomeTileCountModifier : ModSystem
 	{
 		public enum TileCountType

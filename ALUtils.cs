@@ -87,18 +87,8 @@ namespace AltLibrary
 			c.Emit(OpCodes.Br, skip);
 			c.Index--;
 		}
-		internal static ulong SteamID()
-		{
-			if (AltLibrary._steamId.HasValue)
-				return AltLibrary._steamId.Value;
 
-			var steamId = SteamAPI.IsSteamRunning() && SteamUser.BLoggedOn() ? SteamUser.GetSteamID() : default;
-			AltLibrary._steamId = steamId.IsValid() ? steamId.m_SteamID : 0UL;
-			return AltLibrary._steamId.Value;
-		}
-
-		internal static int AdvancedGetSizeOfCategory(string key, out LocalizedText[] texts)
-		{
+		internal static int AdvancedGetSizeOfCategory(string key, out LocalizedText[] texts) {
 			int num = 0;
 			List<LocalizedText> localizedTexts = new();
 			for (int i = 0; i < 420; i++)
@@ -154,12 +144,10 @@ namespace AltLibrary
 			}
 		}
 
-		public static bool IsWorldValid(UIWorldListItem self)
-		{
+		public static bool IsWorldValid(UIWorldListItem self) {
 			GetWorldData(self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 			bool valid = true;
-			if (tempDict.ContainsKey(path2))
-			{
+			if (tempDict.ContainsKey(path2)) {
 				if (tempDict[path2].worldHallow != "" && !ModContent.TryFind<AltBiome>(tempDict[path2].worldHallow, out _))
 				{
 					valid = false;
@@ -242,16 +230,7 @@ namespace AltLibrary
 			}
 		}
 
-		internal static void RemoveUntilInstruction(ILCursor c, Func<Instruction, bool> predicate)
-		{
-			while (!predicate.Invoke(c.Next))
-			{
-				c.Remove();
-			}
-		}
-
-		internal static void DrawBoxedCursorTooltip(SpriteBatch spriteBatch, string text)
-		{
+		internal static void DrawBoxedCursorTooltip(SpriteBatch spriteBatch, string text) {
 			string[] array = Utils.WordwrapString(text, FontAssets.MouseText.Value, 460,
 				10, out int lineAmount);
 			lineAmount++;
@@ -297,7 +276,5 @@ namespace AltLibrary
 					vector.Y + m * 30, color, Color.Black, Vector2.Zero);
 			}
 		}
-
-		internal static Vector2 ToNearestPixel(this Vector2 vector) => new((int)vector.X, (int)vector.Y);
 	}
 }

@@ -12,55 +12,36 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Terraria;
-using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace AltLibrary
-{
-	public partial class AltLibrary : Mod
-	{
-		private static AltLibrary instance;
+namespace AltLibrary {
+	public partial class AltLibrary : Mod {
+		public static AltLibrary Instance { get; internal set; }
 
-		public static AltLibrary Instance { get => instance; internal set => instance = value; }
-
-		internal static List<AltBiome> Biomes = new();
+		internal static List<AltBiome> Biomes = [];
 		internal static List<AltBiome> VanillaBiomes = [];
 
-		internal static List<AltOre> Ores = new();
+		internal static List<AltOre> Ores = [];
 
-		internal static List<GlobalBiome> GlobalBiomes = new();
+		internal static List<GlobalBiome> GlobalBiomes = [];
 
-		internal static List<ALBiomeTileCountModifier> ALBiomeTileCountModifiers = new();
+		internal static List<ALBiomeTileCountModifier> ALBiomeTileCountModifiers = [];
 
-		internal static List<CustomPreviews> PreviewWorldIcons = new();
+		internal static List<CustomPreviews> PreviewWorldIcons = [];
 
 		// Spreading related lists.
-		internal static List<int> planteraBulbs = new() { TileID.PlanteraBulb };
-		internal static List<int> jungleGrass = new() { TileID.JungleGrass };
-		internal static List<int> jungleThorns = new() { TileID.JungleThorns };
-		internal static List<int> evilStoppingOres = new() { TileID.Chlorophyte, TileID.ChlorophyteBrick };
+		internal static List<int> planteraBulbs = [TileID.PlanteraBulb];
+		internal static List<int> jungleGrass = [TileID.JungleGrass];
+		internal static List<int> jungleThorns = [TileID.JungleThorns];
+		internal static List<int> evilStoppingOres = [TileID.Chlorophyte, TileID.ChlorophyteBrick];
 
-		internal static Dictionary<int, int> baseTiles = new();
+		internal static Dictionary<int, int> baseTiles = [];
 
-		internal static int HallowBunnyCageRecipeIndex;
 		internal static int TimeHoveringOnIcon;
 		internal static bool HallowBunnyUnlocked;
 		internal static int ModIconVariation;
-		internal static ulong? _steamId;
-
-		internal static List<int> ItemsToNowShowUp = new();
-		internal static List<int> NPCsToNowShowUp = new();
-		internal static List<int> TilesToNowShowUp = new();
-
-		/// <summary>
-		///     Gets or sets a value indicating whether the mouse should be checked in an interface or not.
-		/// </summary>
-		public bool CheckPointer { get; set; }
-
-		internal static UserInterface userInterface;
-		internal ALPieChartState pieChartState;
 
 		public AltLibrary() {
 			ALReflection.Init();
@@ -70,28 +51,15 @@ namespace AltLibrary
 		public static void AddInFinishList(AltOre ore) => UIWorldCreationEdits.AddInFinishedCreation.Add(ore);
 		public static void AddInFinishList(AltBiome ore) => UIWorldCreationEdits.AddInFinishedCreation2.Add(ore);
 
-		public override void Load()
-		{
-			ALUtils.SteamID();
+		public override void Load() {
 			ALTextureAssets.Load();
 			ILHooks.OnInitialize();
-			//AnimatedModIcon.Init();
 			ALConvert.Load();
 			GuideHelpText.Load();
 			ExtractinatorOres.Load();
-#if CONTENT
-			AnalystShopLoader.Load();
-#endif
 			ModIconVariation = Main.rand.Next(ALTextureAssets.AnimatedModIcon.Length);
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
-			if (!Main.dedServ)
-			{
-				UIChanges.Apply();
-				pieChartState = new ALPieChartState();
-				userInterface = new UserInterface();
-				userInterface.SetState(pieChartState);
-			}
 		}
 
 		public override void PostSetupContent() {
@@ -225,7 +193,6 @@ namespace AltLibrary
 			ALTextureAssets.Unload();
 			ALConvert.Unload();
 			GuideHelpText.Unload();
-			UIChanges.Unapply();
 			ExtractinatorOres.Unload();
 			ALReflection.Unload();
 			AltLibraryConfig.Config = null;
@@ -248,12 +215,6 @@ namespace AltLibrary
 			ILHooks.Unload();
 			ALHooks.Unload();
 			AltLibraryServerConfig.Config = null;
-			HallowBunnyCageRecipeIndex = 0;
-			pieChartState = null;
-			userInterface = null;
-			ItemsToNowShowUp = null;
-			NPCsToNowShowUp = null;
-			TilesToNowShowUp = null;
 			ALBiomeTileCountModifiers = null;
 			ReflectionDictionary.Unload();
 		}
