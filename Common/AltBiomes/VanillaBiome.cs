@@ -200,7 +200,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
 			return ALConvertInheritanceData.tileParentageData.Deconversion.TryGetValue(BaseBlock, out int val) ? val : -1;
 		}
-		public override int GetAltWall(int BaseWall, int posX, int posY) {
+		public override int GetAltWall(int BaseWall, int posX, int posY, bool GERunner = false) {
 			return ALConvertInheritanceData.wallParentageData.Deconversion.TryGetValue(BaseWall, out int val) ? val : -1;
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using AltLibrary.Common.Hooks;
 using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -372,14 +373,15 @@ namespace AltLibrary.Common.AltBiomes
 
 		/// <summary>
 		/// You have no reason to overwrite this unless you need to make some conversions conditional or random
-		/// For Clentaminator purposes. Gets the alt block of the base block. Override this function and call base(BaseBlock) if you want to add new functionality.
+		/// For Clentaminator purposes. Gets the alt block/wall of the base block/wall. Override this function and call base if you want to add new functionality.
 		/// Returns -1 if it's an invalid conversion
 		/// </summary>
 		public virtual int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
 			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : (GERunner && GERunnerConversion.TryGetValue(BaseBlock, out val) ? val : -1);
 		}
-		public virtual int GetAltWall(int BaseWall, int posX, int posY) {
-			return WallConversions.TryGetValue(BaseWall, out int val) ? val : -1;
+		/// <inheritdoc cref="GetAltBlock(int, int, int, bool)"/>
+		public virtual int GetAltWall(int BaseWall, int posX, int posY, bool GERunner = false) {
+			return WallConversions.TryGetValue(BaseWall, out int val) ? val : (GERunner && GERunnerWallConversions.TryGetValue(BaseWall, out val) ? val : -1);
 		}
 		public bool HasAllTileConversions(params int[] tiles) {
 			for (int i = 0; i < tiles.Length; i++) if(!TileConversions.ContainsKey(tiles[i])) return false;

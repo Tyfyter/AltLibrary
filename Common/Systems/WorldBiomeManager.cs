@@ -190,8 +190,6 @@ namespace AltLibrary.Common.Systems {
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
 			drunkAdamantiteCycle = null;
-			drunkGoodGen = 0;
-			drunkEvilGen = 0;
 		}
 
 		public static Dictionary<int, int> biomeCountsWorking = [];
@@ -335,8 +333,6 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:Adamantite", Adamantite);
 			tag.Add("AltLibrary:DrunkIndex", drunkIndex);
 			tag.Add("AltLibrary:HardmodeOreIndex", hmOreIndex);
-			tag.Add("AltLibrary:DrunkGoodGen", drunkGoodGen);
-			tag.Add("AltLibrary:DrunkEvilGen", drunkEvilGen);
 
 			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
 			AltLibraryConfig.WorldDataValues worldData;
@@ -375,8 +371,6 @@ namespace AltLibrary.Common.Systems {
 			Adamantite = tag.GetInt("AltLibrary:Adamantite");
 			drunkIndex = tag.GetInt("AltLibrary:DrunkIndex");
 			hmOreIndex = tag.GetInt("AltLibrary:HardmodeOreIndex");
-			drunkGoodGen = tag.GetInt("AltLibrary:DrunkGoodGen");
-			drunkEvilGen = tag.GetInt("AltLibrary:DrunkEvilGen");
 			DrunkEvil = null;
 
 			//reset every unload
@@ -401,8 +395,6 @@ namespace AltLibrary.Common.Systems {
 			writer.Write(Adamantite);
 			writer.Write(drunkIndex);
 			writer.Write(hmOreIndex);
-			writer.Write(drunkGoodGen);
-			writer.Write(drunkEvilGen);
 		}
 
 		public override void NetReceive(BinaryReader reader)
@@ -423,8 +415,6 @@ namespace AltLibrary.Common.Systems {
 			Adamantite = reader.ReadInt32();
 			drunkIndex = reader.ReadInt32();
 			hmOreIndex = reader.ReadInt32();
-			drunkGoodGen = reader.ReadInt32();
-			drunkEvilGen = reader.ReadInt32();
 		}
 	}
 }
