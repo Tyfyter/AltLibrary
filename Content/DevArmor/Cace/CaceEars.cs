@@ -2,21 +2,15 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Content.DevArmor.Cace
-{
+namespace AltLibrary.Content.DevArmor.Cace {
+	//TODO: too tall, make layer to fix clipping 
 	[AutoloadEquip(EquipType.Head)]
-	internal class CaceEars : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Cace's Cat Ears");
-			// Tooltip.SetDefault("Great for impersonating mod devs!");
-			Item.ResearchUnlockCount = 1;
+	internal class CaceEars : ModItem {
+		public override void SetStaticDefaults() {
 			ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
 		}
 
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			Item.width = 24;
 			Item.height = 26;
 			Item.value = Item.sellPrice(gold: 5);

@@ -6,8 +6,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Systems
-{
+namespace AltLibrary.Common.Systems {
+	//TODO: works fine, but it's ugly, make it better
 	public class RecipeGroups : ModSystem {
 		public static RecipeGroup EvilOres;
 		public static RecipeGroup EvilBars;
@@ -49,8 +49,7 @@ namespace AltLibrary.Common.Systems
 		public static RecipeGroup SoulsOfEvil;
 
 		public static Dictionary<int, Func<int>> AppropriateMaterials;
-		public override void Unload()
-		{
+		public override void Unload() {
 			EvilOres = null;
 			EvilBars = null;
 			HallowBars = null;
@@ -94,20 +93,18 @@ namespace AltLibrary.Common.Systems
 		}
 
 		public override void AddRecipeGroups() {
-			static int DefaultTo(int? value, int @default){
+			static int DefaultTo(int? value, int @default) {
 				return (value ?? -1) == -1 ? @default : value.Value;
 			}
-			AppropriateMaterials = new();
+			AppropriateMaterials = [];
 			List<AltBiome> Hell = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hell);
 			List<AltBiome> Light = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Hallow);
 			List<AltBiome> Evil = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Evil);
 			List<AltBiome> Tropic = AltLibrary.Biomes.FindAll(x => x.BiomeType == BiomeType.Jungle);
 
-			List<int> array = new() { ItemID.DemoniteOre, ItemID.CrimtaneOre };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.EvilOre != -1)
-				{
+			List<int> array = [ItemID.DemoniteOre, ItemID.CrimtaneOre];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.EvilOre != -1) {
 					array.Add(x.MaterialContext.EvilOre);
 				}
 			});
@@ -117,11 +114,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilOre, ItemID.DemoniteOre);
 			});
 
-			array = new List<int>() { ItemID.DemoniteBar, ItemID.CrimtaneBar };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.EvilBar != -1)
-				{
+			array = [ItemID.DemoniteBar, ItemID.CrimtaneBar];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.EvilBar != -1) {
 					array.Add(x.MaterialContext.EvilBar);
 				}
 			});
@@ -131,11 +126,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBar, ItemID.DemoniteBar);
 			});
 
-			array = new List<int>() { ItemID.HallowedBar };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.LightBar != -1)
-				{
+			array = [ItemID.HallowedBar];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.LightBar != -1) {
 					array.Add(x.MaterialContext.LightBar);
 				}
 			});
@@ -145,11 +138,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightBar, ItemID.HallowedBar);
 			});
 
-			array = new List<int>() { ItemID.HellstoneBar };
-			Hell.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.UnderworldBar != -1)
-				{
+			array = [ItemID.HellstoneBar];
+			Hell.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.UnderworldBar != -1) {
 					array.Add(x.MaterialContext.UnderworldBar);
 				}
 			});
@@ -159,11 +150,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldBar, ItemID.HellstoneBar);
 			});
 
-			array = new List<int>() { ItemID.ChlorophyteBar };
-			Tropic.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TropicalBar != -1)
-				{
+			array = [ItemID.ChlorophyteBar];
+			Tropic.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TropicalBar != -1) {
 					array.Add(x.MaterialContext.TropicalBar);
 				}
 			});
@@ -173,11 +162,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalBar, ItemID.ChlorophyteBar);
 			});
 
-			array = new List<int>() { ItemID.ShroomiteBar };
-			Tropic.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.MushroomBar != -1)
-				{
+			array = [ItemID.ShroomiteBar];
+			Tropic.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.MushroomBar != -1) {
 					array.Add(x.MaterialContext.MushroomBar);
 				}
 			});
@@ -187,11 +174,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.MushroomBar, ItemID.ShroomiteBar);
 			});
 
-			array = new List<int>() { ItemID.LightsBane, ItemID.BloodButcherer };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.EvilSword != -1)
-				{
+			array = [ItemID.LightsBane, ItemID.BloodButcherer];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.EvilSword != -1) {
 					array.Add(x.MaterialContext.EvilSword);
 				}
 			});
@@ -201,11 +186,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilSword, ItemID.LightsBane);
 			});
 
-			array = new List<int>() { ItemID.Excalibur };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.LightSword != -1)
-				{
+			array = [ItemID.Excalibur];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.LightSword != -1) {
 					array.Add(x.MaterialContext.LightSword);
 				}
 			});
@@ -215,11 +198,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightSword, ItemID.Excalibur);
 			});
 
-			array = new List<int>() { ItemID.FieryGreatsword };
-			Hell.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.UnderworldSword != -1)
-				{
+			array = [ItemID.FieryGreatsword];
+			Hell.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.UnderworldSword != -1) {
 					array.Add(x.MaterialContext.UnderworldSword);
 				}
 			});
@@ -229,11 +210,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldSword, ItemID.FieryGreatsword);
 			});
 
-			array = new List<int>() { ItemID.BladeofGrass };
-			Tropic.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TropicalSword != -1)
-				{
+			array = [ItemID.BladeofGrass];
+			Tropic.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TropicalSword != -1) {
 					array.Add(x.MaterialContext.TropicalSword);
 				}
 			});
@@ -243,11 +222,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalSword, ItemID.BladeofGrass);
 			});
 
-			array = new List<int>() { ItemID.NightsEdge };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.CombinationSword != -1)
-				{
+			array = [ItemID.NightsEdge];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.CombinationSword != -1) {
 					array.Add(x.MaterialContext.CombinationSword);
 				}
 			});
@@ -257,11 +234,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.CombinationSword, ItemID.NightsEdge);
 			});
 
-			array = new List<int>() { ItemID.TrueNightsEdge };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TrueCombinationSword != -1)
-				{
+			array = [ItemID.TrueNightsEdge];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TrueCombinationSword != -1) {
 					array.Add(x.MaterialContext.TrueCombinationSword);
 				}
 			});
@@ -271,11 +246,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.TrueCombinationSword, ItemID.TrueNightsEdge);
 			});
 
-			array = new List<int>() { ItemID.TrueExcalibur };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TrueLightSword != -1)
-				{
+			array = [ItemID.TrueExcalibur];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TrueLightSword != -1) {
 					array.Add(x.MaterialContext.TrueLightSword);
 				}
 			});
@@ -285,11 +258,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.TrueLightSword, ItemID.TrueExcalibur);
 			});
 
-			array = new List<int>() { ItemID.RottenChunk, ItemID.Vertebrae };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.VileInnard != -1)
-				{
+			array = [ItemID.RottenChunk, ItemID.Vertebrae];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.VileInnard != -1) {
 					array.Add(x.MaterialContext.VileInnard);
 				}
 			});
@@ -299,11 +270,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileInnard, ItemID.RottenChunk);
 			});
 
-			array = new List<int>() { ItemID.PixieDust };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.LightResidue != -1)
-				{
+			array = [ItemID.PixieDust];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.LightResidue != -1) {
 					array.Add(x.MaterialContext.LightResidue);
 				}
 			});
@@ -313,11 +282,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightResidue, ItemID.PixieDust);
 			});
 
-			array = new List<int>() { ItemID.UnicornHorn };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.LightInnard != -1)
-				{
+			array = [ItemID.UnicornHorn];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.LightInnard != -1) {
 					array.Add(x.MaterialContext.LightInnard);
 				}
 			});
@@ -327,11 +294,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightInnard, ItemID.UnicornHorn);
 			});
 
-			array = new List<int>() { ItemID.CrystalShard };
-			Light.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.LightComponent != -1)
-				{
+			array = [ItemID.CrystalShard];
+			Light.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.LightComponent != -1) {
 					array.Add(x.MaterialContext.LightComponent);
 				}
 			});
@@ -341,11 +306,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHallow(true).MaterialContext?.LightComponent, ItemID.CrystalShard);
 			});
 
-			array = new List<int>() { ItemID.CursedFlame, ItemID.Ichor };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.VileComponent != -1)
-				{
+			array = [ItemID.CursedFlame, ItemID.Ichor];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.VileComponent != -1) {
 					array.Add(x.MaterialContext.VileComponent);
 				}
 			});
@@ -355,11 +318,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.VileComponent, ItemID.CursedFlame);
 			});
 
-			array = new List<int>() { ItemID.ShadowScale, ItemID.TissueSample };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.EvilBossDrop != -1)
-				{
+			array = [ItemID.ShadowScale, ItemID.TissueSample];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.EvilBossDrop != -1) {
 					array.Add(x.MaterialContext.EvilBossDrop);
 				}
 			});
@@ -369,22 +330,18 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilBossDrop, ItemID.ShadowScale);
 			});
 
-			array = new List<int>() { ItemID.JungleSpores };
-			Tropic.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TropicalComponent != -1)
-				{
+			array = [ItemID.JungleSpores];
+			Tropic.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TropicalComponent != -1) {
 					array.Add(x.MaterialContext.TropicalComponent);
 				}
 			});
 			JungleSpores = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.JungleSpores")}", array.ToArray());
 			RecipeGroup.RegisterGroup("JungleSpores", JungleSpores);
 
-			array = new List<int>() { ItemID.Deathweed };
-			Evil.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.EvilHerb != -1)
-				{
+			array = [ItemID.Deathweed];
+			Evil.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.EvilHerb != -1) {
 					array.Add(x.MaterialContext.EvilHerb);
 				}
 			});
@@ -394,11 +351,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldEvil(true, true).MaterialContext?.EvilHerb, ItemID.Deathweed);
 			});
 
-			array = new List<int>() { ItemID.Fireblossom };
-			Hell.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.UnderworldHerb != -1)
-				{
+			array = [ItemID.Fireblossom];
+			Hell.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.UnderworldHerb != -1) {
 					array.Add(x.MaterialContext.UnderworldHerb);
 				}
 			});
@@ -408,11 +363,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldHerb, ItemID.Fireblossom);
 			});
 
-			array = new List<int>() { ItemID.Moonglow };
-			Tropic.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.TropicalHerb != -1)
-				{
+			array = [ItemID.Moonglow];
+			Tropic.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.TropicalHerb != -1) {
 					array.Add(x.MaterialContext.TropicalHerb);
 				}
 			});
@@ -422,11 +375,9 @@ namespace AltLibrary.Common.Systems
 				return DefaultTo(WorldBiomeManager.GetWorldJungle(true).MaterialContext?.TropicalHerb, ItemID.Moonglow);
 			});
 
-			array = new List<int>() { ItemID.Hellforge };
-			Hell.ForEach(x =>
-			{
-				if (x.MaterialContext != null && x.MaterialContext.UnderworldForge != -1)
-				{
+			array = [ItemID.Hellforge];
+			Hell.ForEach(x => {
+				if (x.MaterialContext != null && x.MaterialContext.UnderworldForge != -1) {
 					array.Add(x.MaterialContext.UnderworldForge);
 				}
 			});
@@ -437,67 +388,67 @@ namespace AltLibrary.Common.Systems
 			});
 
 
-			array = new List<int>() { ItemID.CopperBar, ItemID.TinBar };
+			array = [ItemID.CopperBar, ItemID.TinBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Copper).ForEach(x => array.Add(x.bar));
 			CopperBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CopperBars", CopperBars);
 
-			array = new List<int>() { ItemID.IronOre, ItemID.LeadOre };
+			array = [ItemID.IronOre, ItemID.LeadOre];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Iron).ForEach(x => array.Add(x.ore));
 			IronOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronOres")}", array.ToArray());
 			RecipeGroup.RegisterGroup("IronOres", IronOres);
 
-			array = new List<int>() { ItemID.IronBar, ItemID.LeadBar };
+			array = [ItemID.IronBar, ItemID.LeadBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Iron).ForEach(x => array.Add(x.bar));
 			IronBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("IronBars", IronBars);
 
-			array = new List<int>() { ItemID.SilverBar, ItemID.TungstenBar };
+			array = [ItemID.SilverBar, ItemID.TungstenBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Silver).ForEach(x => array.Add(x.bar));
 			SilverBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("SilverBars", SilverBars);
 
-			array = new List<int>() { ItemID.GoldOre, ItemID.PlatinumOre };
+			array = [ItemID.GoldOre, ItemID.PlatinumOre];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold).ForEach(x => array.Add(x.ore));
 			GoldOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldOres")}", array.ToArray());
 			RecipeGroup.RegisterGroup("GoldOres", GoldOres);
 
-			array = new List<int>() { ItemID.GoldBar, ItemID.PlatinumBar };
+			array = [ItemID.GoldBar, ItemID.PlatinumBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold).ForEach(x => array.Add(x.bar));
 			GoldBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("GoldBars", GoldBars);
 
-			array = new List<int>() { ItemID.CobaltBar, ItemID.PalladiumBar };
+			array = [ItemID.CobaltBar, ItemID.PalladiumBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Cobalt).ForEach(x => array.Add(x.bar));
 			CobaltBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CobaltBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CobaltBars", CobaltBars);
 
-			array = new List<int>() { ItemID.MythrilBar, ItemID.OrichalcumBar };
+			array = [ItemID.MythrilBar, ItemID.OrichalcumBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Mythril).ForEach(x => array.Add(x.bar));
 			MythrilBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.MythrilBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("MythrilBars", MythrilBars);
 
-			array = new List<int>() { ItemID.AdamantiteBar, ItemID.TitaniumBar };
+			array = [ItemID.AdamantiteBar, ItemID.TitaniumBar];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Adamantite).ForEach(x => array.Add(x.bar));
 			AdamantiteBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.AdamantiteBars")}", array.ToArray());
 			RecipeGroup.RegisterGroup("AdamantiteBars", AdamantiteBars);
 
-			array = new List<int>() { ItemID.Candle, ItemID.PlatinumCandle };
+			array = [ItemID.Candle, ItemID.PlatinumCandle];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold && x.Candle.HasValue).ForEach(x => array.Add(x.Candle.Value));
 			GoldCandles = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldCandles")}", array.ToArray());
 			RecipeGroup.RegisterGroup("GoldCandles", GoldCandles);
 
-			array = new List<int>() { ItemID.CopperWatch, ItemID.TinWatch };
+			array = [ItemID.CopperWatch, ItemID.TinWatch];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Copper && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
 			CopperWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperWatches")}", array.ToArray());
 			RecipeGroup.RegisterGroup("CopperWatches", CopperWatches);
 
-			array = new List<int>() { ItemID.SilverWatch, ItemID.TungstenWatch };
+			array = [ItemID.SilverWatch, ItemID.TungstenWatch];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Silver && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
 			SilverWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverWatches")}", array.ToArray());
 			RecipeGroup.RegisterGroup("SilverWatches", SilverWatches);
 
-			array = new List<int>() { ItemID.GoldWatch, ItemID.PlatinumWatch };
+			array = [ItemID.GoldWatch, ItemID.PlatinumWatch];
 			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
 			GoldWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldWatches")}", array.ToArray());
 			RecipeGroup.RegisterGroup("GoldWatches", GoldWatches);

@@ -10,14 +10,15 @@ namespace AltLibrary.Common.Hooks {
 			IL_Player.MowGrassTile += Player_MowGrassTile;
 		}
 
-		public static void Unload() {
-		}
+		public static void Unload() { }
 
-		//TODO: double check that this code makes sense to begin with
 		private static void Player_MowGrassTile(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(MoveType.AfterLabel,
-				i => i.MatchLdloc(out _),
+				i => i.MatchLdloc(2),
+				i => i.MatchBrfalse(out _)
+			) && !c.TryGotoNext(MoveType.AfterLabel,
+				i => i.MatchLdloc(2),
 				i => i.MatchLdcI4(0),
 				i => i.MatchCgtUn() || i.MatchBgtUn(out _)
 			)) {
@@ -25,6 +26,7 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 
+			c.Index++;
 			c.Emit(OpCodes.Ldloc, 1);
 			c.EmitDelegate<Func<int, Tile, int>>((mowedTileType, tile) => {
 				foreach (AltBiome biome in AltLibrary.Biomes) {

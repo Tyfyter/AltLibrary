@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks
 {
 	internal class FishingCrateLoot : GlobalItem {
-		//TODO: double check that this code makes sense to begin with
+		//TODO: make alt ores so I can test this
 		public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
 		{
 			if (!ItemID.Sets.IsFishingCrate[item.type])

@@ -1,23 +1,18 @@
 ﻿using System.Reflection;
 
-namespace AltLibrary.Core
-{
-	public class ReflectionAsset<T> where T : MemberInfo
-	{
+namespace AltLibrary.Core {
+	public class ReflectionAsset<T> where T : MemberInfo {
 		private T ownValue;
 
 		private T _name;
 
-		public T Name
-		{
-			get
-			{
+		public T Name {
+			get {
 				T old = _name;
 				_name = null;
 				return old;
 			}
-			private set
-			{
+			private set {
 				ownValue = null;
 				_name = value;
 			}

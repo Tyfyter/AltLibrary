@@ -10,19 +10,18 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks
 {
 	public class ShimmerDecraft {
-		public static Dictionary<int, (int createCount, List<(Func<int> type, int count)> ingredients, bool alchemy)> recipes;
+		public static Dictionary<int, (int createCount, List<(Func<int> type, int count)> ingredients, bool alchemy)> Recipes { get; private set; } = [];
 		internal static void Load() {
-			recipes = new();
 			On_Item.CanShimmer += On_Item_CanShimmer;
 			On_Item.GetShimmered += On_Item_GetShimmered;
 		}
 
 		private static bool On_Item_CanShimmer(On_Item.orig_CanShimmer orig, Item self) {
-			if (recipes.ContainsKey(self.type)) return true;
+			if (Recipes.ContainsKey(self.type)) return true;
 			return orig(self);
 		}
 		private static void On_Item_GetShimmered(On_Item.orig_GetShimmered orig, Item self) {
-			if (recipes.TryGetValue(self.type, out var recipe)) {
+			if (Recipes.TryGetValue(self.type, out (int createCount, List<(Func<int> type, int count)> ingredients, bool alchemy) recipe)) {
 				int decraftAmount = self.stack / recipe.createCount;
 				bool spread = recipe.ingredients.Count > 1;
 				int num = 0;
@@ -78,8 +77,8 @@ namespace AltLibrary.Common.Hooks
 				if (Main.netMode == NetmodeID.SinglePlayer) {
 					Item.ShimmerEffect(self.Center);
 				} else {
-					NetMessage.SendData(146, -1, -1, null, 0, (int)self.Center.X, (int)self.Center.Y);
-					NetMessage.SendData(145, -1, -1, null, self.whoAmI, 1f);
+					NetMessage.SendData(MessageID.ShimmerActions, -1, -1, null, 0, (int)self.Center.X, (int)self.Center.Y);
+					NetMessage.SendData(MessageID.SyncItemsWithShimmer, -1, -1, null, self.whoAmI, 1f);
 				}
 				AchievementsHelper.NotifyProgressionEvent(27);
 			} else {
@@ -88,7 +87,7 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		internal static void Unload() {
-			recipes = null;
+			Recipes = null;
 		}
 	}
 }

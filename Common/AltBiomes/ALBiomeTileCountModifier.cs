@@ -5,8 +5,8 @@ using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.AltBiomes
-{
+namespace AltLibrary.Common.AltBiomes {
+	//TODO: figure out what this was for
 	[Obsolete("If you're seeing this message because you're porting a mod back to AltLibrary, please tell me what this is for so I can implement it better")]
 	public abstract class ALBiomeTileCountModifier : ModSystem
 	{
@@ -98,7 +98,6 @@ namespace AltLibrary.Common.AltBiomes
 			HolyTileCountOriginal = metrics.HolyTileCount;
 			EvilTileCountOriginal = metrics.EvilTileCount + metrics.BloodTileCount;
 		}
-		//TODO: double check that this code makes sense to begin with
 		internal static void ExportTileCounts(SceneMetrics metrics, int[] tileCounts)
 		{
 			int TotalHolyTiles = 0;

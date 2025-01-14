@@ -2,21 +2,14 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Content.DevArmor.Fox
-{
+namespace AltLibrary.Content.DevArmor.Fox {
 	[AutoloadEquip(EquipType.Head)]
-	internal class FoxMask : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Fox's Face Mask");
-			// Tooltip.SetDefault("Great for impersonating mod devs!");
-			Item.ResearchUnlockCount = 1;
+	internal class FoxMask : ModItem {
+		public override void SetStaticDefaults() {
 			ArmorIDs.Head.Sets.DrawFullHair[Item.headSlot] = true;
 		}
 
-		public override void SetDefaults()
-		{
+		public override void SetDefaults() {
 			Item.width = 24;
 			Item.height = 14;
 			Item.value = Item.sellPrice(gold: 5);

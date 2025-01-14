@@ -11,13 +11,13 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks {
 	internal class TenthAnniversaryFix {
 		public static void Init() {
-			Terraria.IL_WorldGen.ConvertSkyIslands += WorldGen_ConvertSkyIslands;
-			Terraria.IL_WorldGen.IslandHouse += WorldGen_IslandHouse;
+			IL_WorldGen.ConvertSkyIslands += WorldGen_ConvertSkyIslands;
+			IL_WorldGen.IslandHouse += WorldGen_IslandHouse;
 		}
 
 		public static void Unload() { }
 		static int style = 0;
-		//TODO: double check that this code makes sense to begin with
+		//TODO: I can see how this is supposed to work, and as far as I can tell it should do so consistently, but there has to be a better way to do it
 		private static void WorldGen_IslandHouse(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(207))) {
@@ -91,18 +91,8 @@ namespace AltLibrary.Common.Hooks {
 				AltLibrary.Instance.Logger.Info("o $ 5");
 				return;
 			}
-			//ILLabel label = il.DefineLabel();
 			c.Index -= 2;
 			c.RemoveRange(3);
-			/*c.EmitDelegate(() => {
-				WorldGen::SwitchFountain(int32, int32)
-			});
-			c.EmitDelegate<Func<string>>(() => (WorldGen.tenthAnniversaryWorldGen ? WorldBiomeManager.WorldHallow : ""));
-			c.Emit(OpCodes.Ldstr, "");
-			c.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
-			c.Emit(OpCodes.Brfalse_S, label);
-			c.Emit(OpCodes.Call, switchFountains);
-			c.MarkLabel(label);*/
 		}
 
 		internal static void UselessCallThatDoesTechnicallyNothing(int x, int y, ushort type, int style = 0, short frameX = 0, short frameY = 0) {

@@ -9,12 +9,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class DryadText
-	{
-		public static void Init()
-		{
+namespace AltLibrary.Common.Hooks {
+	internal class DryadText {
+		public static void Init() {
 			On_Lang.GetDryadWorldStatusDialog += Lang_GetDryadWorldStatusDialog;
 			IL_WorldGen.AddUpAlignmentCounts += WorldGen_AddUpAlignmentCounts;
 			On_WorldGen.CountTiles += On_WorldGen_CountTiles;
@@ -91,23 +88,21 @@ namespace AltLibrary.Common.Hooks
 			return builder.ToString();
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void WorldGen_AddUpAlignmentCounts(ILContext il) {
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(MoveType.Before, 
+			if (!c.TryGotoNext(MoveType.Before,
 				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.tileCounts)),
 				i => i.MatchLdcI4(0),
 				i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.tileCounts)),
 				i => i.MatchLdlen(),
 				i => i.MatchConvI4(),
 				i => i.MatchCall<Array>(nameof(Array.Clear))
-				))
-			{
+				)) {
 				AltLibrary.Instance.Logger.Info($"Could not find {nameof(WorldGen.tileCounts)}.{nameof(Array.Clear)} in {nameof(WorldGen.AddUpAlignmentCounts)}");
 				return;
 			}
-			
-			c.EmitDelegate<Action>(() => {
+
+			c.EmitDelegate(() => {
 				for (int i = 0; i < WorldGen.tileCounts.Length; i++) {
 					if (WorldGen.tileCounts[i] > 0 && ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(i, out (int baseTile, AltBiome fromBiome) parent) && parent.fromBiome is not null) {
 						if (parent.fromBiome is DeconvertAltBiome) continue;
@@ -116,7 +111,6 @@ namespace AltLibrary.Common.Hooks
 						WorldGen.totalSolid2 += WorldGen.tileCounts[i];
 					}
 				}
-				//WorldGen.totalSolid2 += hallow + evil;
 			});
 		}
 		public static void Unload() { }

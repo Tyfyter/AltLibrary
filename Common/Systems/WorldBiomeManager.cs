@@ -13,7 +13,6 @@ using static Terraria.ModLoader.ModContent;
 using System;
 
 namespace AltLibrary.Common.Systems {
-	//TODO: double check that this code makes sense to begin with
 	public class WorldBiomeManager : ModSystem {
 		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = false) {
 			if (Main.drunkWorld && includeDrunk) {
@@ -121,7 +120,7 @@ namespace AltLibrary.Common.Systems {
 		public static AltBiome DrunkEvil {
 			get {
 				if (drunkEvil is not null) return drunkEvil;
-				if(!TryFind(drunkEvilName, out drunkEvil)) {
+				if (!TryFind(drunkEvilName, out drunkEvil)) {
 					switch (drunkEvilName) {
 						case "Terraria/Crimson":
 						drunkEvil = GetInstance<CrimsonAltBiome>();
@@ -164,24 +163,7 @@ namespace AltLibrary.Common.Systems {
 		internal static AltOre[] drunkCobaltCycle;
 		internal static AltOre[] drunkMythrilCycle;
 		internal static AltOre[] drunkAdamantiteCycle;
-
-		internal static float[] AltBiomePercentages;
-		public static float PurityBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[0];
-		public static float CorruptionBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[1];
-		public static float CrimsonBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[2];
-		public static float HallowBiomePercentage => AltBiomePercentages == null ? 0f : AltBiomePercentages[3];
-		public static float[] GetBiomePercentages
-		{
-			get
-			{
-				List<float> list = AltBiomePercentages?.ToList();
-				list?.RemoveRange(0, 4);
-				return list?.ToArray();
-			}
-		}
-
-		public override void Load()
-		{
+		public override void Load() {
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
 			drunkAdamantiteCycle = null;
@@ -190,104 +172,16 @@ namespace AltLibrary.Common.Systems {
 		public static Dictionary<int, int> biomeCountsWorking = [];
 		public static Dictionary<int, int> biomeCountsFinished = [];
 		public static Dictionary<int, byte> biomePercents = [];
-		public override void OnWorldLoad()
-		{
-			AltBiomePercentages = new float[AltLibrary.Biomes.Count + 5];
-			AnalysisTiles(false);
+		public override void OnWorldLoad() {
+			biomePercents.Clear();
 		}
 
-		public override void OnWorldUnload()
-		{
-			AltBiomePercentages = null;
+		public override void OnWorldUnload() {
+			biomePercents.Clear();
 		}
 
-		internal static void AnalysisTiles(bool includeText = true)
-		{
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-			ThreadPool.QueueUserWorkItem(new WaitCallback(SmAtcb), 1);
-			if (includeText)
-			{
-				ThreadPool.QueueUserWorkItem(new WaitCallback(text), 1);
-			}
-
-			static void text(object threadContext) => Main.npcChatText = Language.GetTextValue("Mods.AltLibrary.AnalysisDone", Main.LocalPlayer.name, Main.worldName) + AnalysisDoneSpaces;
-		}
-		private static void SmAtcb(object threadContext)
-		{
-			int solid = 0;
-			int purity = 0;
-			int hallow = 0;
-			int evil = 0;
-			int crimson = 0;
-			int[] mods = new int[AltLibrary.Biomes.Count];
-			HashSet<int>[] modTiles = new HashSet<int>[AltLibrary.Biomes.Count];
-			List<int> extraPureSolid = new();
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				modTiles[biome.Type - 1] = new HashSet<int>();
-				if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow) {
-					foreach (KeyValuePair<int, int> pair in biome.TileConversions) {
-						extraPureSolid.Add(pair.Key);
-						modTiles[biome.Type - 1].Add(pair.Value);
-					}
-				}
-			}
-			for (int x = 0; x < Main.maxTilesX; x++)
-			{
-				for (int y = 0; y < Main.maxTilesY; y++)
-				{
-					Tile tile = Framing.GetTileSafely(x, y);
-					if (tile.HasTile)
-					{
-						int type = tile.TileType;
-						if (type == TileID.HallowedGrass || type == TileID.HallowedIce || type == TileID.Pearlsand || type == TileID.Pearlstone || type == TileID.HallowSandstone || type == TileID.HallowHardenedSand || type == TileID.GolfGrassHallowed)
-						{
-							hallow++;
-							solid++;
-						}
-						if (type == TileID.CorruptGrass || type == TileID.CorruptIce || type == TileID.Ebonsand || type == TileID.Ebonstone || type == TileID.CorruptSandstone || type == TileID.CorruptHardenedSand)
-						{
-							evil++;
-							solid++;
-						}
-						if (type == TileID.CrimsonGrass || type == TileID.FleshIce || type == TileID.Crimsand || type == TileID.Crimstone || type == TileID.CrimsonSandstone || type == TileID.CrimsonHardenedSand)
-						{
-							crimson++;
-							solid++;
-						}
-						if (type == TileID.Grass || type == TileID.GolfGrass || type == TileID.Stone || type == TileID.JungleGrass || type == TileID.Sand || type == TileID.IceBlock || type == TileID.Sandstone || type == TileID.HardenedSand || extraPureSolid.Contains(type))
-						{
-							purity++;
-							solid++;
-						}
-						for (int i = 0; i < mods.Length; i++)
-						{
-							if (modTiles[i].Contains(type))
-							{
-								mods[i]++;
-								solid++;
-							}
-						}
-					}
-				}
-			}
-
-			AltBiomePercentages[0] = purity * 100f / (solid * 100f);
-			AltBiomePercentages[1] = evil * 100f / (solid * 100f);
-			AltBiomePercentages[2] = crimson * 100f / (solid * 100f);
-			AltBiomePercentages[3] = hallow * 100f / (solid * 100f);
-			for (int i = 0; i < mods.Length; i++)
-			{
-				AltBiomePercentages[i + 4] = mods[i] * 100f / (solid * 100f);
-			}
-		}
-		internal const string AnalysisDoneSpaces = "\n\n\n\n\n\n\n\n\n\n";
-
-		public override void Unload()
-		{
-			//TODO: uncomment
-			//worldEvilBiome = null;
+		public override void Unload() {
+			worldEvilBiome = null;
 			worldEvilName = null;
 			worldHallowBiome = null;
 			worldHallowName = null;
@@ -306,11 +200,9 @@ namespace AltLibrary.Common.Systems {
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
 			drunkAdamantiteCycle = null;
-			AltBiomePercentages = null;
 		}
 
-		public override void SaveWorldData(TagCompound tag)
-		{
+		public override void SaveWorldData(TagCompound tag) {
 			tag.Add("AltLibrary:WorldEvil", WorldEvilName);
 			tag.Add("AltLibrary:WorldHallow", WorldHallowName);
 			tag.Add("AltLibrary:WorldHell", WorldHell);
@@ -346,8 +238,7 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("WorldJungle", WorldJungle);
 			tag.Add("DrunkEvil", drunkEvilName);
 		}
-		public override void LoadWorldData(TagCompound tag)
-		{
+		public override void LoadWorldData(TagCompound tag) {
 			WorldEvilName = tag.GetString("AltLibrary:WorldEvil");
 			WorldHallowName = tag.GetString("AltLibrary:WorldHallow");
 			WorldHell = tag.GetString("AltLibrary:WorldHell");
@@ -369,8 +260,7 @@ namespace AltLibrary.Common.Systems {
 			drunkAdamantiteCycle = null;
 		}
 
-		public override void NetSend(BinaryWriter writer)
-		{
+		public override void NetSend(BinaryWriter writer) {
 			writer.Write(WorldEvilName);
 			writer.Write(WorldHallowName);
 			writer.Write(WorldHell);
@@ -386,8 +276,7 @@ namespace AltLibrary.Common.Systems {
 			writer.Write(hmOreIndex);
 		}
 
-		public override void NetReceive(BinaryReader reader)
-		{
+		public override void NetReceive(BinaryReader reader) {
 			WorldEvilName = reader.ReadString();
 			WorldHallowName = reader.ReadString();
 			WorldHell = reader.ReadString();

@@ -15,11 +15,9 @@ using Terraria.Utilities;
 using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.Hooks {
-	internal static class EvenMoreWorldGen
-	{
-		public static void Init()
-		{
-			Terraria.IL_WorldGen.GenerateWorld += GenPasses.ILGenerateWorld;
+	internal static class EvenMoreWorldGen {
+		public static void Init() {
+			IL_WorldGen.GenerateWorld += GenPasses.ILGenerateWorld;
 			GenPasses.HookGenPassReset += GenPasses_HookGenPassReset;
 			GenPasses.HookGenPassShinies += GenPasses_HookGenPassShinies;
 			GenPasses.HookGenPassUnderworld += GenPasses_HookGenPassUnderworld;
@@ -33,12 +31,9 @@ namespace AltLibrary.Common.Hooks {
 			//On_WorldGenRange.GetRandom += On_WorldGenRange_GetRandom;
 		}
 
-		public static void Unload()
-		{
-		}
+		public static void Unload() { }
 
-		private static void MiningExplosivesBiome_Place(ILContext il)
-		{
+		private static void MiningExplosivesBiome_Place(ILContext il) {
 			ILCursor c = new(il);
 
 			if (!c.TryGotoNext(MoveType.Before, i => i.MatchStloc(0))) {
@@ -58,8 +53,7 @@ namespace AltLibrary.Common.Hooks {
 			});
 		}
 
-		private static void GenPasses_HookGenPassUnderworld(ILContext il)
-		{
+		private static void GenPasses_HookGenPassUnderworld(ILContext il) {
 			ILCursor c = new(il);
 
 			if (c.TryGotoNext(MoveType.Before, i => i.MatchCallvirt<GenerationProgress>("set_Message"))) {
@@ -87,8 +81,7 @@ namespace AltLibrary.Common.Hooks {
 			c.MarkLabel(label);
 		}
 
-		private static void GenPasses_HookGenPassMicroBiomes(ILContext il)
-		{
+		private static void GenPasses_HookGenPassMicroBiomes(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchLdstr("..Long Minecart Tracks")) || !c.TryGotoPrev(MoveType.AfterLabel, i => i.MatchLdarg(1))) {
 				AltLibrary.Instance.Logger.Info("Missing Long Minecart Tracks micro-biome");
@@ -105,120 +98,117 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Brfalse_S, label);
 		}
 
-		//TODO: double check that this code makes sense to begin with
-		public static void ILGenPassAltars(ILContext il)
-		{
+		public static void ILGenPassAltars(ILContext il) {
 			ILCursor c = new(il);
-			ILLabel endNormalAltar = c.DefineLabel();
 			ILLabel startNormalAltar = c.DefineLabel();
 			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)))) {
 				AltLibrary.Instance.Logger.Info("e $ 1");
 				return;
 			}
-			c.EmitDelegate<Func<bool>>(() => WorldGen.crimson || WorldBiomeManager.WorldEvilName != "");
+			ILLabel skipNormalAltar = default;
+			int x = -1;
+			int y = -1;
+			int distance = -1;
+			c.GotoNext(MoveType.AfterLabel,
+				i => i.MatchLdloc(out x),
+				i => i.MatchLdloc(out y),
+				i => i.MatchLdcI4(TileID.DemonAltar),
+				i => i.MatchLdcI4(out distance),
+				i => i.MatchCall<WorldGen>(nameof(WorldGen.IsTileNearby)),
+				i => i.MatchBrtrue(out skipNormalAltar)
+			);
+			c.EmitDelegate(() => WorldGen.crimson || WorldBiomeManager.WorldEvilName != "");
 			c.Emit(OpCodes.Brfalse, startNormalAltar);
-			c.Emit(OpCodes.Ldloc, 3);
-			c.Emit(OpCodes.Ldloc, 4);
-			c.EmitDelegate<Action<int, int>>((int x, int y) => {
-				if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.AltarTile is int type)
-				{
-					if (!WorldGen.IsTileNearby(x, y, type, 3))
-					{
+			c.Emit(OpCodes.Ldloc, x);
+			c.Emit(OpCodes.Ldloc, y);
+			c.EmitDelegate((int x, int y) => {
+				if (WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.AltarTile is int type) {
+					if (!WorldGen.IsTileNearby(x, y, type, distance)) {
 						WorldGen.Place3x2(x, y, (ushort)type);
+						return Main.tile[x, y].TileType == type;
 					}
 				}
+				return false;
 			});
-			c.Emit(OpCodes.Br, endNormalAltar);
+			ILLabel placedAltar = c.DefineLabel();
+			placedAltar.Target = skipNormalAltar.Target;
+			c.Emit(OpCodes.Brtrue, placedAltar);
+			c.Emit(OpCodes.Br, skipNormalAltar);
 			c.MarkLabel(startNormalAltar);
-			if (!c.TryGotoNext(i => i.MatchLdloc(5)))
-			{
-				AltLibrary.Instance.Logger.Info("e $ 2");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdsflda(out _)))
-			{
+			ILLabel origPlacedAltar = default;
+			if (!c.TryGotoNext(MoveType.After,
+				i => i.MatchCallOrCallvirt<Tile>("get_type"),
+				i => i.MatchLdindI2(),
+				i => i.MatchLdcI4(TileID.DemonAltar),
+				i => i.MatchBeq(out origPlacedAltar)
+			)) {
 				AltLibrary.Instance.Logger.Info("e $ 3");
 				return;
 			}
-			c.MarkLabel(endNormalAltar);
+			placedAltar.Target = origPlacedAltar.Target;
 		}
 
-		//TODO: double check that this code makes sense to begin with
-		private static void GenPasses_HookGenPassReset(ILContext il)
-		{
+		//TODO: completely rewrite alt ore support
+		private static void GenPasses_HookGenPassReset(ILContext il) {
 			ILCursor c = new(il);
 			FieldReference copper = null;
 			FieldReference iron = null;
 			FieldReference silver = null;
 			FieldReference gold = null;
 
-			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static))))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
 				AltLibrary.Instance.Logger.Info("f $ 1");
 				return;
 			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(166)))
-			{
+			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
 				AltLibrary.Instance.Logger.Info("f $ 2");
 				return;
 			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(166)))
-			{
+			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
 				AltLibrary.Instance.Logger.Info("f $ 3");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out copper)))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(out copper))) {
 				AltLibrary.Instance.Logger.Info("f $ 4");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(167)))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdcI4(167))) {
 				AltLibrary.Instance.Logger.Info("f $ 5");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out iron)))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(out iron))) {
 				AltLibrary.Instance.Logger.Info("f $ 6");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(168)))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdcI4(168))) {
 				AltLibrary.Instance.Logger.Info("f $ 7");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out silver)))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(out silver))) {
 				AltLibrary.Instance.Logger.Info("f $ 8");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(169)))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdcI4(169))) {
 				AltLibrary.Instance.Logger.Info("f $ 9");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out gold)))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(out gold))) {
 				AltLibrary.Instance.Logger.Info("f $ 10");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static))))
-			{
+			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
 				AltLibrary.Instance.Logger.Info("f $ 11");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchRet()))
-			{
+			if (!c.TryGotoNext(i => i.MatchRet())) {
 				AltLibrary.Instance.Logger.Info("f $ 12");
 				return;
 			}
-			if (!c.TryGotoPrev(i => i.MatchBneUn(out _)))
-			{
+			if (!c.TryGotoPrev(i => i.MatchBneUn(out _))) {
 				AltLibrary.Instance.Logger.Info("f $ 13");
 				return;
 			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(-1)))
-			{
+			if (!c.TryGotoPrev(i => i.MatchLdcI4(-1))) {
 				AltLibrary.Instance.Logger.Info("f $ 14");
 				return;
 			}
@@ -228,8 +218,7 @@ namespace AltLibrary.Common.Hooks {
 			replaceValues(() => WorldBiomeManager.Silver, (-5, TileID.Silver), (-6, TileID.Tungsten), silver);
 			replaceValues(() => WorldBiomeManager.Gold, (-7, TileID.Gold), (-8, TileID.Platinum), gold);
 
-			void replaceValues(Func<int> type, ValueTuple<int, int> value1, ValueTuple<int, int> value2, FieldReference field)
-			{
+			void replaceValues(Func<int> type, ValueTuple<int, int> value1, ValueTuple<int, int> value2, FieldReference field) {
 				var label = c.DefineLabel();
 				var label2 = c.DefineLabel();
 				var label3 = c.DefineLabel();
@@ -256,9 +245,8 @@ namespace AltLibrary.Common.Hooks {
 			}
 		}
 
-		//TODO: double check that this code makes sense to begin with
-		private static void GenPasses_HookGenPassShinies(ILContext il)
-		{
+		//TODO: make alt ores so I can test this
+		private static void GenPasses_HookGenPassShinies(ILContext il) {
 			ILCursor c = new(il);
 			FieldReference oreField = default;
 			while (c.TryGotoNext(MoveType.AfterLabel,
@@ -324,7 +312,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchStloc(out _),
 				i => i.MatchBr(out _)
 			)) {
-				c.EmitDelegate<Action>(GenEvilOres);
+				c.EmitDelegate(GenEvilOres);
 				c.Emit(OpCodes.Ret);
 				c.Index += 5;
 			}
@@ -339,7 +327,7 @@ namespace AltLibrary.Common.Hooks {
 				if (isDrunk) {
 					oreMult += 2.25E-05;
 				}
-			}else if (isDrunk) {
+			} else if (isDrunk) {
 				oreMult += 2.25E-05;
 			}
 			int oreType = WorldBiomeManager.GetWorldEvil(true, false).BiomeOre ?? TileID.Demonite;
@@ -475,7 +463,7 @@ namespace AltLibrary.Common.Hooks {
 		}
 		private static void IL_GenPasses_SpreadingGrass(ILContext il) {
 			ILCursor c = new(il);
-			while(c.TryGotoNext(MoveType.After,
+			while (c.TryGotoNext(MoveType.After,
 				i => i.MatchLdloc(out _),
 				i => i.MatchLdloc(out _),
 				i => i.MatchLdcI4(out _),
@@ -608,6 +596,7 @@ namespace AltLibrary.Common.Hooks {
 			#endregion Tables/Chairs
 		}
 		delegate void ManipChestType(ref int type, ref int frame);
+		//TODO: this is going to need to be entirely rewritten because of declarative chest loot
 		private static void IL_WorldGen_AddBuriedChest(ILContext il) {
 			ILCursor c = new(il);
 			ILLabel skipLabel = default;

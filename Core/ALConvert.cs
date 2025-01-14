@@ -11,25 +11,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
-namespace AltLibrary.Core
-{
-	public static class ALConvert
-	{
-		internal static void Load()
-		{
+namespace AltLibrary.Core {
+	public static class ALConvert {
+		internal static void Load() {
 			Terraria.On_WorldGen.Convert += WorldGen_Convert;
-			//IL_Projectile.VanillaAI += IL_Projectile_VanillaAI;
-			//IL_WorldGen.smCallBack += IL_WorldGen_smCallBack;
 			if (typeof(WorldGen).GetMethods().FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
 				MonoModHooks.Modify(method, IL_WorldGen_smCallBack_HardmodeGoodRemixTask);
+			} else {
+				AltLibrary.Instance.Logger.Error("Could not find HardmodeGoodRemixTask in WorldGen");
 			}
 		}
 
-		internal static void Unload()
-		{
-		}
+		internal static void Unload() { }
 
 		private static void WorldGen_Convert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size) {
 			AltBiome biome;
@@ -65,12 +59,9 @@ namespace AltLibrary.Core
 				biome = ModContent.GetInstance<DeconvertAltBiome>();
 				break;
 			}
-			for (int k = i - size; k <= i + size; k++)
-			{
-				for (int l = j - size; l <= j + size; l++)
-				{
-					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
-					{
+			for (int k = i - size; k <= i + size; k++) {
+				for (int l = j - size; l <= j + size; l++) {
+					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6) {
 						ConvertTile(k, l, biome);
 
 						ConvertWall(k, l, biome);
@@ -130,8 +121,7 @@ namespace AltLibrary.Core
 		/// </summary>
 		/// <param name="projectile"></param>
 		/// <param name="fullName"></param>
-		public static void SimulateThrownWater(Projectile projectile, string fullName)
-		{
+		public static void SimulateThrownWater(Projectile projectile, string fullName) {
 			int i = (int)(projectile.position.X + projectile.width / 2) / 16;
 			int j = (int)(projectile.position.Y + projectile.height / 2) / 16;
 			Convert(fullName, i, j, 4);
@@ -143,8 +133,7 @@ namespace AltLibrary.Core
 		/// <param name="projectile"></param>
 		/// <param name="mod"></param>
 		/// <param name="name"></param>
-		public static void SimulateThrownWater(Projectile projectile, Mod mod, string name)
-		{
+		public static void SimulateThrownWater(Projectile projectile, Mod mod, string name) {
 			int i = (int)(projectile.position.X + projectile.width / 2) / 16;
 			int j = (int)(projectile.position.Y + projectile.height / 2) / 16;
 			Convert(mod, name, i, j, 4);
@@ -155,8 +144,7 @@ namespace AltLibrary.Core
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="projectile"></param>
-		public static void SimulateThrownWater<T>(Projectile projectile) where T : AltBiome
-		{
+		public static void SimulateThrownWater<T>(Projectile projectile) where T : AltBiome {
 			int i = (int)(projectile.position.X + projectile.width / 2) / 16;
 			int j = (int)(projectile.position.Y + projectile.height / 2) / 16;
 			Convert<T>(i, j, 4);
@@ -167,8 +155,7 @@ namespace AltLibrary.Core
 		/// </summary>
 		/// <param name="projectile"></param>
 		/// <param name="biome"></param>
-		public static void SimulateThrownWater(Projectile projectile, AltBiome biome)
-		{
+		public static void SimulateThrownWater(Projectile projectile, AltBiome biome) {
 			int i = (int)(projectile.position.X + projectile.width / 2) / 16;
 			int j = (int)(projectile.position.Y + projectile.height / 2) / 16;
 			Convert(biome, i, j, 4);
@@ -201,8 +188,7 @@ namespace AltLibrary.Core
 		/// </summary>
 		/// <param name="projectile"></param>
 		/// <param name="biome"></param>
-		public static void SimulateSolution(Projectile projectile, AltBiome biome)
-		{
+		public static void SimulateSolution(Projectile projectile, AltBiome biome) {
 			Convert(biome, (int)(projectile.position.X + projectile.width / 2) / 16, (int)(projectile.position.Y + projectile.height / 2) / 16, 2);
 		}
 
@@ -212,16 +198,12 @@ namespace AltLibrary.Core
 
 		public static void Convert(Mod mod, string name, int i, int j, int size = 4) => Convert(AltLibrary.Biomes.Find(x => x.Mod == mod && x.Name == name), i, j, size);
 
-		public static void Convert(AltBiome biome, int i, int j, int size = 4)
-		{
+		public static void Convert(AltBiome biome, int i, int j, int size = 4) {
 			if (biome is null)
 				throw new ArgumentNullException(nameof(biome), "Can't be null!");
-			for (int k = i - size; k <= i + size; k++)
-			{
-				for (int l = j - size; l <= j + size; l++)
-				{
-					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6)
-					{
+			for (int k = i - size; k <= i + size; k++) {
+				for (int l = j - size; l <= j + size; l++) {
+					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6) {
 						ConvertTile(k, l, biome);
 
 						ConvertWall(k, l, biome);

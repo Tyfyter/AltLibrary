@@ -7,83 +7,34 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.Utilities;
 
-namespace AltLibrary.Core.Baking
-{
-	internal class DrunkenBaking
-	{
-		internal static bool GetDrunkSmashingData(bool drunk, int smashType)
-		{
-			if (!drunk || smashType != 0 || WorldGen.altarCount == 0)
-				return false;
-			GetDrunkenOres();
-			return false;
-		}
-
-		internal static string GetTranslation(AltOre ore)
-		{
-			return ore.BlessingMessage.Value ?? Language.GetTextValue("Mods.AltLibrary.BlessBase", ore.DisplayName.Value);
-		}
-
-		internal static string GetSmashAltarText(int j)
-		{
-			string key = "";
-			key = j switch
-			{
-				0 => WorldGen.SavedOreTiers.Cobalt switch
-				{
-					TileID.Cobalt => Lang.misc[12].Value,
-					TileID.Palladium => Lang.misc[21].Value,
-					_ => GetTranslation(AltLibrary.Ores.First(o => o.OreType == OreType.Cobalt && o.ore == WorldGen.SavedOreTiers.Cobalt)),
-				},
-				1 => WorldGen.SavedOreTiers.Mythril switch
-				{
-					TileID.Mythril => Lang.misc[13].Value,
-					TileID.Orichalcum => Lang.misc[22].Value,
-					_ => GetTranslation(AltLibrary.Ores.First(o => o.OreType == OreType.Mythril && o.ore == WorldGen.SavedOreTiers.Mythril)),
-				},
-				_ => WorldGen.SavedOreTiers.Adamantite switch
-				{
-					TileID.Adamantite => Lang.misc[14].Value,
-					TileID.Titanium => Lang.misc[23].Value,
-					_ => GetTranslation(AltLibrary.Ores.First(o => o.OreType == OreType.Adamantite && o.ore == WorldGen.SavedOreTiers.Adamantite)),
-				},
-			};
-			return key;
-		}
-
+namespace AltLibrary.Core.Baking {
+	internal class DrunkenBaking {
 		//move to utility function later
-		private static void ShuffleArrayUsingSeed<T>(T[] list, UnifiedRandom seed)
-		{
+		private static void ShuffleArrayUsingSeed<T>(T[] list, UnifiedRandom seed) {
 			int randIters = list.Length - 1; //-1 cause we don't wanna shuffle the back
 			if (randIters == 1)
 				return;
-			while (randIters > 1)
-			{
+			while (randIters > 1) {
 				int thisRand = seed.Next(randIters);
 				randIters--;
-				if (thisRand != randIters)
-				{
+				if (thisRand != randIters) {
 					(list[thisRand], list[randIters]) = (list[randIters], list[thisRand]);
 				}
 			}
 		}
 
-		private static void SendOriginalToToBackOfList(AltOre[] list, int original)
-		{
+		private static void SendOriginalToToBackOfList(AltOre[] list, int original) {
 			if (list.Length <= 1)
 				return;
-			for (int x = 0; x < list.Length - 1; x++)
-			{
-				if (list[x].Type == original)
-				{
+			for (int x = 0; x < list.Length - 1; x++) {
+				if (list[x].Type == original) {
 					(list[^1], list[x]) = (list[x], list[^1]);
 					return;
 				}
 			}
 		}
 
-		internal static void BakeDrunken()
-		{
+		internal static void BakeDrunken() {
 			UnifiedRandom rngSeed = new(WorldGen._genRandSeed); //bake seed later
 			List<AltOre> hardmodeListing = ALWorldCreationLists.prehmOreData.Types.FindAll(x => x.includeInHardmodeDrunken || x.OreType >= OreType.Cobalt & x.OreType != OreType.None);
 
@@ -100,8 +51,7 @@ namespace AltLibrary.Core.Baking
 			ShuffleArrayUsingSeed(WorldBiomeManager.drunkAdamantiteCycle, rngSeed);
 		}
 
-		internal static void GetDrunkenOres()
-		{
+		internal static void GetDrunkenOres() {
 			if (WorldBiomeManager.drunkCobaltCycle == null)
 				BakeDrunken();
 

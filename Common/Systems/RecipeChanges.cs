@@ -9,8 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Systems
-{
+namespace AltLibrary.Common.Systems {
 	internal class RecipeChanges : ModSystem {
 		public override void PostAddRecipes() {
 			FieldInfo[] fields = typeof(RecipeGroups).GetFields();
@@ -21,141 +20,141 @@ namespace AltLibrary.Common.Systems
 				Recipe recipe = Main.recipe[i];
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.IronskinPotion },
-								  new int[] { ItemID.IronOre },
+								  [ItemID.IronskinPotion],
+								  [ItemID.IronOre],
 								  "IronOres",
 								  ItemID.LeadOre);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.SpelunkerPotion },
-								  new int[] { ItemID.GoldOre },
+								  [ItemID.SpelunkerPotion],
+								  [ItemID.GoldOre],
 								  "GoldOres",
 								  ItemID.PlatinumOre);
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.DeerThing },
-								  new int[] { ItemID.DemoniteOre },
+								  [ItemID.DeerThing],
+								  [ItemID.DemoniteOre],
 								  "EvilOres",
 								  ItemID.CrimtaneOre);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.Magiluminescence, ItemID.ShadowCandle },
-								  new int[] { ItemID.DemoniteBar },
+								  [ItemID.Magiluminescence, ItemID.ShadowCandle],
+								  [ItemID.DemoniteBar],
 								  "EvilBars",
 								  ItemID.CrimtaneBar);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.OpticStaff, ItemID.PumpkinMoonMedallion },
-								  new int[] { ItemID.HallowedBar },
+								  [ItemID.OpticStaff, ItemID.PumpkinMoonMedallion],
+								  [ItemID.HallowedBar],
 								  "HallowBars");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.DrillContainmentUnit },
-								  new int[] { ItemID.HellstoneBar },
+								  [ItemID.DrillContainmentUnit],
+								  [ItemID.HellstoneBar],
 								  "HellBars");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.DrillContainmentUnit, ItemID.VenomStaff, ItemID.TrueExcalibur },
-								  new int[] { ItemID.ChlorophyteBar },
+								  [ItemID.DrillContainmentUnit, ItemID.VenomStaff, ItemID.TrueExcalibur],
+								  [ItemID.ChlorophyteBar],
 								  "JungleBars");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.DrillContainmentUnit, ItemID.MiniNukeI, ItemID.MiniNukeII },
-								  new int[] { ItemID.ShroomiteBar },
+								  [ItemID.DrillContainmentUnit, ItemID.MiniNukeI, ItemID.MiniNukeII],
+								  [ItemID.ShroomiteBar],
 								  "MushroomBars");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.PeaceCandle, ItemID.Throne, ItemID.FlinxFurCoat, ItemID.FlinxStaff },
-								  new int[] { ItemID.GoldBar },
+								  [ItemID.PeaceCandle, ItemID.Throne, ItemID.FlinxFurCoat, ItemID.FlinxStaff],
+								  [ItemID.GoldBar],
 								  "GoldBars",
 								  ItemID.PlatinumBar);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.FrostBreastplate, ItemID.FrostLeggings, ItemID.FrostHelmet, ItemID.AncientBattleArmorHat, ItemID.AncientBattleArmorPants, ItemID.AncientBattleArmorShirt },
-								  new int[] { ItemID.AdamantiteBar },
+								  [ItemID.FrostBreastplate, ItemID.FrostLeggings, ItemID.FrostHelmet, ItemID.AncientBattleArmorHat, ItemID.AncientBattleArmorPants, ItemID.AncientBattleArmorShirt],
+								  [ItemID.AdamantiteBar],
 								  "AdamantiteBars",
 								  ItemID.TitaniumBar);
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.NightsEdge },
-								  new int[] { ItemID.LightsBane },
+								  [ItemID.NightsEdge],
+								  [ItemID.LightsBane],
 								  "EvilSwords",
 								  ItemID.BloodButcherer);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.NightsEdge },
-								  new int[] { ItemID.BladeofGrass },
+								  [ItemID.NightsEdge],
+								  [ItemID.BladeofGrass],
 								  "JungleSwords");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.NightsEdge },
-								  new int[] { ItemID.FieryGreatsword },
+								  [ItemID.NightsEdge],
+								  [ItemID.FieryGreatsword],
 								  "HellSwords");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.TerraBlade },
-								  new int[] { ItemID.TrueNightsEdge },
+								  [ItemID.TerraBlade],
+								  [ItemID.TrueNightsEdge],
 								  "TrueComboSwords");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.TerraBlade },
-								  new int[] { ItemID.TrueExcalibur },
+								  [ItemID.TerraBlade],
+								  [ItemID.TrueExcalibur],
 								  "TrueHallowSwords");
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.MonsterLasagna, ItemID.CoffinMinecart, ItemID.MechanicalWorm, ItemID.BattlePotion },
-								  new int[] { ItemID.RottenChunk },
+								  [ItemID.MonsterLasagna, ItemID.CoffinMinecart, ItemID.MechanicalWorm, ItemID.BattlePotion],
+								  [ItemID.RottenChunk],
 								  "RottenChunks",
 								  ItemID.Vertebrae);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.MeteorStaff, ItemID.GreaterHealingPotion },
-								  new int[] { ItemID.PixieDust },
+								  [ItemID.MeteorStaff, ItemID.GreaterHealingPotion],
+								  [ItemID.PixieDust],
 								  "PixieDusts");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.SuperManaPotion },
-								  new int[] { ItemID.UnicornHorn },
+								  [ItemID.SuperManaPotion],
+								  [ItemID.UnicornHorn],
 								  "UnicornHorns");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.SuperManaPotion, ItemID.GreaterHealingPotion, ItemID.BluePhasesaber, ItemID.GreenPhasesaber, ItemID.PurplePhasesaber, ItemID.RedPhasesaber, ItemID.WhitePhasesaber, ItemID.YellowPhasesaber, ItemID.OrangePhasesaber },
-								  new int[] { ItemID.CrystalShard },
+								  [ItemID.SuperManaPotion, ItemID.GreaterHealingPotion, ItemID.BluePhasesaber, ItemID.GreenPhasesaber, ItemID.PurplePhasesaber, ItemID.RedPhasesaber, ItemID.WhitePhasesaber, ItemID.YellowPhasesaber, ItemID.OrangePhasesaber],
+								  [ItemID.CrystalShard],
 								  "CrystalShards");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.VoidLens, ItemID.VoidVault, ItemID.ObsidianHelm, ItemID.ObsidianShirt, ItemID.ObsidianPants },
-								  new int[] { ItemID.ShadowScale },
+								  [ItemID.VoidLens, ItemID.VoidVault, ItemID.ObsidianHelm, ItemID.ObsidianShirt, ItemID.ObsidianPants],
+								  [ItemID.ShadowScale],
 								  "ShadowScales",
 								  ItemID.TissueSample);
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.VoidLens, ItemID.VoidVault },
-								  new int[] { ItemID.JungleSpores },
+								  [ItemID.VoidLens, ItemID.VoidVault],
+								  [ItemID.JungleSpores],
 								  "JungleSpores");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.BattlePotion, ItemID.GravitationPotion, ItemID.MagicPowerPotion, ItemID.StinkPotion, ItemID.TitanPotion },
-								  new int[] { ItemID.Deathweed },
+								  [ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.BattlePotion, ItemID.GravitationPotion, ItemID.MagicPowerPotion, ItemID.StinkPotion, ItemID.TitanPotion],
+								  [ItemID.Deathweed],
 								  "Deathweed");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.GravitationPotion, ItemID.TeleportationPotion },
-								  new int[] { ItemID.Fireblossom },
+								  [ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.GravitationPotion, ItemID.TeleportationPotion],
+								  [ItemID.Fireblossom],
 								  "Fireblossom");
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.BuilderPotion, ItemID.CratePotion, ItemID.LifeforcePotion, ItemID.SpelunkerPotion },
-								  new int[] { ItemID.JungleSpores },
+								  [ItemID.GarlandHat, ItemID.GenderChangePotion, ItemID.BuilderPotion, ItemID.CratePotion, ItemID.LifeforcePotion, ItemID.SpelunkerPotion],
+								  [ItemID.JungleSpores],
 								  "JungleSpores");
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.AdamantiteForge, ItemID.TitaniumForge },
-								  new int[] { ItemID.Hellforge },
+								  [ItemID.AdamantiteForge, ItemID.TitaniumForge],
+								  [ItemID.Hellforge],
 								  "Hellforges");
 
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.WaterCandle },
-								  new int[] { ItemID.Candle },
+								  [ItemID.WaterCandle],
+								  [ItemID.Candle],
 								  "GoldCandles",
 								  ItemID.PlatinumCandle);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.Timer5Second },
-								  new int[] { ItemID.CopperWatch },
+								  [ItemID.Timer5Second],
+								  [ItemID.CopperWatch],
 								  "CopperWatches",
 								  ItemID.TinWatch);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.Timer3Second },
-								  new int[] { ItemID.SilverWatch },
+								  [ItemID.Timer3Second],
+								  [ItemID.SilverWatch],
 								  "SilverWatches",
 								  ItemID.TungstenWatch);
 				ReplaceRecipe(ref recipe,
-								  new int[] { ItemID.Timer1Second },
-								  new int[] { ItemID.GoldWatch },
+								  [ItemID.Timer1Second],
+								  [ItemID.GoldWatch],
 								  "GoldWatches",
 								  ItemID.PlatinumWatch);
-				if (!recipe.Disabled && !ShimmerDecraft.recipes.ContainsKey(recipe.createItem.type)) {
+				if (!recipe.Disabled && !ShimmerDecraft.Recipes.ContainsKey(recipe.createItem.type)) {
 					List<(int type, int count)> ingredients = recipe.requiredItem.Select(it => (it.type, it.stack)).ToList();
 					List<(int type, int count)> ingredientGroups = new();
 					for (int j = ingredients.Count - 1; j >= 0; j--) {
@@ -169,7 +168,7 @@ namespace AltLibrary.Common.Systems
 						}
 					}
 					if (ingredientGroups.Count > 0) {
-						ShimmerDecraft.recipes.Add(
+						ShimmerDecraft.Recipes.Add(
 							recipe.createItem.type,
 							(
 							recipe.createItem.stack,
@@ -185,16 +184,11 @@ namespace AltLibrary.Common.Systems
 			}
 
 		}
-		private static void ReplaceRecipe(ref Recipe r, int[] results, int[] ingredients, string group)
-		{
-			foreach (int result in results)
-			{
-				if (r.HasResult(result))
-				{
-					foreach (int ingredient in ingredients)
-					{
-						if (r.HasIngredient(ingredient))
-						{
+		private static void ReplaceRecipe(ref Recipe r, int[] results, int[] ingredients, string group) {
+			foreach (int result in results) {
+				if (r.HasResult(result)) {
+					foreach (int ingredient in ingredients) {
+						if (r.HasIngredient(ingredient)) {
 							r.TryGetIngredient(ingredient, out Item ing);
 							if (ing == null)
 								continue;
@@ -206,20 +200,13 @@ namespace AltLibrary.Common.Systems
 			}
 		}
 
-		private static void ReplaceRecipe(ref Recipe r, int[] results, int[] ingredients, string group, int altIng)
-		{
-			foreach (int result in results)
-			{
-				if (r.HasResult(result))
-				{
-					foreach (int ingredient in ingredients)
-					{
-						if (r.HasIngredient(altIng))
-						{
+		private static void ReplaceRecipe(ref Recipe r, int[] results, int[] ingredients, string group, int altIng) {
+			foreach (int result in results) {
+				if (r.HasResult(result)) {
+					foreach (int ingredient in ingredients) {
+						if (r.HasIngredient(altIng)) {
 							r.DisableRecipe();
-						}
-						else if (r.HasIngredient(ingredient))
-						{
+						} else if (r.HasIngredient(ingredient)) {
 							r.TryGetIngredient(ingredient, out Item ing);
 							if (ing == null)
 								continue;

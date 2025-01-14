@@ -12,14 +12,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Core
-{
-	internal class ILHooks
-	{
-		public static void OnInitialize()
-		{
-			Terraria.On_Main.EraseWorld += Main_EraseWorld;
-			Terraria.On_Main.GUIChatDrawInner += Main_GUIChatDrawInner;
+namespace AltLibrary.Core {
+	internal class ILHooks {
+		public static void OnInitialize() {
+			On_Main.EraseWorld += Main_EraseWorld;
 			WorldIcons.Init();
 			OuterVisual.Init();
 			EvenMoreWorldGen.Init();
@@ -33,16 +29,14 @@ namespace AltLibrary.Core
 			MimicSummon.Init();
 			SimpleReplacements.Load();
 			DryadText.Init();
-			JungleHuts.Init(); // TODO: redo?
+			JungleHuts.Init();
 			TenthAnniversaryFix.Init();
 			//BackgroundsAlternating.Inject();//TODO: redo
 			EvilBiomeRangeTracker.Init();
 		}
 
-		public static void Unload()
-		{
-			Terraria.On_Main.EraseWorld -= Main_EraseWorld;
-			Terraria.On_Main.GUIChatDrawInner -= Main_GUIChatDrawInner;
+		public static void Unload() {
+			On_Main.EraseWorld -= Main_EraseWorld;
 			WorldIcons.Unload();
 			OuterVisual.Unload();
 			EvenMoreWorldGen.Unload();
@@ -61,32 +55,11 @@ namespace AltLibrary.Core
 			GenPasses.Unload();
 			//BackgroundsAlternating.Uninit();
 		}
-
-		private static void Main_GUIChatDrawInner(Terraria.On_Main.orig_GUIChatDrawInner orig, Main self)
-		{
-			orig(self);
-#if CONTENT
-			if (Main.LocalPlayer.talkNPC != -1 && Main.npc[Main.LocalPlayer.talkNPC].type == ModContent.NPCType<PieChartTownNPC>())
-			{
-				if (AnalystShopLoader.MaxShopCount() >= 1)
-				{
-					Main.npcChatCornerItem = ItemID.DirtBlock;
-				}
-				if (Main.npcChatText == Language.GetTextValue("Mods.AltLibrary.AnalysisDone", Main.LocalPlayer.name, Main.worldName) + WorldBiomeManager.AnalysisDoneSpaces && Main.LocalPlayer.GetModPlayer<ALPlayer>().IsAnalysingClick)
-				{
-					AltLibrary.userInterface.Update(Main._drawInterfaceGameTime);
-					AltLibrary.userInterface.Draw(Main.spriteBatch, Main._drawInterfaceGameTime);
-				}
-			}
-#endif
-		}
-
-		private static void Main_EraseWorld(Terraria.On_Main.orig_EraseWorld orig, int i)
-		{
+		//TODO: clean config when a world has its data stored to its header
+		private static void Main_EraseWorld(On_Main.orig_EraseWorld orig, int i) {
 			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
-			var path = Path.ChangeExtension(Main.WorldList[i].Path, ".twld");
-			if (tempDict.ContainsKey(path))
-			{
+			string path = Path.ChangeExtension(Main.WorldList[i].Path, ".twld");
+			if (tempDict.ContainsKey(path)) {
 				tempDict.Remove(path);
 				AltLibraryConfig.Config.SetWorldData(tempDict);
 				AltLibraryConfig.Save(AltLibraryConfig.Config);

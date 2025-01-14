@@ -30,13 +30,11 @@ namespace AltLibrary {
 			}
 
 			private static void OreRunner_ReplaceHallowedOre(On_WorldGen.orig_OreRunner orig, int i, int j, double strength, int steps, ushort type) {
-				if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallowName == "")
-				{
+				if (HallowedOreList.Count == 0 || WorldBiomeManager.WorldHallowName == "") {
 					orig(i, j, strength, steps, type);
 					return;
 				}
-				if (HallowedOreList.ContainsKey(type))
-				{
+				if (HallowedOreList.ContainsKey(type)) {
 					AltBiome biome = WorldBiomeManager.WorldHallowBiome;
 					if (biome.BiomeOre != null)
 						type = (ushort)biome.BiomeOre.Value;

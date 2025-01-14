@@ -7,10 +7,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Core.Baking
-{
-	internal abstract class BlockParentageData
-	{
+namespace AltLibrary.Core.Baking {
+	internal abstract class BlockParentageData {
 		//tiles
 		public Dictionary<int, (int, AltBiome)> Parent = new();
 
@@ -24,16 +22,13 @@ namespace AltLibrary.Core.Baking
 
 		public abstract void Bake();
 
-		public int GetConverted(int baseTile, Func<int, int> GetAltBlock, int ConversionType)
-		{
+		public int GetConverted(int baseTile, Func<int, int> GetAltBlock, int ConversionType) {
 			int ForcedConvertedTile = -1;
-			while (true)
-			{
+			while (true) {
 				int test = GetAltBlock(baseTile);
 				if (test != -1)
 					return test;
-				if (BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits))
-				{
+				if (BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
 					if (bits[ConversionType])
 						ForcedConvertedTile = -2; //change this to make use of spraytype
 				}
@@ -43,14 +38,11 @@ namespace AltLibrary.Core.Baking
 			}
 		}
 	}
-	internal class TileParentageData : BlockParentageData
-	{
-		public override void Bake()
-		{
+	internal class TileParentageData : BlockParentageData {
+		public override void Bake() {
 			// Mass Parenting
 
-			for (int x = 0; x < TileLoader.TileCount; x++)
-			{
+			for (int x = 0; x < TileLoader.TileCount; x++) {
 				if (TileID.Sets.Conversion.GolfGrass[x])
 					Parent.TryAdd(x, (TileID.GolfGrass, null));
 				else if (TileID.Sets.Conversion.Grass[x])
@@ -59,12 +51,10 @@ namespace AltLibrary.Core.Baking
 					Parent.TryAdd(x, (TileID.JungleGrass, null));
 				else if (TileID.Sets.Conversion.MushroomGrass[x])
 					Parent.TryAdd(x, (TileID.MushroomGrass, null));
-				else if (Main.tileMoss[x] && x != TileID.Stone)
-				{
+				else if (Main.tileMoss[x] && x != TileID.Stone) {
 					NoDeconversion.Add(x); //prevents deconversion of moss to stone
 					Parent.TryAdd(x, (TileID.Stone, null));
-				}
-				else if (TileID.Sets.Conversion.Stone[x])
+				} else if (TileID.Sets.Conversion.Stone[x])
 					Parent.TryAdd(x, (TileID.Stone, null));
 				else if (TileID.Sets.Conversion.Ice[x])
 					Parent.TryAdd(x, (TileID.IceBlock, null));
@@ -84,28 +74,22 @@ namespace AltLibrary.Core.Baking
 		}
 	}
 
-	internal class WallParentageData : BlockParentageData
-	{
+	internal class WallParentageData : BlockParentageData {
 		const int GRASS_UNSAFE_DIFFERENT = -3;
-		public override void Bake()
-		{
-			for (int x = 0; x < WallLoader.WallCount; x++)
-			{
-				if (WallID.Sets.Conversion.Grass[x] && x != WallID.Grass)
-				{
-					switch (x)
-					{
+		public override void Bake() {
+			for (int x = 0; x < WallLoader.WallCount; x++) {
+				if (WallID.Sets.Conversion.Grass[x] && x != WallID.Grass) {
+					switch (x) {
 						case WallID.CorruptGrassUnsafe:
 						case WallID.CrimsonGrassUnsafe:
 						case WallID.HallowedGrassUnsafe:
-							Parent.TryAdd(x, (GRASS_UNSAFE_DIFFERENT, null));
-							break;
+						Parent.TryAdd(x, (GRASS_UNSAFE_DIFFERENT, null));
+						break;
 						default:
-							Parent.TryAdd(x, (WallID.Grass, null));
-							break;
+						Parent.TryAdd(x, (WallID.Grass, null));
+						break;
 					}
-				}
-				else if (WallID.Sets.Conversion.Stone[x] && x != WallID.Stone)
+				} else if (WallID.Sets.Conversion.Stone[x] && x != WallID.Stone)
 					Parent.TryAdd(x, (WallID.Stone, null));
 				else if (WallID.Sets.Conversion.HardenedSand[x] && x != WallID.HardenedSand)
 					Parent.TryAdd(x, (WallID.HardenedSand, null));
@@ -141,28 +125,23 @@ namespace AltLibrary.Core.Baking
 		}
 	}
 
-	internal static class ALConvertInheritanceData
-	{
+	internal static class ALConvertInheritanceData {
 		internal static TileParentageData tileParentageData;
 		internal static WallParentageData wallParentageData;
 
-		internal class ALConvertInheritanceData_Loader : ILoadable
-		{
-			public void Load(Mod mod)
-			{
+		internal class ALConvertInheritanceData_Loader : ILoadable {
+			public void Load(Mod mod) {
 				tileParentageData = new();
 				wallParentageData = new();
 			}
 
-			public void Unload()
-			{
+			public void Unload() {
 				tileParentageData = null;
 				wallParentageData = null;
 			}
 		}
 
-		public static void FillData()
-		{
+		public static void FillData() {
 			// Mass Parenting
 			tileParentageData.Bake();
 			wallParentageData.Bake();
@@ -170,10 +149,8 @@ namespace AltLibrary.Core.Baking
 			wallParentageData.SetupDeconversion();
 		}
 
-		public static int GetUltimateParent(int baseTile)
-		{
-			while (true)
-			{
+		public static int GetUltimateParent(int baseTile) {
+			while (true) {
 				if (!tileParentageData.Parent.TryGetValue(baseTile, out (int tileType, AltBiome) test))
 					return baseTile;
 				baseTile = test.tileType;

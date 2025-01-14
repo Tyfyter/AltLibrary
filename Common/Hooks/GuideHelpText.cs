@@ -5,8 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 
-namespace AltLibrary.Common.Hooks
-{
+namespace AltLibrary.Common.Hooks {
 	internal class GuideHelpText {
 		public static void Load() {
 			IL_Main.HelpText += Main_HelpText;

@@ -9,22 +9,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal class DungeonChests
-	{
-		internal static int hellChestIndex;
+namespace AltLibrary.Common.Hooks {
+	internal class DungeonChests {
 
-		public static void Init()
-		{
-			hellChestIndex = -1;
-			Terraria.IL_WorldGen.MakeDungeon += WorldGen_MakeDungeon;
+		public static void Init() {
+			IL_WorldGen.MakeDungeon += WorldGen_MakeDungeon;
 		}
 
-		public static void Unload()
-		{
-			hellChestIndex = 0;
-		}
+		public static void Unload() {}
 		static void MakeDungeonChests() {
 			List<(int chestTileType, int contain, int style2)> biomeChests = new();
 			static bool GetBiomeChest(AltBiome biome, out (int chestTileType, int contain, int style2) chestData) {
@@ -88,8 +80,7 @@ namespace AltLibrary.Common.Hooks
 				}
 			}
 		}
-		private static void WorldGen_MakeDungeon(ILContext il)
-		{
+		private static void WorldGen_MakeDungeon(ILContext il) {
 			//IL_213b: ldc.i4.5
 			//IL_213c: stloc.s 15
 			// if (drunkWorldGen)
@@ -112,7 +103,7 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchStloc(biomeChestCount)
 			)) {
 				c.RemoveRange(6);
-				c.EmitDelegate<Action>(MakeDungeonChests);
+				c.EmitDelegate(MakeDungeonChests);
 				c.Emit(OpCodes.Ldc_I4_0);
 				c.Emit(OpCodes.Stloc, biomeChestCount);
 			}

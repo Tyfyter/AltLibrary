@@ -70,6 +70,7 @@ namespace AltLibrary {
 			ALConvertInheritanceData.FillData();
 			ModSupport.ModSupport.HookAll();
 			AltOreInsideBodies.Setup();
+			ExtractinatorOres.Setup();
 
 			//BackgroundsAlternating.Init();//TODO: redo
 		}
@@ -138,36 +139,6 @@ namespace AltLibrary {
 							throw new ArgumentException("Arguments cannot be less or more than 5 or 6 in length for Convert");
 						}
 						return "Success";
-					case "getbiomepercentage":
-						{
-							if (args[1] is string type)
-							{
-								string type2 = type.ToLower();
-								switch (type2)
-								{
-									case "purity":
-										return WorldBiomeManager.PurityBiomePercentage;
-									case "corruption":
-										return WorldBiomeManager.CorruptionBiomePercentage;
-									case "crimson":
-										return WorldBiomeManager.CrimsonBiomePercentage;
-									case "hallow":
-										return WorldBiomeManager.HallowBiomePercentage;
-								}
-								foreach (AltBiome biome in Biomes)
-								{
-									if (type2 == biome.FullName.ToLower())
-									{
-										return WorldBiomeManager.AltBiomePercentages[biome.Type + 3];
-									}
-								}
-							}
-							else if (args[1] is AltBiome biome)
-							{
-								return WorldBiomeManager.AltBiomePercentages[biome.Type + 3];
-							}
-							throw new ArgumentException("Second argument (type) is not string or AltBiome!");
-						}
 					case "addinmimiclist": {
 						if (args.Length == 3) {
 							if (args[1] is ValueTuple<int, int> mimicType) {

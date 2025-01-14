@@ -27,7 +27,6 @@ namespace AltLibrary.Common.Hooks
 
 		private static void IL_ShopHelper_IsPlayerInEvilBiomes(ILContext il) {
 			ILCursor c = new(il);
-			//FieldInfo _dangerousBiomes = typeof(ShopHelper_EvilBiomes).GetField("_dangerousBiomes", BindingFlags.NonPublic | BindingFlags.Static);
 			Func<IShoppingBiome[], IShoppingBiome[]> getDangerBiomes = (_) => {
 				if (_dangerousBiomes is null || _dangerousBiomes.Length != DangerousBiomes.Count) {
 					_dangerousBiomes = DangerousBiomes.ToArray();
@@ -39,9 +38,6 @@ namespace AltLibrary.Common.Hooks
 				i => i.MatchLdfld<ShopHelper>("_dangerousBiomes")
 			)) {
 				c.EmitDelegate(getDangerBiomes);
-				//c.RemoveRange(2);
-				//c.Emit(OpCodes.Ldsfld, _dangerousBiomes);
-				//getDangerBiomes = (_) => _dangerousBiomes;
 			}
 
 			AltLibrary.DumpIL(il);

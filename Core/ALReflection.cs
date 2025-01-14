@@ -7,6 +7,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ModLoader;
 using Terraria.UI;
+using PegasusLib;
 
 namespace AltLibrary.Core
 {
@@ -45,6 +46,7 @@ namespace AltLibrary.Core
 			Recipe_alchemy = null;
 		}
 	}
+	[Obsolete("Use PegasusLib")]
 	public class FastFieldInfo<TParent, T> {
 		public readonly FieldInfo field;
 		Func<TParent, T> getter;

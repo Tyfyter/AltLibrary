@@ -7,25 +7,19 @@ using MonoMod.Cil;
 using System;
 using Terraria.ModLoader;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal static class UnderworldVisual
-	{
-		public static void Init()
-		{
+namespace AltLibrary.Common.Hooks {
+	internal static class UnderworldVisual {
+		public static void Init() {
 			Terraria.IL_Main.DrawUnderworldBackgroudLayer += Main_DrawUnderworldBackgroudLayer;
 		}
 
-		public static void Unload()
-		{
+		public static void Unload() {
 		}
 
-		//TODO: double check that this code makes sense to begin with
-		private static void Main_DrawUnderworldBackgroudLayer(ILContext il)
-		{
+		//TODO: replace, Depths probably has a better edit for it
+		private static void Main_DrawUnderworldBackgroudLayer(ILContext il) {
 			var c = new ILCursor(il);
-			if (!c.TryGotoNext(i => i.MatchStloc(2)))
-			{
+			if (!c.TryGotoNext(i => i.MatchStloc(2))) {
 				AltLibrary.Instance.Logger.Info("r $ 1");
 				return;
 			}
@@ -33,10 +27,8 @@ namespace AltLibrary.Common.Hooks
 			c.Index++;
 			c.Emit(OpCodes.Ldloc, 0);
 			c.Emit(OpCodes.Ldloc, 2);
-			c.EmitDelegate<Func<int, Texture2D, Texture2D>>((index, orig) =>
-			{
-				if (WorldBiomeManager.WorldHell != "")
-				{
+			c.EmitDelegate<Func<int, Texture2D, Texture2D>>((index, orig) => {
+				if (WorldBiomeManager.WorldHell != "") {
 					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).AltUnderworldBackgrounds[index].Value;
 				}
 				return orig;
@@ -46,17 +38,14 @@ namespace AltLibrary.Common.Hooks
 			if (!c.TryGotoNext(i => i.MatchLdcI4(11),
 				i => i.MatchLdcI4(3),
 				i => i.MatchLdcI4(7),
-				i => i.MatchNewobj<Color>()))
-			{
+				i => i.MatchNewobj<Color>())) {
 				AltLibrary.Instance.Logger.Info("r $ 2");
 				return;
 			}
 
 			c.Index += 4;
-			c.EmitDelegate<Func<Color, Color>>((orig) =>
-			{
-				if (WorldBiomeManager.WorldHell != "")
-				{
+			c.EmitDelegate<Func<Color, Color>>((orig) => {
+				if (WorldBiomeManager.WorldHell != "") {
 					return ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).AltUnderworldColor;
 				}
 				return orig;

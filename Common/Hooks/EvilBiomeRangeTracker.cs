@@ -55,10 +55,10 @@ namespace AltLibrary.Common.Hooks {
 						c.Index--;
 					}
 					c.Index = index;
-					foreach (var (code, operand) in instructions) {
+					foreach ((OpCode code, object operand) in instructions) {
 						c.Emit(code, operand);
 					}
-					c.EmitDelegate<Action<int, int>>(WorldBiomeGeneration.ChangeRange.AddChangeToRange);
+					c.EmitDelegate(WorldBiomeGeneration.ChangeRange.AddChangeToRange);
 				}
 			};
 		}

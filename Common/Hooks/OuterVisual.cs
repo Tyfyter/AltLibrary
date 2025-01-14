@@ -18,14 +18,14 @@ namespace AltLibrary.Common.Hooks
 	{
 		public static void Init()
 		{
-			Terraria.GameContent.UI.Elements.IL_UIGenProgressBar.DrawSelf += UIGenProgressBar_DrawSelf;
+			IL_UIGenProgressBar.DrawSelf += UIGenProgressBar_DrawSelf;
 		}
 
 		public static void Unload()
 		{
 		}
 
-		//TODO: double check that this code makes sense to begin with
+		//TODO: completely rewrite
 		private static void UIGenProgressBar_DrawSelf(ILContext il)
 		{
 			ILCursor c = new(il);

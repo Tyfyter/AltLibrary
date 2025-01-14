@@ -32,7 +32,7 @@ namespace AltLibrary.Common.Hooks {
 				int addX = WorldGen.genRand.Next(300, 400) * WorldBiomeGeneration.WofKilledTimes;
 				if (!good) addX *= -1;
 				i += addX;
-				//TODO: double check that this code makes sense to begin with
+				//TODO: this could be improved
 				if (i < 0) {
 					i *= -1;
 				}

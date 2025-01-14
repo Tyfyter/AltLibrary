@@ -13,8 +13,8 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks {
 	public class ShopGlobalNPC : GlobalNPC {
 		public override void ModifyShop(NPCShop shop) {
-			foreach (var entry in shop.Entries) {
-				var conditions = ALReflection.ShopEntry_conditions.GetValue(entry);
+			foreach (NPCShop.Entry entry in shop.Entries) {
+				List<Condition> conditions = ALReflection.ShopEntry_conditions.GetValue(entry);
 				for (int i = 0; i < conditions.Count; i++) {
 					if (conditions[i] == Condition.CorruptWorld) {
 						if (entry.Item.type == ItemID.CrimsonSeeds) {

@@ -36,6 +36,5 @@ internal class ALHooks {
 	}
 	public static void ReplacePredicate(Condition condition, Func<bool> replacement) {
 		predicate.SetValue(condition, replacement);
-		//MonoModHooks.Add(condition.Predicate.Method, (Func<bool> orig) => replacement());
 	}
 }

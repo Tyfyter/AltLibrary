@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using PegasusLib.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
@@ -13,27 +15,10 @@ using Terraria.Utilities;
 
 namespace AltLibrary.Common.Hooks {
 	public static class ExtractinatorOres {
-		private const string OldNote = "Yes, this is a detour, and it WILL have incompatibilities with ILs, but it was made for the sake of other detours.";
-		private const string NoteToFox = "Could you explain what the above note meant? My experience with competing detours has consisted of detours that don't call orig breaking those that don't, and being fixed most effectively by using IL";
-
-		public static List<int> Gems;
-		public static List<int> PrehardmodeOres;
-		public static List<int> Ores;
-
-		internal static void Load()
-		{
-			Gems = new()
-			{
-				ItemID.Amethyst,
-				ItemID.Topaz,
-				ItemID.Sapphire,
-				ItemID.Emerald,
-				ItemID.Ruby,
-				ItemID.Diamond,
-			};
-
-			PrehardmodeOres = new()
-			{
+		public static List<int> PrehardmodeOres { get; private set; }
+		public static List<int> Ores { get; private set; }
+		internal static void Setup() {
+			PrehardmodeOres = [
 				ItemID.CopperOre,
 				ItemID.TinOre,
 				ItemID.IronOre,
@@ -41,10 +26,10 @@ namespace AltLibrary.Common.Hooks {
 				ItemID.SilverOre,
 				ItemID.TungstenOre,
 				ItemID.GoldOre,
-				ItemID.PlatinumOre
-			};
-			Ores = new()
-			{
+				ItemID.PlatinumOre,
+				ItemID.ToiletDynasty
+			];
+			Ores = [
 				ItemID.CopperOre,
 				ItemID.TinOre,
 				ItemID.IronOre,
@@ -52,82 +37,59 @@ namespace AltLibrary.Common.Hooks {
 				ItemID.SilverOre,
 				ItemID.TungstenOre,
 				ItemID.GoldOre,
-				ItemID.PlatinumOre
-			};
+				ItemID.PlatinumOre,
+				ItemID.CobaltOre,
+				ItemID.PalladiumOre,
+				ItemID.MythrilOre,
+				ItemID.OrichalcumOre,
+				ItemID.AdamantiteOre,
+				ItemID.TitaniumOre,
+				ItemID.ThePersistencyofEyes,
+			];
 
 			foreach (AltOre o in AltLibrary.Ores.Where(x => x.IncludeInExtractinator)) {
 				int oreItem = TileLoader.GetItemDropFromTypeAndStyle(o.ore);
 				if (o.OreType >= OreType.Copper && o.OreType <= OreType.Gold) PrehardmodeOres.Add(oreItem);
 				Ores.Add(oreItem);
 			}
-
+		}
+		internal static void Load() {
 			IL_Player.ExtractinatorUse += Player_ExtractinatorUse;
 		}
 
-		internal static void Unload()
-		{
-
-			Gems = null;
+		internal static void Unload() {
+			PrehardmodeOres = null;
 			Ores = null;
 		}
 		static void Player_ExtractinatorUse(ILContext il) {
-			ILCursor c = new(il);
-			try {
-				c.GotoNext(MoveType.After,
-					ins => !ins.MatchLdcI4(-1),
-					ins => !ins.MatchBeq(out _),
-					ins => ins.MatchLdarg(2),
-					ins => ins.MatchLdcI4(TileID.ChlorophyteExtractinator),
-					ins => ins.MatchBneUn(out _)
+			MethodInfo next = typeof(Utils).GetMethods().FirstOrDefault(m => {
+				if (m.Name != nameof(Utils.Next)) return false;
+				if (!m.ContainsGenericParameters) return false;
+				if (m.GetParameters().Length <= 1) return false;
+				Type parameterType = m.GetParameters()[1].ParameterType;
+				if (!parameterType.IsGenericType) return false;
+				return parameterType.GetGenericTypeDefinition() == typeof(IList<>);
+			}).MakeGenericMethod(typeof(int));
+			void DoThing(int defaultType, IList<int> ores) {
+				ILCursor c = new(il);
+				ILLabel[] cases = default;
+				ILLabel defaultCase = default;
+				c.GotoNext(MoveType.AfterLabel,
+					i => i.MatchSwitch(out cases),
+					i => i.MatchBr(out defaultCase) && defaultCase.Target.MatchLdcI4(defaultType)
 				);
-				for (int i = 0; i < 2; i++) {
-					int randParam = -1;
-					Func<Instruction, bool>[] predicates = {
-						ins => ins.MatchCall<Main>("get_rand"),
-						ins => ins.MatchLdcI4(out _),
-						ins => ins.MatchCallOrCallvirt<UnifiedRandom>("Next"),
-						ins => ins.MatchStloc(out randParam),
-						ins => ins.MatchLdloc(randParam),
-						ins => ins.MatchSwitch(out _),
-						ins => ins.MatchBr(out _)
-					};
-					c.GotoNext(MoveType.Before, predicates);
-					ILLabel skipLabel = c.DefineLabel();
-					c.Emit(OpCodes.Br, skipLabel);
-					c.Index += predicates.Length;
-					int itemType = -1;
-					loop:
-					if (c.SkipMatching(
-						ins => ins.MatchLdcI4(out _),
-						ins => ins.MatchStloc(out itemType),
-						ins => ins.MatchBr(out _)
-					)) goto loop;
-					c.SkipMatchingThrow(AltLibrary.Instance, il,
-						ins => ins.MatchLdcI4(out _),
-						ins => ins.MatchStloc(itemType)
-					);
-					c.MarkLabel(skipLabel);
-					c.Emit(OpCodes.Ldloca, itemType);
-					switch (i) {
-						case 0:
-						c.EmitDelegate<_SetExtractinatorDrop>(SetGreenExtractinatorDrop);
-						break;
-						case 1:
-						c.EmitDelegate<_SetExtractinatorDrop>(SetExtractinatorDrop);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				if (e is not ILPatchFailureException) MonoModHooks.DumpIL(AltLibrary.Instance, il);
-				throw;
+				MonoModMethods.SkipPrevArgument(c);
+				defaultCase.Target.Next.MatchStloc(out int local);
+				cases[0].Target.Next.Next.MatchBr(out ILLabel skipSwitch);
+				c.EmitBr(skipSwitch);
+				c.GotoLabel(skipSwitch);
+				c.EmitCall(typeof(Main).GetProperty(nameof(Main.rand)).GetGetMethod());
+				c.EmitReference(ores);
+				c.EmitCall(next);
+				c.EmitStloc(local);
 			}
-		}
-		delegate void _SetExtractinatorDrop(ref int itemType);
-		static void SetExtractinatorDrop(ref int itemType) {
-			itemType = Main.rand.Next(PrehardmodeOres);
-		}
-		static void SetGreenExtractinatorDrop(ref int itemType) {
-			itemType = Main.rand.Next(Ores);
+			DoThing(ItemID.TitaniumOre, Ores);
+			DoThing(ItemID.PlatinumOre, PrehardmodeOres);
 		}
 	}
 }
