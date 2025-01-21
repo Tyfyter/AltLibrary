@@ -14,7 +14,6 @@ namespace AltLibrary.Common.Hooks {
 			foreach (AltOre ore in AltLibrary.Ores.Where(x => x.OreType < OreType.Cobalt)) {
 				ItemID.Sets.OreDropsFromSlime.TryAdd(TileLoader.GetItemDropFromTypeAndStyle(ore.ore), (3, 13));
 			}
-			ItemID.Sets.OreDropsFromSlime.TryAdd(ItemID.LunarOre, (3, 13));
 		}
 	}
 }
