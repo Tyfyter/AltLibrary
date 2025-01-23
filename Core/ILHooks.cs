@@ -8,6 +8,7 @@ using AltLibrary.Core.Baking;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Enums;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;

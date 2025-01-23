@@ -102,7 +102,7 @@ namespace AltLibrary.Common.Hooks {
 			ILCursor c = new(il);
 			ILLabel startNormalAltar = c.DefineLabel();
 			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)))) {
-				AltLibrary.Instance.Logger.Info("e $ 1");
+				AltLibrary.Instance.Logger.Info("ILGenPassAltars could not find use of WorldGen.crimson");
 				return;
 			}
 			ILLabel skipNormalAltar = default;
