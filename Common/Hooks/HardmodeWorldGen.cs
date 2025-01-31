@@ -113,15 +113,20 @@ namespace AltLibrary.Common.Hooks {
 						}
 						Tile tile = Main.tile[x, y];
 						int tileConversion = biome.GetAltBlock(tile.TileType, x, y, true);
-						if (tileConversion == -1 && ShouldConvertBeeTiles) {
-							switch (tile.TileType) {
-								case TileID.Hive:
-								tileConversion = biome.GetAltBlock(TileID.Stone, x, y, true);
-								break;
+						if (tileConversion == -1) {
+							if (ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
+								tileConversion = biome.GetAltBlock(parent.baseTile, x, y, true);
+							}
+							if (tileConversion == -1 && ShouldConvertBeeTiles) {
+								switch (tile.TileType) {
+									case TileID.Hive:
+									tileConversion = biome.GetAltBlock(TileID.Stone, x, y, true);
+									break;
 
-								case TileID.CrispyHoneyBlock:
-								tileConversion = biome.GetAltBlock(TileID.HardenedSand, x, y, true);
-								break;
+									case TileID.CrispyHoneyBlock:
+									tileConversion = biome.GetAltBlock(TileID.HardenedSand, x, y, true);
+									break;
+								}
 							}
 						}
 						if (tileConversion != -1) {
