@@ -16,8 +16,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace AltLibrary.Common.Hooks
-{
+namespace AltLibrary.Common.Hooks {
+	//TODO: completely redesign and rewrite this, maybe even go out of your way to chastise whoever wrote it
 	internal static class WorldIcons
 	{
 		internal static int WarnUpdate = 0;
@@ -35,7 +35,6 @@ namespace AltLibrary.Common.Hooks
 		{
 			WarnUpdate = 0;
 		}
-		//TODO: double check that this code makes sense to begin with
 		private static Asset<Texture2D> UIWorldListItem_GetIcon(Terraria.GameContent.UI.Elements.On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
 		{
 			Asset<Texture2D> asset = orig(self);
@@ -53,7 +52,6 @@ namespace AltLibrary.Common.Hooks
 			return asset;
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void UIWorldListItem_DrawSelf1(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -71,7 +69,6 @@ namespace AltLibrary.Common.Hooks
 			});
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void UIWorldListItem_ctor(ILContext il)
 		{
 			ILCursor c = new(il);
@@ -131,7 +128,6 @@ namespace AltLibrary.Common.Hooks
 			});
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		/// <summary>
 		/// For drunk icons
 		/// </summary>
@@ -230,7 +226,6 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void UIWorldListItem_DrawSelf(On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch)
 		{
 			orig(self, spriteBatch);
@@ -284,7 +279,6 @@ namespace AltLibrary.Common.Hooks
 			}
 		}
 
-		//TODO: double check that this code makes sense to begin with
 		private static void LayeredIcons(string forWhich, WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2)
 		{
 			Dictionary<string, Func<WorldFileData, bool>> assets = new()
