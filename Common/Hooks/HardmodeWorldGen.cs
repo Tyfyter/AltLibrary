@@ -114,7 +114,7 @@ namespace AltLibrary.Common.Hooks {
 						Tile tile = Main.tile[x, y];
 						int tileConversion = biome.GetAltBlock(tile.TileType, x, y, true);
 						if (tileConversion == -1) {
-							if (ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
+							if (ALConvertInheritanceData.tileParentageData.TryGetParent(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
 								tileConversion = biome.GetAltBlock(parent.baseTile, x, y, true);
 							}
 							if (tileConversion == -1 && ShouldConvertBeeTiles) {

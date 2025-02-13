@@ -444,7 +444,11 @@ namespace AltLibrary.Common.AltBiomes {
 
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);
-			TileConversions.Add(parentBlock, block);
+			if (Main.tileMoss[parentBlock] && TileConversions.TryGetValue(TileID.Stone, out int stone) && TileConversions[parentBlock] == stone) {
+				TileConversions[parentBlock] = block;
+			} else {
+				TileConversions.Add(parentBlock, block);
+			}
 			if (extraFunctions) {
 				switch (parentBlock) {
 					case TileID.Grass:
@@ -454,6 +458,12 @@ namespace AltLibrary.Common.AltBiomes {
 
 					case TileID.GolfGrass:
 					BiomeMowedGrass = block;
+					break;
+
+					case TileID.Stone:
+					for (int i = 0; i < Main.tileMoss.Length; i++) {
+						if (Main.tileMoss[i]) TileConversions.TryAdd(i, block);
+					}
 					break;
 				}
 			}
@@ -469,7 +479,7 @@ namespace AltLibrary.Common.AltBiomes {
 		public void AddWallConversions(int with, params int[] orig) {
 			foreach (int original in orig) {
 				WallConversions.TryAdd(original, with);
-				ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (original, this));
+				ALConvertInheritanceData.wallParentageData.AddParent(with, (original, this));
 				if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
 			}
 		}
@@ -481,7 +491,7 @@ namespace AltLibrary.Common.AltBiomes {
 			for (int i = 0; i < set.Length; i++) {
 				if (set[i]) {
 					WallConversions.TryAdd(i, with);
-					ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (i, this));
+					ALConvertInheritanceData.wallParentageData.AddParent(with, (i, this));
 					if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
 				}
 			}
@@ -489,7 +499,7 @@ namespace AltLibrary.Common.AltBiomes {
 		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
 		public void AddWallReplacement(int orig, int with) {
 			WallConversions.TryAdd(orig, with);
-			ALConvertInheritanceData.wallParentageData.Parent.TryAdd(with, (orig, this));
+			ALConvertInheritanceData.wallParentageData.AddParent(with, (orig, this));
 		}
 		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
 		public void AddWallReplacement<T>(params int[] orig) where T : ModWall {
@@ -500,14 +510,14 @@ namespace AltLibrary.Common.AltBiomes {
 		}
 
 		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.tileParentageData.Parent[Block] = (ParentBlock, this);
+			ALConvertInheritanceData.tileParentageData.AddParent(Block, (ParentBlock, this));
 			if (BreakIfConversionFail != null) {
 				ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
 			}
 		}
 
 		public void AddChildWall(int Wall, int ParentWall, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.wallParentageData.Parent[Wall] = (ParentWall, this);
+			ALConvertInheritanceData.tileParentageData.AddParent(Wall, (ParentWall, this));
 			if (BreakIfConversionFail != null) {
 				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
 			}

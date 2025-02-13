@@ -31,12 +31,8 @@ Common/UIWorldCreationEdits.cs
 Common/Hooks/OuterVisual.cs
 Core/UIs/ALGroupOptionButton.cs
 Core/UIs/ALUIBiomeListItem.cs
-Core/UIs/ALUIBorderedPieChart.cs
-Core/UIs/ALUICircle.cs
-Core/UIs/ALUIElement.cs
 Core/UIs/ALUIOreListItem.cs
-Core/UIs/ALUIPieChart.cs
-Core/UIs/FilterableUIList.cs
 Common/Hooks/UnderworldVisual.cs
 Common/Hooks/WorldIcons.cs
 Common/Hooks/BackgroundsAlternating.cs
+Fix Hell & Jungle still using ModContent.Find instead of actually being stored

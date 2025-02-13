@@ -104,7 +104,7 @@ namespace AltLibrary.Common.Hooks {
 
 			c.EmitDelegate(() => {
 				for (int i = 0; i < WorldGen.tileCounts.Length; i++) {
-					if (WorldGen.tileCounts[i] > 0 && ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(i, out (int baseTile, AltBiome fromBiome) parent) && parent.fromBiome is not null) {
+					if (WorldGen.tileCounts[i] > 0 && ALConvertInheritanceData.tileParentageData.TryGetParent(i, out (int baseTile, AltBiome fromBiome) parent) && parent.fromBiome is not null) {
 						if (parent.fromBiome is DeconvertAltBiome) continue;
 						WorldBiomeManager.biomeCountsWorking.TryGetValue(parent.fromBiome.Type, out int alreadyCounted);
 						WorldBiomeManager.biomeCountsWorking[parent.fromBiome.Type] = alreadyCounted + WorldGen.tileCounts[i];

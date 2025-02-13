@@ -2,6 +2,7 @@ using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +10,7 @@ using Terraria.WorldBuilding;
 
 namespace AltLibrary.Core.Generation {
 	internal static class EvilBiomeGenerationPassHandler {
+		internal static List<(int min, int max, float edgeGivePercent)> evilRanges;
 		internal static bool GenerateAllCorruption(
 			int dungeonSide,
 			int dungeonLocation,
@@ -18,8 +20,8 @@ namespace AltLibrary.Core.Generation {
 			int SnowBoundMinX = Main.maxTilesX;
 			int SnowBoundMaxX = 0;
 			for (int i = 0; i < Main.maxTilesX; i++) {
-				int snowJungleIter = 0;
-				while (snowJungleIter < Main.worldSurface) {
+				int snowJungleIter = (int)GenVars.worldSurfaceLow - 10;
+				while (snowJungleIter < GenVars.worldSurfaceHigh - 50) {
 					if (Main.tile[i, snowJungleIter].HasTile) {
 						if (Main.tile[i, snowJungleIter].TileType == (WorldBiomeManager.WorldJungle == "" ? TileID.JungleGrass : ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass.Value)) {
 							if (i < JungleBoundMinX) {
@@ -28,7 +30,7 @@ namespace AltLibrary.Core.Generation {
 							if (i > JungleBoundMaxX) {
 								JungleBoundMaxX = i;
 							}
-						} else if (Main.tile[i, snowJungleIter].TileType == 147 || Main.tile[i, snowJungleIter].TileType == 161) {
+						} else if (Main.tile[i, snowJungleIter].TileType == TileID.SnowBlock || Main.tile[i, snowJungleIter].TileType == TileID.IceBlock) {
 							if (i < SnowBoundMinX) {
 								SnowBoundMinX = i;
 							}
@@ -78,23 +80,24 @@ namespace AltLibrary.Core.Generation {
 
 			int drunkIter = 0;
 			int drunkMax = EvilBiomes.Count;
-
+			evilRanges = [];
 			EvilBiomes.ForEach(i => {
-				progress.Message = (i?.ProgressMessage) ?? "No ProgressMessage! Report that to Mod Developer!";
-
-				int passesDone = 0;
-				while (passesDone < numberPasses) {
-					if (i != null) {
-						i.GetEvilSpawnLocation(dungeonSide, dungeonLocation, SnowBoundMinX, SnowBoundMaxX, JungleBoundMinX, JungleBoundMaxX, drunkIter, drunkMax, out int evilMid, out int evilLeft, out int evilRight);
-						i.GenerateEvil(evilMid, evilLeft, evilRight);
-					}
-					passesDone++;
-				}
 				if (i != null) {
-					i?.PostGenerateEvil();
+					progress.Message = i.ProgressMessage ?? "No ProgressMessage! Report that to Mod Developer!";
+
+					int passesDone = 0;
+					while (passesDone < numberPasses) {
+						WorldBiomeGeneration.ChangeRange.ResetRange();
+						i.GetEvilSpawnLocation(dungeonSide, dungeonLocation, SnowBoundMinX, SnowBoundMaxX, JungleBoundMinX, JungleBoundMaxX, drunkIter, drunkMax, out int evilMid, out int evilLeft, out int evilRight);
+						evilRanges.Add((evilLeft, evilRight, i.EdgeGivePercent));
+						i.GenerateEvil(evilMid, evilLeft, evilRight);
+						passesDone++;
+					}
+					i.PostGenerateEvil();
 				}
 				drunkIter++;
 			});
+			evilRanges = [];
 
 			return false;
 		}
@@ -111,7 +114,10 @@ namespace AltLibrary.Core.Generation {
 		public virtual int DrunkRNGMapCenterGive => 200; //100 if crimson
 
 		public virtual bool CanGenerateNearDungeonOcean => true;
-
+		/// <summary>
+		/// The amount of this biome's area in which other evil biomes generating will be disincentivized rather than outright prohibited
+		/// </summary>
+		public virtual float EdgeGivePercent => 0.25f;
 		public virtual string ProgressMessage => "";
 
 		/* This is the code which allows you to spawn the evil */
@@ -151,19 +157,103 @@ namespace AltLibrary.Core.Generation {
 			int maxDrunkBorders,
 
 			out int evilBiomePosition, out int evilBiomePositionWestBound, out int evilBiomePositionEastBound) {
+			DefaultGetEvilSpawnLocation(SnowBoundMinX, SnowBoundMaxX, JungleBoundMinX, JungleBoundMaxX, currentDrunkIter, maxDrunkBorders, out evilBiomePosition, out evilBiomePositionWestBound, out evilBiomePositionEastBound);
+			//START GENERATING!
+		}
+		public void DefaultGetEvilSpawnLocation(int SnowBoundMinX, int SnowBoundMaxX, int JungleBoundMinX, int JungleBoundMaxX, int currentDrunkIter, int maxDrunkBorders, out int evilBiomePosition, out int evilBiomePositionWestBound, out int evilBiomePositionEastBound, int baseExtent = 100, int rngExtent = 200) {
+
 			bool FoundEvilLocation = false;
 			evilBiomePosition = 0;
 			evilBiomePositionWestBound = 0;
 			evilBiomePositionEastBound = 0;
+			int MapCenter = Main.maxTilesX / 2;
+			int MapCenterGive = WorldGen.drunkWorldGen ? DrunkRNGMapCenterGive : 200;
 
-			int tries = 0;
+			int tries;
+			string newSystemFailReason = $"RNG could not reach non-zero total weight";
+			int minPriority = 0;
+			while (minPriority <= 5) {
+				PegasusLib.RangeRandom rand = new(WorldGen.genRand, 0, Main.maxTilesX);
+				void ProtectRange(int min, int max, int priority, int padding = 200) {
+					if (priority < minPriority) return;
+					rand.Multiply(min, max, 0);
+					rand.Multiply(min - padding, max + padding, 0.5);
+				}
+				int beachPadding = minPriority < 2 ? 100 : 0;
+				ProtectRange(0, evilBiomeBeachAvoidance, 5, beachPadding);
+				ProtectRange(Main.maxTilesX - evilBiomeBeachAvoidance, Main.maxTilesX, 5, beachPadding);
+				if (!Main.remixWorld) ProtectRange(MapCenter - MapCenterGive, MapCenter + MapCenterGive, 5, 100);
+				ProtectRange(GenVars.UndergroundDesertLocation.X, GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width, 4);
+				ProtectRange(GenVars.dungeonLocation - DungeonGive, GenVars.dungeonLocation + DungeonGive, 3, 100 - minPriority * 20);
+				ProtectRange(SnowBoundMinX, SnowBoundMaxX, 3);
+				foreach ((int min, int max, float edgeGivePercent) in EvilBiomeGenerationPassHandler.evilRanges) {
+					int padding = (int)((max - min) * edgeGivePercent * 0.5f);
+					ProtectRange(min + padding, max - padding, 4, padding);
+				}
+				ProtectRange(JungleBoundMinX, JungleBoundMaxX, 5);
+
+				if (rand.AnyWeight) {
+					/*for (int i = 0; i < Main.maxTilesX; i++) {
+						double weight = rand.GetWeight(i);
+						byte paintType = weight == 0 ? PaintID.ShadowPaint : PaintID.DeepRedPaint;
+						if (weight == 1) paintType = PaintID.None;
+						for (int j = 0; j < Main.maxTilesY; j++) {
+							Tile tile = Main.tile[i, j];
+							tile.TileColor = paintType;
+						}
+					}*/
+					tries = 0;
+					int bestExtent = 0;
+					while (tries < 100) {
+						evilBiomePosition = rand.Get();
+						int westExtent = WorldGen.genRand.Next(rngExtent) + baseExtent;
+						int eastExtent = WorldGen.genRand.Next(rngExtent) + baseExtent;
+						evilBiomePositionWestBound = evilBiomePosition;
+						evilBiomePositionEastBound = evilBiomePosition;
+						for (int i = 0; i < westExtent; i++) {
+							if (evilBiomePositionWestBound - 1 < evilBiomeBeachAvoidance || rand.GetWeight(evilBiomePositionWestBound - 1) == 0) {
+								westExtent = i;
+								break;
+							}
+							evilBiomePositionWestBound--;
+						}
+						for (int i = 0; i < eastExtent; i++) {
+							if (evilBiomePositionEastBound + 1 > Main.maxTilesX - evilBiomeBeachAvoidance || rand.GetWeight(evilBiomePositionEastBound + 1) == 0) {
+								eastExtent = i;
+								break;
+							}
+							evilBiomePositionEastBound++;
+						}
+						if (westExtent + eastExtent >= 150) {
+							/*if (evilBiomePositionWestBound < evilBiomeBeachAvoidance) {
+								evilBiomePositionWestBound = evilBiomeBeachAvoidance;
+							}
+							if (evilBiomePositionEastBound > Main.maxTilesX - evilBiomeBeachAvoidance) {
+								evilBiomePositionEastBound = Main.maxTilesX - evilBiomeBeachAvoidance;
+							}*/
+							if (evilBiomePosition < evilBiomePositionWestBound + EvilBiomeAvoidanceMidFixer) {
+								evilBiomePosition = evilBiomePositionWestBound + EvilBiomeAvoidanceMidFixer;
+							}
+							if (evilBiomePosition > evilBiomePositionEastBound - EvilBiomeAvoidanceMidFixer) {
+								evilBiomePosition = evilBiomePositionEastBound - EvilBiomeAvoidanceMidFixer;
+							}
+							return;
+						}
+						if (bestExtent < westExtent + eastExtent) {
+							newSystemFailReason = $"Could not find large enough area, largest was {westExtent}+{eastExtent}";
+						}
+						tries++;
+					}
+				}
+				minPriority++;
+			}
+
+			AltLibrary.Instance.Logger.Info($"Could not find location with new system (reason:\"{newSystemFailReason}\"), falling back to old system");
+			tries = 0;
 			while (!FoundEvilLocation) {
 				FoundEvilLocation = true;
-				int MapCenter = Main.maxTilesX / 2;
-				int MapCenterGive = 200;
 
 				if (WorldGen.drunkWorldGen) {
-					MapCenterGive = DrunkRNGMapCenterGive;
 
 					int diff = Main.maxTilesX - NonDrunkBorderDist - NonDrunkBorderDist;
 
@@ -197,9 +287,9 @@ namespace AltLibrary.Core.Generation {
 				}
 				//DIFFERENCE 2 - CRIMSON ONLY
 				if (!CanGenerateNearDungeonOcean) {
-					if (dungeonSide < 0 && evilBiomePositionWestBound < 400) {
+					if (GenVars.dungeonSide < 0 && evilBiomePositionWestBound < 400) {
 						evilBiomePositionWestBound = 400;
-					} else if (dungeonSide > 0 && evilBiomePositionWestBound > Main.maxTilesX - 400) {
+					} else if (GenVars.dungeonSide > 0 && evilBiomePositionWestBound > Main.maxTilesX - 400) {
 						evilBiomePositionWestBound = Main.maxTilesX - 400;
 					}
 				}
@@ -222,7 +312,7 @@ namespace AltLibrary.Core.Generation {
 				if (tries < 200 && evilBiomePositionEastBound > GenVars.UndergroundDesertLocation.X && evilBiomePositionEastBound < GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width) {
 					FoundEvilLocation = false;
 				}
-				if (tries < 1000 && evilBiomePositionWestBound < dungeonLocation + DungeonGive && evilBiomePositionEastBound > dungeonLocation - DungeonGive) {
+				if (tries < 1000 && evilBiomePositionWestBound < GenVars.dungeonLocation + DungeonGive && evilBiomePositionEastBound > GenVars.dungeonLocation - DungeonGive) {
 					FoundEvilLocation = false;
 				}
 				if (tries < 100 && evilBiomePositionWestBound < SnowBoundMinX && evilBiomePositionEastBound > SnowBoundMaxX) {
@@ -242,7 +332,6 @@ namespace AltLibrary.Core.Generation {
 								}
 				#endif*/
 			}
-			//START GENERATING!
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using AltLibrary.Core;
 using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -198,10 +199,10 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 0;
 		public DeconvertAltBiome() : base("Deconvert", BiomeType.None, int.MinValue, Color.Green) {}
 		public override int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
-			return ALConvertInheritanceData.tileParentageData.Deconversion.TryGetValue(BaseBlock, out int val) ? val : -1;
+			return ALConvertInheritanceData.tileParentageData.Deconversion[BaseBlock];
 		}
 		public override int GetAltWall(int BaseWall, int posX, int posY, bool GERunner = false) {
-			return ALConvertInheritanceData.wallParentageData.Deconversion.TryGetValue(BaseWall, out int val) ? val : -1;
+			return ALConvertInheritanceData.wallParentageData.Deconversion[BaseWall];
 		}
 	}
 	public class MushroomAltBiome : VanillaBiome {

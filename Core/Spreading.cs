@@ -15,7 +15,7 @@ namespace AltLibrary.Core {
 			bool isJungleSpreadingOre = false;
 			bool isGrass = false;
 			AltBiome biomeToSpread = null;
-			ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(type, out (int baseTile, AltBiome fromBiome) parent);
+			ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
 			AltBiome biome = parent.fromBiome;
 			if (biome is null or VanillaBiome) {
 				return;

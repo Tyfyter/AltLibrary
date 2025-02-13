@@ -1,8 +1,16 @@
 using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using Microsoft.Xna.Framework.Input;
+using MonoMod.RuntimeDetour;
+using MonoMod.Utils;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,32 +18,32 @@ using Terraria.ModLoader;
 namespace AltLibrary.Core.Baking {
 	internal abstract class BlockParentageData {
 		//tiles
-		public Dictionary<int, (int, AltBiome)> Parent = new();
-
+		internal Dictionary<int, (int parentTile, AltBiome parentBiome)> UnbakedParents = new();
+		(int parentTile, AltBiome parentBiome)[] parents;
+		public ReadOnlySpan<(int parentTile, AltBiome parentBiome)> ParentData => parents;
 		internal void SetupDeconversion() {
-			Deconversion = new(Parent.Where(i => !NoDeconversion.Contains(i.Key)).Select(i => new KeyValuePair<int, int>(i.Key, i.Value.Item1)));
+			parents = TileID.Sets.Factory.CreateCustomSet<(int, AltBiome)>((-1, null));
+			Deconversion = TileID.Sets.Factory.CreateIntSet(-1);
+			foreach (KeyValuePair<int, (int parentTile, AltBiome parentBiome)> item in UnbakedParents) {
+				if (parents.IndexInRange(item.Key)) {
+					parents[item.Key] = item.Value;
+					if (!NoDeconversion.Contains(item.Key)) Deconversion[item.Key] = item.Value.parentTile;
+				}
+			}
 		}
-		public Dictionary<int, int> Deconversion { get; private set; }
+		public int[] Deconversion { get; private set; }
 		public HashSet<int> NoDeconversion = [];
 
 		public Dictionary<int, BitsByte> BreakIfConversionFail = new();
 
 		public abstract void Bake();
 
-		public int GetConverted(int baseTile, Func<int, int> GetAltBlock, int ConversionType) {
-			int ForcedConvertedTile = -1;
-			while (true) {
-				int test = GetAltBlock(baseTile);
-				if (test != -1)
-					return test;
-				if (BreakIfConversionFail.TryGetValue(baseTile, out BitsByte bits)) {
-					if (bits[ConversionType])
-						ForcedConvertedTile = -2; //change this to make use of spraytype
-				}
-				if (!Parent.TryGetValue(baseTile, out (int test, AltBiome biome) value))
-					return ForcedConvertedTile;
-				baseTile = value.test;
-			}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool AddParent(int type, (int parentTile, AltBiome parentBiome) parent) => UnbakedParents.TryAdd(type, parent);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool TryGetParent(int type, out (int parentTile, AltBiome parentBiome) parent) {
+			parent = parents[type];
+			return parent.parentTile != -1 || parent.parentBiome is not null;
 		}
 	}
 	internal class TileParentageData : BlockParentageData {
@@ -44,26 +52,26 @@ namespace AltLibrary.Core.Baking {
 
 			for (int x = 0; x < TileLoader.TileCount; x++) {
 				if (TileID.Sets.Conversion.GolfGrass[x])
-					Parent.TryAdd(x, (TileID.GolfGrass, null));
+					AddParent(x, (TileID.GolfGrass, null));
 				else if (TileID.Sets.Conversion.Grass[x])
-					Parent.TryAdd(x, (TileID.Grass, null));
+					AddParent(x, (TileID.Grass, null));
 				else if (TileID.Sets.Conversion.JungleGrass[x])
-					Parent.TryAdd(x, (TileID.JungleGrass, null));
+					AddParent(x, (TileID.JungleGrass, null));
 				else if (TileID.Sets.Conversion.MushroomGrass[x])
-					Parent.TryAdd(x, (TileID.MushroomGrass, null));
+					AddParent(x, (TileID.MushroomGrass, null));
 				else if (Main.tileMoss[x] && x != TileID.Stone) {
 					NoDeconversion.Add(x); //prevents deconversion of moss to stone
-					Parent.TryAdd(x, (TileID.Stone, null));
+					AddParent(x, (TileID.Stone, null));
 				} else if (TileID.Sets.Conversion.Stone[x])
-					Parent.TryAdd(x, (TileID.Stone, null));
+					AddParent(x, (TileID.Stone, null));
 				else if (TileID.Sets.Conversion.Ice[x])
-					Parent.TryAdd(x, (TileID.IceBlock, null));
+					AddParent(x, (TileID.IceBlock, null));
 				else if (TileID.Sets.Conversion.Sandstone[x])
-					Parent.TryAdd(x, (TileID.Sandstone, null));
+					AddParent(x, (TileID.Sandstone, null));
 				else if (TileID.Sets.Conversion.HardenedSand[x])
-					Parent.TryAdd(x, (TileID.HardenedSand, null));
+					AddParent(x, (TileID.HardenedSand, null));
 				else if (TileID.Sets.Conversion.Sand[x])
-					Parent.TryAdd(x, (TileID.Sand, null));
+					AddParent(x, (TileID.Sand, null));
 			}
 
 			BreakIfConversionFail.TryAdd(TileID.JungleThorns, new(true, true, true, true));
@@ -83,45 +91,45 @@ namespace AltLibrary.Core.Baking {
 						case WallID.CorruptGrassUnsafe:
 						case WallID.CrimsonGrassUnsafe:
 						case WallID.HallowedGrassUnsafe:
-						Parent.TryAdd(x, (GRASS_UNSAFE_DIFFERENT, null));
+						AddParent(x, (GRASS_UNSAFE_DIFFERENT, null));
 						break;
 						default:
-						Parent.TryAdd(x, (WallID.Grass, null));
+						AddParent(x, (WallID.Grass, null));
 						break;
 					}
 				} else if (WallID.Sets.Conversion.Stone[x] && x != WallID.Stone)
-					Parent.TryAdd(x, (WallID.Stone, null));
+					AddParent(x, (WallID.Stone, null));
 				else if (WallID.Sets.Conversion.HardenedSand[x] && x != WallID.HardenedSand)
-					Parent.TryAdd(x, (WallID.HardenedSand, null));
+					AddParent(x, (WallID.HardenedSand, null));
 				else if (WallID.Sets.Conversion.Sandstone[x] && x != WallID.Sandstone)
-					Parent.TryAdd(x, (WallID.Sandstone, null));
+					AddParent(x, (WallID.Sandstone, null));
 				else if (WallID.Sets.Conversion.NewWall1[x] && x != WallID.RocksUnsafe1)
-					Parent.TryAdd(x, (WallID.RocksUnsafe1, null));
+					AddParent(x, (WallID.RocksUnsafe1, null));
 				else if (WallID.Sets.Conversion.NewWall2[x] && x != WallID.RocksUnsafe2)
-					Parent.TryAdd(x, (WallID.RocksUnsafe2, null));
+					AddParent(x, (WallID.RocksUnsafe2, null));
 				else if (WallID.Sets.Conversion.NewWall3[x] && x != WallID.RocksUnsafe3)
-					Parent.TryAdd(x, (WallID.RocksUnsafe3, null));
+					AddParent(x, (WallID.RocksUnsafe3, null));
 				else if (WallID.Sets.Conversion.NewWall4[x] && x != WallID.RocksUnsafe4)
-					Parent.TryAdd(x, (WallID.RocksUnsafe4, null));
+					AddParent(x, (WallID.RocksUnsafe4, null));
 			}
 
 			//Manual Grass conversionating to ensure safe grass walls cannot become unsafe through green solution conversion
 
-			Parent.TryAdd(GRASS_UNSAFE_DIFFERENT, (WallID.Grass, null));
+			AddParent(GRASS_UNSAFE_DIFFERENT, (WallID.Grass, null));
 
-			Parent[WallID.Cave7Echo] = (WallID.Cave7Unsafe, null);
-			Parent[WallID.Cave8Echo] = (WallID.Cave8Unsafe, null);
-			Parent[WallID.MushroomUnsafe] = (WallID.JungleUnsafe, null);
+			UnbakedParents[WallID.Cave7Echo] = (WallID.Cave7Unsafe, null);
+			UnbakedParents[WallID.Cave8Echo] = (WallID.Cave8Unsafe, null);
+			UnbakedParents[WallID.MushroomUnsafe] = (WallID.JungleUnsafe, null);
 
-			Parent.TryAdd(WallID.JungleUnsafe1, (WallID.JungleUnsafe, null));
-			Parent.TryAdd(WallID.JungleUnsafe2, (WallID.JungleUnsafe, null));
-			Parent.TryAdd(WallID.JungleUnsafe3, (WallID.JungleUnsafe, null));
-			Parent.TryAdd(WallID.JungleUnsafe4, (WallID.JungleUnsafe, null));
+			AddParent(WallID.JungleUnsafe1, (WallID.JungleUnsafe, null));
+			AddParent(WallID.JungleUnsafe2, (WallID.JungleUnsafe, null));
+			AddParent(WallID.JungleUnsafe3, (WallID.JungleUnsafe, null));
+			AddParent(WallID.JungleUnsafe4, (WallID.JungleUnsafe, null));
 
-			Parent.TryAdd(WallID.Jungle1Echo, (WallID.Jungle, null));
-			Parent.TryAdd(WallID.Jungle2Echo, (WallID.Jungle, null));
-			Parent.TryAdd(WallID.Jungle3Echo, (WallID.Jungle, null));
-			Parent.TryAdd(WallID.Jungle4Echo, (WallID.Jungle, null));
+			AddParent(WallID.Jungle1Echo, (WallID.Jungle, null));
+			AddParent(WallID.Jungle2Echo, (WallID.Jungle, null));
+			AddParent(WallID.Jungle3Echo, (WallID.Jungle, null));
+			AddParent(WallID.Jungle4Echo, (WallID.Jungle, null));
 		}
 	}
 
@@ -151,7 +159,7 @@ namespace AltLibrary.Core.Baking {
 
 		public static int GetUltimateParent(int baseTile) {
 			while (true) {
-				if (!tileParentageData.Parent.TryGetValue(baseTile, out (int tileType, AltBiome) test))
+				if (!tileParentageData.TryGetParent(baseTile, out (int tileType, AltBiome) test))
 					return baseTile;
 				baseTile = test.tileType;
 			}

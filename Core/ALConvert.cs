@@ -112,7 +112,7 @@ namespace AltLibrary.Core {
 		}
 		static bool CheckTileEvil(bool evil, Tile tile) {
 			if (!evil
-				&& ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)
+				&& ALConvertInheritanceData.tileParentageData.TryGetParent(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)
 				&& parent.fromBiome?.BiomeType == BiomeType.Evil) return true;
 			return evil;
 		}
@@ -221,7 +221,7 @@ namespace AltLibrary.Core {
 			}
 			int baseTile = tile.TileType;
 			AltBiome fromBiome = null;
-			if (ALConvertInheritanceData.tileParentageData.Parent.TryGetValue(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
+			if (ALConvertInheritanceData.tileParentageData.TryGetParent(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
 				(baseTile, fromBiome) = parent;
 			}
 			if (newTile == -1) {
@@ -284,7 +284,7 @@ namespace AltLibrary.Core {
 			}
 			int baseWall = tile.WallType;
 			AltBiome fromBiome = null;
-			if (ALConvertInheritanceData.wallParentageData.Parent.TryGetValue(tile.WallType, out (int baseTile, AltBiome fromBiome) parent)) {
+			if (ALConvertInheritanceData.wallParentageData.TryGetParent(tile.WallType, out (int baseTile, AltBiome fromBiome) parent)) {
 				(baseWall, fromBiome) = parent;
 			}
 			if (newWall == -1) {
