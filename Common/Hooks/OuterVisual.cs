@@ -4,188 +4,81 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using PegasusLib;
+using PegasusLib.Reflection;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
+using Terraria.UI;
 
-namespace AltLibrary.Common.Hooks
-{
-	internal static class OuterVisual
-	{
-		public static void Init()
-		{
-			IL_UIGenProgressBar.DrawSelf += UIGenProgressBar_DrawSelf;
+namespace AltLibrary.Common.Hooks {
+	internal class ProgressBarMethods : ReflectionLoader {
+		public static FastFieldInfo<UIGenProgressBar, float> _targetOverallProgress;
+		public static FastFieldInfo<UIGenProgressBar, float> _targetCurrentProgress;
+		public static FastFieldInfo<UIGenProgressBar, int> _longBarWidth;
+		public static FastFieldInfo<UIGenProgressBar, int> _smallBarWidth;
+		[ReflectionParentType(typeof(UIGenProgressBar))]
+		static Action<SpriteBatch, Texture2D, Texture2D, Vector2, int, int, Color, Color> DrawFilling;
+		[ReflectionParentType(typeof(UIGenProgressBar))]
+		static Action<SpriteBatch, Vector2, int, int, int, Color, Color, Color> DrawFilling2;
+		public static void DoDrawFilling(UIGenProgressBar self, SpriteBatch spritebatch, Texture2D tex, Texture2D texShadow, Vector2 topLeft, int completedWidth, int totalWidth, Color separator, Color empty) {
+			PegasusLib.Reflection.DelegateMethods._target.SetValue(DrawFilling, self);
+			DrawFilling(spritebatch, tex, texShadow, topLeft, completedWidth, totalWidth, separator, empty);
 		}
-
-		public static void Unload()
-		{
+		public static void DoDrawFilling2(UIGenProgressBar self, SpriteBatch spritebatch, Vector2 topLeft, int height, int completedWidth, int totalWidth, Color filled, Color separator, Color empty) {
+			PegasusLib.Reflection.DelegateMethods._target.SetValue(DrawFilling2, self);
+			DrawFilling2(spritebatch, topLeft, height, completedWidth, totalWidth, filled, separator, empty);
 		}
-
-		//TODO: completely rewrite
-		private static void UIGenProgressBar_DrawSelf(ILContext il)
-		{
-			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchLdcI4(-8131073)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 1");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchCall(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 2");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Ldloc, 5);
-			c.EmitDelegate<Func<Color, Color>>((color) =>
-			{
-				int worldGenStep = 0;
-				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
-
-				if (WorldGen.drunkWorldGen && Main.rand.NextBool(2)) worldGenStep = Main.rand.Next(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().Count + 2);
-
-				switch (worldGenStep) {
-					case 0:
-					return new Color(95, 242, 86);
-
-					case 1:
-					return new Color(255, 237, 131);
-
-					default:
-					return WorldBiomeManager.WorldEvilBiome.OuterColor;
-				}
-			});
-			c.Emit(OpCodes.Stloc, 5);
-			if (!c.TryGotoNext(i => i.MatchLdfld<UIGenProgressBar>("_texOuterCorrupt")))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 3");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Pop);
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCorrupt", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCrimson", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.EmitDelegate<Func<Asset<Texture2D>, Asset<Texture2D>, Asset<Texture2D>>>((corrupt, crimson) =>
-			{
-				int worldGenStep = 0;
-				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
-				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
-				return worldGenStep <= 1 ? (worldGenStep == 0 ? corrupt : crimson) : asset;
-			});
-			if (!c.TryGotoNext(i => i.MatchLdfld<UIGenProgressBar>("_texOuterCrimson")))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 4");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Pop);
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCorrupt", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCrimson", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.EmitDelegate<Func<Asset<Texture2D>, Asset<Texture2D>, Asset<Texture2D>>>((corrupt, crimson) =>
-			{
-				int worldGenStep = 0;
-				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
-				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
-				return worldGenStep <= 1 ? (worldGenStep == 0 ? corrupt : crimson) : asset;
-			});
-			if (!c.TryGotoNext(i => i.MatchCallvirt(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 5");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchCallvirt(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 6");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Ldarg, 1);
-			c.Emit(OpCodes.Ldloc, 6);
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCorrupt", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterCrimson", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.EmitDelegate<Action<SpriteBatch, Rectangle, Asset<Texture2D>, Asset<Texture2D>>>((spriteBatch, r, corrupt, crimson) =>
-			{
-				int worldGenStep = 0;
-				if (WorldGen.crimson) worldGenStep = 1;
-				if (WorldBiomeManager.WorldEvilName != "") worldGenStep = WorldBiomeManager.WorldEvilBiome.Type + 2;
-				if (WorldGen.drunkWorldGen && Main.rand.NextBool(2)) worldGenStep = Main.rand.Next(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Evil).ToList().Count + 2);
-				Asset<Texture2D> asset = ALTextureAssets.OuterTexture;
-				if (worldGenStep == 0) asset = corrupt;
-				switch (worldGenStep) {
-					case 0:
-					asset = corrupt;
-					break;
-
-					case 1:
-					asset = crimson;
-					break;
-
-					default:
-					if (ALTextureAssets.BiomeOuter.IndexInRange(worldGenStep - 3)) asset = ALTextureAssets.BiomeOuter[worldGenStep - 3];
-					break;
-				}
-				spriteBatch.Draw(asset.Value, r.TopLeft(), Color.White);
-			});
-			if (!c.TryGotoNext(i => i.MatchLdfld<UIGenProgressBar>("_texOuterLower")))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 7");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Pop);
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterLower", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.EmitDelegate<Func<Asset<Texture2D>, Asset<Texture2D>>>((lower) =>
-			{
-				int worldGenStep = 0;
-				if (WorldBiomeManager.WorldHell != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).Type + 1;
-				Asset<Texture2D> asset = ALTextureAssets.OuterLowerTexture;
-				return worldGenStep <= 0 ? lower : asset;
-			});
-			if (!c.TryGotoNext(i => i.MatchCallvirt(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 8");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchCallvirt(out _)))
-			{
-				AltLibrary.Instance.Logger.Info("m $ 9");
-				return;
-			}
-			c.Index++;
-			c.Emit(OpCodes.Ldarg, 1);
-			c.Emit(OpCodes.Ldloc, 6);
-			c.Emit(OpCodes.Ldarg, 0);
-			c.Emit(OpCodes.Ldfld, typeof(UIGenProgressBar).GetField("_texOuterLower", BindingFlags.Instance | BindingFlags.NonPublic));
-			c.EmitDelegate<Action<SpriteBatch, Rectangle, Asset<Texture2D>>>((spriteBatch, r, lower) =>
-			{
-				int worldGenStep = 0;
-				if (WorldBiomeManager.WorldHell != "") worldGenStep = ModContent.Find<AltBiome>(WorldBiomeManager.WorldHell).Type + 1;
-				if (WorldGen.drunkWorldGen && Main.rand.NextBool(2)) worldGenStep = Main.rand.Next(AltLibrary.Biomes.Where(x => x.BiomeType == BiomeType.Hell).ToList().Count + 1);
-				Asset<Texture2D> asset = ALTextureAssets.OuterLowerTexture;
-				if (worldGenStep == 0) asset = lower;
-				foreach (AltBiome biome in AltLibrary.Biomes)
-				{
-					if (worldGenStep == biome.Type + 1 && biome.BiomeType == BiomeType.Hell)
-					{
-						asset = ALTextureAssets.BiomeLower[biome.Type - 1];
-					}
-				}
-				spriteBatch.Draw(asset.Value, r.TopLeft() + new Vector2(44f, 60f), Color.White);
-			});
+	}
+	internal class OuterVisual : ILoadable {
+		List<AltBiome> biomes;
+		public void Load(Mod mod) {
+			On_UIGenProgressBar.DrawSelf += On_UIGenProgressBar_DrawSelf;
 		}
+		private void On_UIGenProgressBar_DrawSelf(On_UIGenProgressBar.orig_DrawSelf orig, UIGenProgressBar self, SpriteBatch spriteBatch) {
+			AltBiome hell = WorldBiomeManager.GetWorldHell();
+			Asset<Texture2D> lowerTexture = hell.LowerTextureAsset;
+			if (lowerTexture.IsLoaded) {
+				AltBiome biome;
+				if (WorldGen.drunkWorldGen) {
+					biomes ??= [..((IEnumerable<AltBiome>)AltLibrary.AllBiomes).Where(biome => biome.BiomeType == BiomeType.Evil)];
+					biome = Main.rand.Next(biomes);
+				} else {
+					biome = WorldBiomeManager.GetWorldEvil();
+				}
+				CalculatedStyle dimensions = self.GetDimensions();
+				Vector2 pos = dimensions.Position();
+				Color color = biome.OuterColor;
+				ProgressBarMethods.DoDrawFilling2(self, spriteBatch,
+					pos + new Vector2(20f, 40f),
+					16,
+					(int)(ProgressBarMethods._targetOverallProgress.GetValue(self) * ProgressBarMethods._longBarWidth.GetValue(self)),
+					ProgressBarMethods._longBarWidth.GetValue(self),
+					color,
+					Color.Lerp(color, Color.Black, 0.5f),
+					new Color(48, 48, 48)
+				);
+				color = hell.LowerColor;
+				ProgressBarMethods.DoDrawFilling2(self, spriteBatch,
+					pos + new Vector2(50f, 60f),
+					8,
+					(int)(ProgressBarMethods._targetCurrentProgress.GetValue(self) * ProgressBarMethods._smallBarWidth.GetValue(self)),
+					ProgressBarMethods._smallBarWidth.GetValue(self),
+					color,
+					Color.Lerp(color, Color.Black, 0.5f),
+					new Color(33, 33, 33)
+				);
+				Rectangle r = dimensions.ToRectangle();
+				r.X -= 8;
+				spriteBatch.Draw(biome.OuterTextureAsset.Value, r.TopLeft(), Color.White);
+				spriteBatch.Draw(lowerTexture.Value, r.TopLeft() + new Vector2(44f, 60f), Color.White);
+			}
+		}
+		public void Unload() { }
 	}
 }

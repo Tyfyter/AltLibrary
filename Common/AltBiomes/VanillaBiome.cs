@@ -50,6 +50,8 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCorrupt");
 		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false) { }
+		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Corrupt";
+		public override Color OuterColor => new(95, 242, 86);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.DemoniteOre;
 			SeedType = ItemID.CorruptSeeds;
@@ -103,6 +105,8 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCrimson");
 		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true) { }
+		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Crimson";
+		public override Color OuterColor => new(255, 237, 131);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.CrimtaneOre;
 			SeedType = ItemID.CrimsonSeeds;
@@ -194,6 +198,8 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	public class UnderworldAltBiome : VanillaBiome {
 		public UnderworldAltBiome() : base("UnderworldBiome", BiomeType.Hell, -5, Color.OrangeRed) { }
+		public override Color LowerColor => new(87, 168, 194);
+		public override string LowerTexture => "Terraria/Images/UI/WorldGen/Outer_Lower";
 	}
 	public class DeconvertAltBiome : VanillaBiome {
 		public override int ConversionType => 0;

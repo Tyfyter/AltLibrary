@@ -256,14 +256,20 @@ namespace AltLibrary.Common.AltBiomes {
 		/// For Evil biomes. The texture that appears around the loading bar on world creation.
 		/// </summary>
 		public virtual string OuterTexture => "AltLibrary/Assets/Loading/Outer Empty";
+		public Asset<Texture2D> OuterTextureAsset { get; protected internal set; }
 		/// <summary>
 		/// For Underworld biomes. The texture that appears around the lower loading bar on world creation.
 		/// </summary>
 		public virtual string LowerTexture => "AltLibrary/Assets/Loading/Outer Lower Empty";// TODO: create a default/template sprite to make the bar look less ugly when no bar is specified
+		public Asset<Texture2D> LowerTextureAsset { get; protected internal set; }
 		/// <summary>
 		/// For Evil biomes. The texture that appears inside the loading bar on world creation.
 		/// </summary>
 		public virtual Color OuterColor => new(127, 127, 127);
+		/// <summary>
+		/// For Underworld biomes. The texture that appears inside the lower loading bar on world creation.
+		/// </summary>
+		public virtual Color LowerColor => new(127, 127, 127);
 		/// <summary>
 		/// The color of this biome's name that will appear on the biome selection menu.
 		/// </summary>
@@ -390,6 +396,8 @@ namespace AltLibrary.Common.AltBiomes {
 		}
 		protected sealed override void Register() {
 			ModTypeLookup<AltBiome>.Register(this);
+			if (ModContent.RequestIfExists(OuterTexture, out Asset<Texture2D> asset)) OuterTextureAsset = asset;
+			if (ModContent.RequestIfExists(LowerTexture, out asset)) LowerTextureAsset = asset;
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
 				return;

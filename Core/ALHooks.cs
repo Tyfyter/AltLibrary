@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using PegasusLib;
 using System;
 using System.Reflection;
 using Terraria;

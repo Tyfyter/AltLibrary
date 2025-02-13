@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
+using PegasusLib;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;

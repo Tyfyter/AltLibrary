@@ -18,7 +18,6 @@ namespace AltLibrary.Core {
 		public static void OnInitialize() {
 			On_Main.EraseWorld += Main_EraseWorld;
 			WorldIcons.Init();
-			OuterVisual.Init();
 			EvenMoreWorldGen.Init();
 			UnderworldVisual.Init();
 			UIWorldCreationEdits.Init();
@@ -39,7 +38,6 @@ namespace AltLibrary.Core {
 		public static void Unload() {
 			On_Main.EraseWorld -= Main_EraseWorld;
 			WorldIcons.Unload();
-			OuterVisual.Unload();
 			EvenMoreWorldGen.Unload();
 			UnderworldVisual.Unload();
 			UIWorldCreationEdits.Unload();

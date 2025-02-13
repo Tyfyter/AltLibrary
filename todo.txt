@@ -28,7 +28,6 @@ Common/Hooks/TenthAnniversaryFix.cs
 
 Rewrite:
 Common/UIWorldCreationEdits.cs
-Common/Hooks/OuterVisual.cs
 Core/UIs/ALGroupOptionButton.cs
 Core/UIs/ALUIBiomeListItem.cs
 Core/UIs/ALUIOreListItem.cs
