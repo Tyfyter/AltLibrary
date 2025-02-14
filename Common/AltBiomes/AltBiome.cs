@@ -38,15 +38,15 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <summary>
 		/// The name of this biome that will display on the biome selection screen.
 		/// </summary>
-		public LocalizedText DisplayName => this.GetLocalization("DisplayName", PrettyPrintName);
+		public virtual LocalizedText DisplayName => this.GetLocalization("DisplayName", PrettyPrintName);
 		/// <summary>
 		/// The description for this biome that will appear on the biome selection screen.
 		/// </summary>
-		public LocalizedText Description => this.GetLocalization("Description", PrettyPrintName);
+		public virtual LocalizedText Description => this.GetLocalization("Description", PrettyPrintName);
 		/// <summary>
 		/// The message that will appear during world generation. Used by Underworld and Jungle alts. Yet.
 		/// </summary>
-		public LocalizedText GenPassName => this.GetLocalization("GenPassName", PrettyPrintName);
+		public virtual LocalizedText GenPassName => this.GetLocalization("GenPassName", PrettyPrintName);
 		/// <summary>
 		/// The descriptor the dryad will use when saying how much of the world is this biome
 		/// </summary>
@@ -398,6 +398,9 @@ namespace AltLibrary.Common.AltBiomes {
 			ModTypeLookup<AltBiome>.Register(this);
 			if (ModContent.RequestIfExists(OuterTexture, out Asset<Texture2D> asset)) OuterTextureAsset = asset;
 			if (ModContent.RequestIfExists(LowerTexture, out asset)) LowerTextureAsset = asset;
+			_ = DisplayName.Value;
+			_ = Description.Value;
+			_ = GenPassName.Value;
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
 				return;
@@ -424,6 +427,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// Override if you want custom selection
 		/// </summary>
 		/// <param name="list"></param>
+		[Obsolete("Custom selection is no longer supported, support may be re-added if someone has a use for it")]
 		public virtual void CustomSelection(List<AltBiome> list) {
 			int index = list.FindLastIndex(x => x.BiomeType == BiomeType);
 			if (index != -1) {

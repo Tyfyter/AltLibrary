@@ -17,7 +17,6 @@ Core/ReflectionDictionary.cs
 
 See TODO comments:
 ModSupport/Calamity.cs
-Content/DevArmor/Cace/CaceEars.cs
 Common/Hooks/EvenMoreWorldGen.cs
 Common/Hooks/HardmodeWorldGen.cs
 Common/Hooks/FishingCrateLoot.cs
@@ -27,7 +26,6 @@ Common/AltBiomes/ALBiomeTileCountModifier.cs
 Common/Hooks/TenthAnniversaryFix.cs
 
 Rewrite:
-Common/UIWorldCreationEdits.cs
 Core/UIs/ALGroupOptionButton.cs
 Core/UIs/ALUIBiomeListItem.cs
 Core/UIs/ALUIOreListItem.cs

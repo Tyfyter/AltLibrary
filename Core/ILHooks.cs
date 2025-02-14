@@ -20,7 +20,11 @@ namespace AltLibrary.Core {
 			WorldIcons.Init();
 			EvenMoreWorldGen.Init();
 			UnderworldVisual.Init();
-			UIWorldCreationEdits.Init();
+			if (AltLibraryConfig.Config.OldWorldCreationUI) {
+				UIWorldCreationEdits.Init();
+			} else {
+				NewWorldCreationMenu.Init();
+			}
 			HardmodeWorldGen.Init();
 			DungeonChests.Init();
 			SmashAltarMessage.Init();

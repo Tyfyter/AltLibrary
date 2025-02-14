@@ -24,7 +24,6 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Gamepad;
-using static Humanizer.In;
 using static Terraria.ModLoader.ModContent;
 
 namespace AltLibrary.Common
@@ -54,11 +53,6 @@ namespace AltLibrary.Common
 		internal static bool isCrimson;
 		internal static string seed;
 		internal static bool initializedLists;
-		internal enum CurrentAltOption
-		{
-			Biome,
-			Ore
-		}
 
 		public static void Init()
 		{

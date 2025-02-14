@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.AltBiomes
 {
 	public abstract class VanillaBiome : AltBiome {
-		public override string IconSmall => "Terraria/Images/UI/Bestiary/Icon_Tags_Shadow";
+		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilRandom";
 		public override string Name => name;
 		public override Color NameColor => nameColor;
 
@@ -43,6 +43,7 @@ namespace AltLibrary.Common.AltBiomes
 			FleshChairTile = TileID.Chairs;
 			FleshTableTile = TileID.Tables;
 			FleshChestTile = TileID.Containers;
+			if (biome == BiomeType.None) Selectable = false;
 		}
 	}
 	public class CorruptionAltBiome : VanillaBiome {
@@ -51,6 +52,8 @@ namespace AltLibrary.Common.AltBiomes
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCorrupt");
 		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Corrupt";
+		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCorruption";
+		public override Color NameColor => Color.MediumPurple;
 		public override Color OuterColor => new(95, 242, 86);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.DemoniteOre;
@@ -106,6 +109,8 @@ namespace AltLibrary.Common.AltBiomes
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCrimson");
 		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Crimson";
+		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCrimson";
+		public override Color NameColor => Color.IndianRed;
 		public override Color OuterColor => new(255, 237, 131);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.CrimtaneOre;

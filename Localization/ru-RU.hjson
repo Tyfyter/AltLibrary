@@ -118,10 +118,10 @@ Mods: {
 		}
 
 		AltBiomeName: {
-			RandomEvilBiome: Рандомное зло
-			RandomHallowBiome: Рандомное освящение
-			RandomJungleBiome: Рандомный джунгли
-			RandomUnderworldBiome: Рандомная преисподняя
+			// Evil: Evil
+			// Hallow: Hallow
+			// Jungle: Jungle
+			// Hell: Underworld
 			CorruptBiome: Искажение
 			CrimsonBiome: Багрянец
 			HallowBiome: Освящение
@@ -289,6 +289,11 @@ Mods: {
 					// Label: Extra glitchy Zenith world icon
 					// Tooltip: ""
 				}
+
+				OldWorldCreationUI: {
+					// Label: Old World Creation U I
+					// Tooltip: ""
+				}
 			}
 
 			AltLibraryServerConfig: {
@@ -307,8 +312,100 @@ Mods: {
 		}
 
 		AltBiomes: {
-			// CrimsonBiome.DisplayName: Crimson
-			// CorruptBiome.DisplayName: Corruption
+			CrimsonBiome: {
+				// DisplayName: Crimson
+				// Description: "{$UI.WorldDescriptionEvilCrimson}"
+				// GenPassName: Crimson Biome
+			}
+
+			CorruptBiome: {
+				// DisplayName: Corruption
+				// Description: "{$UI.WorldDescriptionEvilCorrupt}"
+				// GenPassName: Corrupt Biome
+			}
+
+			DebuggingHallowBiome: {
+				// DisplayName: Debugging Hallow Biome
+				// Description: Debugging Hallow Biome
+				// GenPassName: Debugging Hallow Biome
+			}
+
+			DebuggingHellBiome: {
+				// DisplayName: AltLibrary
+				// Description: Debugging Hell Biome
+				// GenPassName: Debugging Hell Biome
+			}
+
+			DebuggingJungleBiome: {
+				// DisplayName: Debugging Jungle Biome
+				// Description: Debugging Jungle Biome
+				// GenPassName: Debugging Jungle Biome
+			}
+
+			Deconvert: {
+				// DisplayName: Deconvert
+				// Description: Deconvert
+				// GenPassName: Deconvert
+			}
+
+			DesertBiome: {
+				// DisplayName: Desert Biome
+				// Description: Desert Biome
+				// GenPassName: Desert Biome
+			}
+
+			ForestBiome: {
+				// DisplayName: Forest Biome
+				// Description: Forest Biome
+				// GenPassName: Forest Biome
+			}
+
+			HallowBiome: {
+				// DisplayName: Hallow
+				// Description: Hallow Biome
+				// GenPassName: Hallow Biome
+			}
+
+			JungleBiome: {
+				// DisplayName: Jungle
+				// Description: Jungle Biome
+				// GenPassName: Jungle Biome
+			}
+
+			Mushroom: {
+				// DisplayName: Mushroom
+				// Description: Mushroom
+				// GenPassName: Mushroom
+			}
+
+			SnowBiome: {
+				// DisplayName: Snow Biome
+				// Description: Snow Biome
+				// GenPassName: Snow Biome
+			}
+
+			UnderworldBiome: {
+				// DisplayName: Underworld
+				// Description: Underworld Biome
+				// GenPassName: Underworld Biome
+			}
+
+			RandomOptionBiome: {
+				// DisplayName: Random {0}
+				// Description: Chooses a random {0} for you
+			}
+
+			DebuggingNoneBiome: {
+				// DisplayName: Debugging None Biome
+				// Description: Debugging None Biome
+				// GenPassName: Debugging None Biome
+			}
+
+			DebuggingNoneBiome2: {
+				// DisplayName: Debugging None Biome2
+				// Description: Debugging None Biome2
+				// GenPassName: Debugging None Biome2
+			}
 		}
 	}
 }

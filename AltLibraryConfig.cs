@@ -7,7 +7,7 @@ using Terraria.ModLoader.Config;
 namespace AltLibrary
 {
 #pragma warning disable CS0649
-	internal class AltLibraryConfig : ModConfig
+	public class AltLibraryConfig : ModConfig
 	{
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public static AltLibraryConfig Config;
@@ -46,6 +46,9 @@ namespace AltLibrary
 
 		[DefaultValue(false)]
 		public bool ZenithIconJank;
+
+		[DefaultValue(false), ReloadRequired]
+		public bool OldWorldCreationUI;
 
 #pragma warning restore CS0649
 

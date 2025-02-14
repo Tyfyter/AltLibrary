@@ -24,7 +24,7 @@ namespace AltLibrary.Common.Hooks {
 		public static void Unload() { }
 		public static bool GERunnerRunning { get; private set; }
 		/// <summary>
-		/// In Not the bees! worlds, hive and crispy honey blocks are replaced with 
+		/// In Not the bees! worlds, hive and crispy honey blocks are replaced with Stone and Hardened Sand equivalents respectively
 		/// </summary>
 		public static bool ShouldConvertBeeTiles { get; private set; }
 		private static void WorldGen_GERunner1(On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good) {

@@ -42,7 +42,7 @@ namespace AltLibrary {
 		internal static bool HallowBunnyUnlocked;
 		internal static int ModIconVariation;
 		static AltLibrary() {
-			AllBiomes = [VanillaBiomes, Biomes];
+			AllBiomes = new MultiList<AltBiome>() { VanillaBiomes, Biomes };
 		}
 		public AltLibrary() {
 			ALReflection.Init();
@@ -256,6 +256,15 @@ namespace AltLibrary {
 				logSummary.Clear();
 			} else {
 				logSummary.Append(compressed);
+			}
+		}
+		// for DevHelper
+		static string DevHelpBrokenReason {
+			get {
+#if DEBUG
+				return "Mod was last built in DEBUG configuration";
+#endif
+				return null;
 			}
 		}
 	}
