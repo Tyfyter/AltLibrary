@@ -248,7 +248,7 @@ namespace AltLibrary.Core.Generation {
 				minPriority++;
 			}
 
-			AltLibrary.Instance.Logger.Info($"Could not find location with new system (reason:\"{newSystemFailReason}\"), falling back to old system");
+			AltLibrary.Instance.Logger.Warn($"Could not find location with new system (reason:\"{newSystemFailReason}\"), falling back to old system");
 			tries = 0;
 			while (!FoundEvilLocation) {
 				FoundEvilLocation = true;

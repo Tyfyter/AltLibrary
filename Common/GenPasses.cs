@@ -61,7 +61,7 @@ namespace AltLibrary.Common {
 
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchCall(typeof(Utils), nameof(Utils.LogAndChatAndConsoleInfoMessage)))) {
-				AltLibrary.Instance.Logger.Info($"Could not find {nameof(Utils.LogAndChatAndConsoleInfoMessage)} call in {nameof(WorldGen)}.{nameof(WorldGen.GenerateWorld)}");
+				AltLibrary.Instance.Logger.Error($"Could not find {nameof(Utils.LogAndChatAndConsoleInfoMessage)} call in {nameof(WorldGen)}.{nameof(WorldGen.GenerateWorld)}");
 				return;
 			}
 

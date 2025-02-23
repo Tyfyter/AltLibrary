@@ -401,6 +401,7 @@ namespace AltLibrary.Common.AltBiomes {
 			_ = DisplayName.Value;
 			_ = Description.Value;
 			_ = GenPassName.Value;
+			_ = DryadTextDescriptor.Value;
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
 				return;

@@ -22,7 +22,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchLdcI4(0),
 				i => i.MatchCgtUn() || i.MatchBgtUn(out _)
 			)) {
-				AltLibrary.Instance.Logger.Info("Could not find num != 0 in Player_MowGrassTile");
+				AltLibrary.Instance.Logger.Error("Could not find num != 0 in Player_MowGrassTile");
 				return;
 			}
 

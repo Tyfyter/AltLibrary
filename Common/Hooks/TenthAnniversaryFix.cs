@@ -21,7 +21,7 @@ namespace AltLibrary.Common.Hooks {
 		private static void WorldGen_IslandHouse(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(207))) {
-				AltLibrary.Instance.Logger.Info("Could not find fountain placement in WorldGen_IslandHouse");
+				AltLibrary.Instance.Logger.Error("Could not find fountain placement in WorldGen_IslandHouse");
 				return;
 			}
 			c.Emit(OpCodes.Ldarg, 2);
@@ -43,7 +43,7 @@ namespace AltLibrary.Common.Hooks {
 				return orig;
 			});
 			if (!c.TryGotoNext(MoveType.After, i => i.MatchLdarg(2))) {
-				AltLibrary.Instance.Logger.Info("Missing islandStyle in WorldGen_IslandHouse fountain placement");
+				AltLibrary.Instance.Logger.Error("Missing islandStyle in WorldGen_IslandHouse fountain placement");
 				return;
 			}
 			c.EmitDelegate<Func<int, int>>((orig) => {
@@ -58,7 +58,7 @@ namespace AltLibrary.Common.Hooks {
 				return orig;
 			});
 			if (!c.TryGotoNext(i => i.MatchCall(out _))) {
-				AltLibrary.Instance.Logger.Info("o $ 3");
+				AltLibrary.Instance.Logger.Error("o $ 3");
 				return;
 			}
 			c.Remove();
@@ -88,7 +88,7 @@ namespace AltLibrary.Common.Hooks {
 			});
 			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.SwitchFountain))))
 			{
-				AltLibrary.Instance.Logger.Info("o $ 5");
+				AltLibrary.Instance.Logger.Error("o $ 5");
 				return;
 			}
 			c.Index -= 2;
@@ -111,7 +111,7 @@ namespace AltLibrary.Common.Hooks {
 			ILCursor c = new(il);
 
 			if (!c.TryGotoNext(i => i.MatchCall<WorldGen>(nameof(WorldGen.Convert)))) {
-				AltLibrary.Instance.Logger.Info($"Could not find {nameof(WorldGen.Convert)} call in WorldGen.ConvertSkyIslands");
+				AltLibrary.Instance.Logger.Error($"Could not find {nameof(WorldGen.Convert)} call in WorldGen.ConvertSkyIslands");
 				return;
 			}
 			c.Index++;

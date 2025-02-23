@@ -37,7 +37,7 @@ namespace AltLibrary.Common.Hooks {
 			ILCursor c = new(il);
 
 			if (!c.TryGotoNext(MoveType.Before, i => i.MatchStloc(0))) {
-				AltLibrary.Instance.Logger.Info("Missing stloc.0 in MiningExplosivesBiome_Place");
+				AltLibrary.Instance.Logger.Error("Missing stloc.0 in MiningExplosivesBiome_Place");
 				return;
 			}
 
@@ -59,7 +59,7 @@ namespace AltLibrary.Common.Hooks {
 			if (c.TryGotoNext(MoveType.Before, i => i.MatchCallvirt<GenerationProgress>("set_Message"))) {
 				c.EmitDelegate<Func<string, string>>(message => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.GenPassName != null ? hell.GenPassName.Value : message);
 			} else {
-				AltLibrary.Instance.Logger.Info("Missing Message set in Underworld GenPass");
+				AltLibrary.Instance.Logger.Error("Missing Message set in Underworld GenPass");
 			}
 
 			ALUtils.ReplaceIDs(il, TileID.Ash,
@@ -70,7 +70,7 @@ namespace AltLibrary.Common.Hooks {
 				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.BiomeOre.HasValue);
 
 			if (!c.TryGotoNext(MoveType.AfterLabel, i => i.MatchCall<WorldGen>(nameof(WorldGen.AddHellHouses)))) {
-				AltLibrary.Instance.Logger.Info("Missing WorldGen.AddHellHouses call in Underworld GenPass");
+				AltLibrary.Instance.Logger.Error("Missing WorldGen.AddHellHouses call in Underworld GenPass");
 				return;
 			}
 
@@ -84,13 +84,13 @@ namespace AltLibrary.Common.Hooks {
 		private static void GenPasses_HookGenPassMicroBiomes(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchLdstr("..Long Minecart Tracks")) || !c.TryGotoPrev(MoveType.AfterLabel, i => i.MatchLdarg(1))) {
-				AltLibrary.Instance.Logger.Info("Missing Long Minecart Tracks micro-biome");
+				AltLibrary.Instance.Logger.Error("Missing Long Minecart Tracks micro-biome");
 				return;
 			}
 			ILLabel label = c.MarkLabel();
 			c.Index = 0;
 			if (!c.TryGotoNext(i => i.MatchLdstr("..Living Trees")) || !c.TryGotoPrev(MoveType.AfterLabel, i => i.MatchLdarg(1))) {
-				AltLibrary.Instance.Logger.Info("Missing Living Mahogany Trees micro-biome");
+				AltLibrary.Instance.Logger.Error("Missing Living Mahogany Trees micro-biome");
 				return;
 			}
 
@@ -100,9 +100,24 @@ namespace AltLibrary.Common.Hooks {
 
 		public static void ILGenPassAltars(ILContext il) {
 			ILCursor c = new(il);
+			while (c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(TileID.DemonAltar))) {
+				if (c.Previous.Previous.MatchLdsfld<Lang>(nameof(Lang.gen))) continue;
+				c.EmitDelegate<Func<int, int>>((value) => {
+					if (WorldBiomeManager.WorldEvilBiome?.AltarTile is int type) return type;
+					return value;
+				});
+				if (c.Next.MatchLdloc(out _) && c.Next.Next.MatchCall<WorldGen>(nameof(WorldGen.Place3x2))) {
+					c.Index++;
+					c.EmitDelegate<Func<int, int>>((value) => {
+						if (WorldBiomeManager.WorldEvilBiome?.AltarTile is not null) return 0;
+						return value;
+					});
+				}
+			}
+			return;
 			ILLabel startNormalAltar = c.DefineLabel();
 			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)))) {
-				AltLibrary.Instance.Logger.Info("ILGenPassAltars could not find use of WorldGen.crimson");
+				AltLibrary.Instance.Logger.Error("ILGenPassAltars could not find use of WorldGen.crimson");
 				return;
 			}
 			ILLabel skipNormalAltar = default;
@@ -142,7 +157,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchLdcI4(TileID.DemonAltar),
 				i => i.MatchBeq(out origPlacedAltar)
 			)) {
-				AltLibrary.Instance.Logger.Info("e $ 3");
+				AltLibrary.Instance.Logger.Error("e $ 3");
 				return;
 			}
 			placedAltar.Target = origPlacedAltar.Target;
@@ -157,59 +172,59 @@ namespace AltLibrary.Common.Hooks {
 			FieldReference gold = null;
 
 			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
-				AltLibrary.Instance.Logger.Info("f $ 1");
+				AltLibrary.Instance.Logger.Error	("f $ 1");
 				return;
 			}
 			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
-				AltLibrary.Instance.Logger.Info("f $ 2");
+				AltLibrary.Instance.Logger.Error("f $ 2");
 				return;
 			}
 			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
-				AltLibrary.Instance.Logger.Info("f $ 3");
+				AltLibrary.Instance.Logger.Error("f $ 3");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStsfld(out copper))) {
-				AltLibrary.Instance.Logger.Info("f $ 4");
+				AltLibrary.Instance.Logger.Error("f $ 4");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdcI4(167))) {
-				AltLibrary.Instance.Logger.Info("f $ 5");
+				AltLibrary.Instance.Logger.Error("f $ 5");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStsfld(out iron))) {
-				AltLibrary.Instance.Logger.Info("f $ 6");
+				AltLibrary.Instance.Logger.Error("f $ 6");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdcI4(168))) {
-				AltLibrary.Instance.Logger.Info("f $ 7");
+				AltLibrary.Instance.Logger.Error("f $ 7");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStsfld(out silver))) {
-				AltLibrary.Instance.Logger.Info("f $ 8");
+				AltLibrary.Instance.Logger.Error("f $ 8");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdcI4(169))) {
-				AltLibrary.Instance.Logger.Info("f $ 9");
+				AltLibrary.Instance.Logger.Error("f $ 9");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStsfld(out gold))) {
-				AltLibrary.Instance.Logger.Info("f $ 10");
+				AltLibrary.Instance.Logger.Error("f $ 10");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
-				AltLibrary.Instance.Logger.Info("f $ 11");
+				AltLibrary.Instance.Logger.Error("f $ 11");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchRet())) {
-				AltLibrary.Instance.Logger.Info("f $ 12");
+				AltLibrary.Instance.Logger.Error("f $ 12");
 				return;
 			}
 			if (!c.TryGotoPrev(i => i.MatchBneUn(out _))) {
-				AltLibrary.Instance.Logger.Info("f $ 13");
+				AltLibrary.Instance.Logger.Error("f $ 13");
 				return;
 			}
 			if (!c.TryGotoPrev(i => i.MatchLdcI4(-1))) {
-				AltLibrary.Instance.Logger.Info("f $ 14");
+				AltLibrary.Instance.Logger.Error("f $ 14");
 				return;
 			}
 

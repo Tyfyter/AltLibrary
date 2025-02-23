@@ -23,7 +23,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchStsfld<WorldGen>(nameof(WorldGen.crimson))
 			];
 			if (!c.TryGotoNext(MoveType.Before, predicates)) {
-				AltLibrary.Instance.Logger.Info("Could not find WorldGen.crimson = !WorldGen.crimson in Main.UpdateTime_StartDay");
+				AltLibrary.Instance.Logger.Error("Could not find WorldGen.crimson = !WorldGen.crimson in Main.UpdateTime_StartDay");
 				return;
 			}
 			c.EmitDelegate(() => {

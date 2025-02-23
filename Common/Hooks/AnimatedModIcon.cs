@@ -37,27 +37,27 @@ namespace AltLibrary.Common.Hooks
 			FieldReference _modIcon = null;
 			if (!c.TryGotoNext(i => i.MatchLdfld(out _mod)))
 			{
-				AltLibrary.Instance.Logger.Info("a $ 1");
+				AltLibrary.Instance.Logger.Error("a $ 1");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdstr(".png")))
 			{
-				AltLibrary.Instance.Logger.Info("a $ 2");
+				AltLibrary.Instance.Logger.Error("a $ 2");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchStfld(out _modIcon)))
 			{
-				AltLibrary.Instance.Logger.Info("a $ 3");
+				AltLibrary.Instance.Logger.Error("a $ 3");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdstr("Unknown error")))
 			{
-				AltLibrary.Instance.Logger.Info("a $ 4");
+				AltLibrary.Instance.Logger.Error("a $ 4");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchLdarg(0)))
 			{
-				AltLibrary.Instance.Logger.Info("a $ 5");
+				AltLibrary.Instance.Logger.Error("a $ 5");
 				return;
 			}
 

@@ -19,7 +19,7 @@ namespace AltLibrary.Common.Hooks {
 		private static void Main_DrawUnderworldBackgroudLayer(ILContext il) {
 			var c = new ILCursor(il);
 			if (!c.TryGotoNext(MoveType.After, i => i.MatchStloc(2))) {
-				AltLibrary.Instance.Logger.Info("r $ 1");
+				AltLibrary.Instance.Logger.Error("r $ 1");
 				return;
 			}
 
@@ -37,7 +37,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchLdcI4(3),
 				i => i.MatchLdcI4(7),
 				i => i.MatchNewobj<Color>())) {
-				AltLibrary.Instance.Logger.Info("r $ 2");
+				AltLibrary.Instance.Logger.Error("r $ 2");
 				return;
 			}
 

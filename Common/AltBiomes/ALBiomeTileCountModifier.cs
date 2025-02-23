@@ -60,7 +60,7 @@ namespace AltLibrary.Common.AltBiomes {
 				i => i.MatchLdcI4(0),
 				i => i.MatchBge(out ILLabel _)
 			)) {
-				AltLibrary.Instance.Logger.Info("10 $ 1");
+				AltLibrary.Instance.Logger.Error("10 $ 1");
 			}
 			c.Index--;
 			c.Emit(OpCodes.Ldarg_0);

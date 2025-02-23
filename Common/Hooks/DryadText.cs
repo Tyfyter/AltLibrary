@@ -98,7 +98,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchConvI4(),
 				i => i.MatchCall<Array>(nameof(Array.Clear))
 				)) {
-				AltLibrary.Instance.Logger.Info($"Could not find {nameof(WorldGen.tileCounts)}.{nameof(Array.Clear)} in {nameof(WorldGen.AddUpAlignmentCounts)}");
+				AltLibrary.Instance.Logger.Error($"Could not find {nameof(WorldGen.tileCounts)}.{nameof(Array.Clear)} in {nameof(WorldGen.AddUpAlignmentCounts)}");
 				return;
 			}
 

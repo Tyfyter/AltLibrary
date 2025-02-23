@@ -57,7 +57,7 @@ namespace AltLibrary.Common.Hooks {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchCall<Color>("get_White")))
 			{
-				AltLibrary.Instance.Logger.Info("s $ 1");
+				AltLibrary.Instance.Logger.Error("s $ 1");
 				return;
 			}
 
@@ -76,7 +76,7 @@ namespace AltLibrary.Common.Hooks {
 			if (!c.TryGotoNext(i => i.MatchLdarg(3),
 				i => i.MatchStfld(out canBePlayed)))
 			{
-				AltLibrary.Instance.Logger.Info("t $ 1");
+				AltLibrary.Instance.Logger.Error("t $ 1");
 				return;
 			}
 
@@ -92,18 +92,18 @@ namespace AltLibrary.Common.Hooks {
 
 			if (!c.TryGotoNext(i => i.MatchLdftn(out _)))
 			{
-				AltLibrary.Instance.Logger.Info("t $ 2");
+				AltLibrary.Instance.Logger.Error("t $ 2");
 				return;
 			}
 			FieldReference fieldReference = null;
 			if (!c.TryGotoNext(i => i.MatchLdfld(out fieldReference)))
 			{
-				AltLibrary.Instance.Logger.Info("t $ 3");
+				AltLibrary.Instance.Logger.Error("t $ 3");
 				return;
 			}
 			if (!c.TryGotoNext(i => i.MatchCall(out _)))
 			{
-				AltLibrary.Instance.Logger.Info("t $ 4");
+				AltLibrary.Instance.Logger.Error("t $ 4");
 				return;
 			}
 			c.Index++;

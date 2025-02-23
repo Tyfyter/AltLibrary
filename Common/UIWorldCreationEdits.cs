@@ -366,15 +366,15 @@ namespace AltLibrary.Common
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchRet()))
 			{
-				AltLibrary.Instance.Logger.Info("0 $ 1");
+				AltLibrary.Instance.Logger.Error("0 $ 1");
 				return;
 			}
 			if (!c.TryGotoPrev(i => i.MatchLdnull()))
 			{
-				AltLibrary.Instance.Logger.Info("0 $ 2");
+				AltLibrary.Instance.Logger.Error("0 $ 2");
 				return;
 			}
-			c.EmitDelegate<Action>(() =>
+			c.EmitDelegate(() =>
 			{
 				if (AltHallowBiomeChosenType <= -1)
 				{
@@ -424,7 +424,7 @@ namespace AltLibrary.Common
 				foreach (AltOre o in AddInFinishedCreation)
 					o.OnCreating();
 
-				AltLibrary.Instance.Logger.Info($"On creating world - Hallow: {AltHallowBiomeChosenType} Corrupt: {AltEvilBiomeChosenType} Jungle: {AltJungleBiomeChosenType} Underworld: {AltHellBiomeChosenType}");
+				AltLibrary.Instance.Logger.Info($"On creating world - Hallow: {WorldBiomeManager.WorldHallowBiome.Name}({AltHallowBiomeChosenType}) Corrupt: {WorldBiomeManager.WorldHallowBiome.Name}({AltEvilBiomeChosenType}) Jungle: {AltJungleBiomeChosenType} Underworld: {AltHellBiomeChosenType}");
 			});
 		}
 
@@ -535,7 +535,7 @@ namespace AltLibrary.Common
 				i => i.MatchSwitch(out _),
 				i => i.MatchBr(out _)))
 			{
-				AltLibrary.Instance.Logger.Info("z $ 1");
+				AltLibrary.Instance.Logger.Error("z $ 1");
 				return;
 			}
 
@@ -550,7 +550,7 @@ namespace AltLibrary.Common
 				i => i.MatchSwitch(out _),
 				i => i.MatchBr(out _)))
 			{
-				AltLibrary.Instance.Logger.Info("z $ 2");
+				AltLibrary.Instance.Logger.Error("z $ 2");
 				return;
 			}
 
@@ -639,7 +639,7 @@ namespace AltLibrary.Common
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(i => i.MatchRet() && i.Offset != 0))
 			{
-				AltLibrary.Instance.Logger.Info("3 $ 1");
+				AltLibrary.Instance.Logger.Error("3 $ 1");
 				return;
 			}
 

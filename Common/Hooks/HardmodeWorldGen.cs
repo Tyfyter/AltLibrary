@@ -71,7 +71,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchLdloca(5),
 				i => i.MatchCall<Tile>("active")
 			)) {
-				AltLibrary.Instance.Logger.Info("GenPassHardmodeWalls $ active");
+				AltLibrary.Instance.Logger.Error("GenPassHardmodeWalls $ active");
 				return;
 			}
 			c.Index++;

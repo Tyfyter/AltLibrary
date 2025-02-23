@@ -328,36 +328,42 @@ Mods: {
 				DisplayName: Debugging Hallow Biome
 				Description: Debugging Hallow Biome
 				GenPassName: Debugging Hallow Biome
+				DryadTextDescriptor: Debugging Hallow Biome
 			}
 
 			DebuggingHellBiome: {
 				DisplayName: AltLibrary
 				Description: Debugging Hell Biome
 				GenPassName: Debugging Hell Biome
+				DryadTextDescriptor: Debugging Hell Biome
 			}
 
 			DebuggingJungleBiome: {
 				DisplayName: Debugging Jungle Biome
 				Description: Debugging Jungle Biome
 				GenPassName: Debugging Jungle Biome
+				DryadTextDescriptor: Debugging Jungle Biome
 			}
 
 			Deconvert: {
 				DisplayName: Deconvert
 				Description: Deconvert
 				GenPassName: Deconvert
+				DryadTextDescriptor: Deconvert
 			}
 
 			DesertBiome: {
 				DisplayName: Desert Biome
 				Description: Desert Biome
 				GenPassName: Desert Biome
+				DryadTextDescriptor: Desert Biome
 			}
 
 			ForestBiome: {
 				DisplayName: Forest Biome
 				Description: Forest Biome
 				GenPassName: Forest Biome
+				DryadTextDescriptor: Forest Biome
 			}
 
 			HallowBiome: {
@@ -370,24 +376,28 @@ Mods: {
 				DisplayName: Jungle
 				Description: Jungle Biome
 				GenPassName: Jungle Biome
+				DryadTextDescriptor: Jungle Biome
 			}
 
 			Mushroom: {
 				DisplayName: Mushroom
 				Description: Mushroom
 				GenPassName: Mushroom
+				DryadTextDescriptor: Mushroom
 			}
 
 			SnowBiome: {
 				DisplayName: Snow Biome
 				Description: Snow Biome
 				GenPassName: Snow Biome
+				DryadTextDescriptor: Snow Biome
 			}
 
 			UnderworldBiome: {
 				DisplayName: Underworld
 				Description: Underworld Biome
 				GenPassName: Underworld Biome
+				DryadTextDescriptor: Underworld Biome
 			}
 
 			RandomOptionBiome: {
@@ -399,12 +409,14 @@ Mods: {
 				DisplayName: Debugging None Biome
 				Description: Debugging None Biome
 				GenPassName: Debugging None Biome
+				DryadTextDescriptor: Debugging None Biome
 			}
 
 			DebuggingNoneBiome2: {
 				DisplayName: Debugging None Biome2
 				Description: Debugging None Biome2
 				GenPassName: Debugging None Biome2
+				DryadTextDescriptor: Debugging None Biome2
 			}
 		}
 	}

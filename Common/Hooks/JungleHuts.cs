@@ -18,7 +18,7 @@ namespace AltLibrary.Common.Hooks {
 		private static void HouseUtils_CreateBuilder(ILContext il) {
 			ILCursor c = new(il);
 			if (!c.TryGotoNext(MoveType.Before, i => i.MatchNewobj(typeof(JungleHouseBuilder).GetConstructor(BindingFlags.Public | BindingFlags.Instance, [typeof(IEnumerable<Rectangle>)])))) {
-				AltLibrary.Instance.Logger.Info("Could not find new JungleHouseBuilder in HouseUtils_CreateBuilder");
+				AltLibrary.Instance.Logger.Error("Could not find new JungleHouseBuilder in HouseUtils_CreateBuilder");
 				return;
 			}
 

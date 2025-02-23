@@ -20,7 +20,7 @@ namespace AltLibrary.Common.Hooks {
 					i => i.MatchCall(out _),
 					i => i.MatchStsfld<Main>(nameof(Main.npcChatText)))
 			) {
-				AltLibrary.Instance.Logger.Info("Missing Hellforge upgrade tip in Main_HelpText");
+				AltLibrary.Instance.Logger.Error("Missing Hellforge upgrade tip in Main_HelpText");
 				return;
 			}
 
@@ -39,14 +39,14 @@ namespace AltLibrary.Common.Hooks {
 			});
 
 			if (!c.TryGotoPrev(i => i.MatchLdcI4(TileID.Adamantite))) {
-				AltLibrary.Instance.Logger.Info("Missing WorldGen.SavedOreTiers.Adamantite == TileID.Adamantite in Main_HelpText");
+				AltLibrary.Instance.Logger.Error("Missing WorldGen.SavedOreTiers.Adamantite == TileID.Adamantite in Main_HelpText");
 				return;
 			}
 
 			c.EmitDelegate((int i) => WorldGen.altarCount > 2 ? TileID.Adamantite : 0);
 
 			if (!c.TryGotoNext(i => i.MatchLdcI4(TileID.Titanium))) {
-				AltLibrary.Instance.Logger.Info("Missing WorldGen.SavedOreTiers.Adamantite == TileID.Titanium in Main_HelpText");
+				AltLibrary.Instance.Logger.Error("Missing WorldGen.SavedOreTiers.Adamantite == TileID.Titanium in Main_HelpText");
 				return;
 			}
 

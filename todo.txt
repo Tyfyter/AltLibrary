@@ -26,9 +26,6 @@ Common/AltBiomes/ALBiomeTileCountModifier.cs
 Common/Hooks/TenthAnniversaryFix.cs
 
 Rewrite:
-Core/UIs/ALGroupOptionButton.cs
-Core/UIs/ALUIBiomeListItem.cs
-Core/UIs/ALUIOreListItem.cs
 Common/Hooks/UnderworldVisual.cs
 Common/Hooks/WorldIcons.cs
 Common/Hooks/BackgroundsAlternating.cs
