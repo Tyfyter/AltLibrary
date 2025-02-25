@@ -62,7 +62,7 @@ namespace AltLibrary.Common.Hooks {
 				}
 				for (int i = 0; i < AltLibrary.Biomes.Count; i++) {
 					AltBiome currentDrunkBiome = AltLibrary.Biomes[i];
-					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome.Type != altEvil.Type && GetBiomeChest(currentDrunkBiome, out chestData)) {
+					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome.Type != (altEvil?.Type ?? -1) && GetBiomeChest(currentDrunkBiome, out chestData)) {
 						biomeChests.Add(chestData);
 					}
 				}
