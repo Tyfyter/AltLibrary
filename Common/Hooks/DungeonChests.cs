@@ -11,14 +11,16 @@ using Terraria.WorldBuilding;
 
 namespace AltLibrary.Common.Hooks {
 	internal class DungeonChests {
-
+		public static List<(int chestTileType, int contain, int style, Func<bool> condition)> extraDungeonChests = [];
 		public static void Init() {
 			IL_WorldGen.MakeDungeon += WorldGen_MakeDungeon;
 		}
 
-		public static void Unload() {}
+		public static void Unload() {
+			extraDungeonChests = null;
+		}
 		static void MakeDungeonChests() {
-			List<(int chestTileType, int contain, int style2)> biomeChests = new();
+			List<(int chestTileType, int contain, int style2)> biomeChests = [];
 			static bool GetBiomeChest(AltBiome biome, out (int chestTileType, int contain, int style2) chestData) {
 				if (biome is not null && biome.BiomeChestTile.HasValue && biome.BiomeChestItem.HasValue) {
 					chestData = (biome.BiomeChestTile.Value, biome.BiomeChestItem.Value, biome.BiomeChestTileStyle.GetValueOrDefault());
@@ -65,6 +67,12 @@ namespace AltLibrary.Common.Hooks {
 					if (currentDrunkBiome.BiomeType == BiomeType.Evil && currentDrunkBiome.Type != (altEvil?.Type ?? -1) && GetBiomeChest(currentDrunkBiome, out chestData)) {
 						biomeChests.Add(chestData);
 					}
+				}
+			}
+			for (int i = 0; i < extraDungeonChests.Count; i++) {
+				(int chestTileType, int contain, int style, Func<bool> condition) = extraDungeonChests[i];
+				if (condition?.Invoke() ?? true) {
+					biomeChests.Add((chestTileType, contain, style));
 				}
 			}
 			for (int i = 0; i < biomeChests.Count; i++) {

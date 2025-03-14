@@ -1,4 +1,5 @@
-﻿using Mono.Cecil.Cil;
+﻿using AltLibrary.Core;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks
 {
 	public class ShimmerDecraft {
-		public static Dictionary<int, (int createCount, List<(Func<int> type, int count)> ingredients, bool alchemy)> Recipes { get; private set; } = [];
+		public static Dictionary<int, (int createCount, List<(Func<int> type, int count)> ingredients, Recipe recipe)> Recipes { get; private set; } = [];
 		internal static void Load() {
 			On_Item.CanShimmer += On_Item_CanShimmer;
 			On_Item.GetShimmered += On_Item_GetShimmered;
@@ -21,7 +22,7 @@ namespace AltLibrary.Common.Hooks
 			return orig(self);
 		}
 		private static void On_Item_GetShimmered(On_Item.orig_GetShimmered orig, Item self) {
-			if (Recipes.TryGetValue(self.type, out (int createCount, List<(Func<int> type, int count)> ingredients, bool alchemy) recipe)) {
+			if (Recipes.TryGetValue(self.type, out (int createCount, List<(Func<int> type, int count)> ingredients, Recipe recipe) recipe)) {
 				int decraftAmount = self.stack / recipe.createCount;
 				bool spread = recipe.ingredients.Count > 1;
 				int num = 0;
@@ -33,12 +34,8 @@ namespace AltLibrary.Common.Hooks
 					}
 					num++;
 					int totalDecrafted = decraftAmount * stack;
-					if (recipe.alchemy) {
-						for (int num9 = totalDecrafted; num9 > 0; num9--) {
-							if (Main.rand.NextBool(3)) {
-								totalDecrafted--;
-							}
-						}
+					if (recipe.recipe.ConsumeIngredientHooks() is Recipe.IngredientQuantityCallback ConsumeIngredientHooks) {
+						ConsumeIngredientHooks(recipe.recipe, itemType, ref totalDecrafted, true);
 					}
 					while (totalDecrafted > 0) {
 						int stackDecrafted = totalDecrafted;

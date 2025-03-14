@@ -2,14 +2,15 @@ Alternative Biomes Library is library mod to enable the creation of alternatives
 
 This mod is used by developers to reduce the amount of repeated code involved in the process, as well as to ensure a baseline of compatibility between multiple mods that add alternates to vanilla content.
 
-Our GitHub: https://github.com/TheLuxure/AltLibrary
+Our GitHub: https://github.com/Tyfyter/AltLibrary
 
-Our Discord: https://discord.gg/rrxE78cyjm
+Our Discord: https://discord.gg/NK7jERXsTN
 
-Wiki: https://github.com/TheLuxure/AltLibrary/wiki
+Wiki: https://github.com/Tyfyter/AltLibrary/wiki
+
+Note that while compatibility is a goal of this library, mods which add the features it is designed to enable without using it cannot gain the benefit of that compatibility, and may resultingly be as incompatible with mods which use this as if the other mod did not use it, some incompatibility with world creation nay be resolved by using the legacy world creation interface.
 
 Extra Credits:
 Ouroel - advanced converting code, drunk hardmode ores
-Ghasttear1 - pie chart thing and lots of code for it
 
-Note: "secret features" and some minor menu visuals may be missing from version 1.1, as priority was given to the mod's functionality and availability as a library mod over content, these will likely be restored shortly
+Note: "secret features" and some minor menu visuals may be missing from version 1.1 and onward, as priority was given to the mod's functionality and availability as a library mod over content, these will likely not be restored, as they did not belong in a library to begin with

@@ -176,7 +176,7 @@ namespace AltLibrary.Common.Systems {
 								ingredientGroups.Select<(int type, int count), (Func<int>, int)>(g => (RecipeGroups.AppropriateMaterials[g.type], g.count)))
 
 								.ToList(),
-								ALReflection.Recipe_alchemy.GetValue(recipe)
+								recipe
 							)
 						);
 					}

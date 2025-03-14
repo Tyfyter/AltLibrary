@@ -153,6 +153,24 @@ namespace AltLibrary {
 						}
 						throw new ArgumentException("Incorrect argument count");
 					}
+					case "adddungeonchest": {
+						if (args.Length == 4 || args.Length == 5) {
+							if (args[1] is not int chestTileType) {
+								if (args[1] is ushort uShortChestTileType) chestTileType = uShortChestTileType;
+								else throw new ArgumentException("Second argument (chestTileType) is not int");
+							}
+							if (args[2] is not int contain) throw new ArgumentException("Third argument (contain) is not int");
+							if (args[3] is not int style) throw new ArgumentException("Fourth argument (style) is not int");
+							Func<bool> condition = null;
+							if (args.Length == 5) {
+								condition = args[4] as Func<bool>;
+								if (condition is null) throw new ArgumentException("Fifth argument (condition) is not present and not Func<bool>");
+							}
+							DungeonChests.extraDungeonChests.Add((chestTileType, contain, style, condition));
+							return "Success";
+						}
+						throw new ArgumentException("Incorrect argument count");
+					}
 					default:
 						throw new ArgumentException("Invalid option!");
 				}
