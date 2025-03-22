@@ -72,6 +72,11 @@ namespace AltLibrary {
 			AltOreInsideBodies.Setup();
 			ExtractinatorOres.Setup();
 
+			if (ModLoader.TryGetMod("Fargowiltas", out Mod fargowiltas)) {
+				foreach (AltBiome biome in Biomes) {
+					if (biome.AltarTile.HasValue) fargowiltas.Call("AddEvilAltar", (int)biome.AltarTile.Value);
+				}
+			}
 			//BackgroundsAlternating.Init();//TODO: redo
 		}
 
