@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace AltLibrary.Common {
-	internal class MultiList<T> : ICollection<T>, ICollection<List<T>> {
+	public class MultiList<T> : ICollection<T>, ICollection<List<T>> {
 		readonly List<List<T>> backingList = [];
 		public T this[int index] {
 			get {

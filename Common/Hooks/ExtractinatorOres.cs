@@ -44,7 +44,6 @@ namespace AltLibrary.Common.Hooks {
 				ItemID.OrichalcumOre,
 				ItemID.AdamantiteOre,
 				ItemID.TitaniumOre,
-				ItemID.ThePersistencyofEyes,
 			];
 
 			foreach (AltOre o in AltLibrary.Ores.Where(x => x.IncludeInExtractinator)) {
@@ -70,7 +69,7 @@ namespace AltLibrary.Common.Hooks {
 				if (!parameterType.IsGenericType) return false;
 				return parameterType.GetGenericTypeDefinition() == typeof(IList<>);
 			}).MakeGenericMethod(typeof(int));
-			void DoThing(int defaultType, IList<int> ores) {
+			void DoThing(int defaultType, string oresName) {
 				ILCursor c = new(il);
 				ILLabel[] cases = default;
 				ILLabel defaultCase = default;
@@ -84,12 +83,12 @@ namespace AltLibrary.Common.Hooks {
 				c.EmitBr(skipSwitch);
 				c.GotoLabel(skipSwitch);
 				c.EmitCall(typeof(Main).GetProperty(nameof(Main.rand)).GetGetMethod());
-				c.EmitReference(ores);
+				c.EmitCall(typeof(ExtractinatorOres).GetProperty(oresName).GetGetMethod());
 				c.EmitCall(next);
 				c.EmitStloc(local);
 			}
-			DoThing(ItemID.TitaniumOre, Ores);
-			DoThing(ItemID.PlatinumOre, PrehardmodeOres);
+			DoThing(ItemID.TitaniumOre, nameof(Ores));
+			DoThing(ItemID.PlatinumOre, nameof(PrehardmodeOres));
 		}
 	}
 }

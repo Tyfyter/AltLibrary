@@ -21,7 +21,7 @@ namespace AltLibrary {
 
 		internal static List<AltBiome> Biomes { get; private set; } = [];
 		internal static List<AltBiome> VanillaBiomes { get; private set; } = [];
-		internal static MultiList<AltBiome> AllBiomes { get; private set; }
+		public static MultiList<AltBiome> AllBiomes { get; private set; }
 
 		internal static List<AltOre> Ores = [];
 
@@ -218,8 +218,10 @@ namespace AltLibrary {
 
 		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
 		public static AltBiome GetAltBiome(int type) => Biomes.FirstOrDefault(x => x.Type == type) ?? VanillaBiomes.FirstOrDefault(x => x.Type == type);
-
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
+		public static IReadOnlyList<AltOre> GetAltOres() => Ores;
+		public static AltOre GetAltOre(int type) => Ores.FirstOrDefault(x => x.Type == type);
+		public static int AltAltOre<T>() where T : AltOre => ModContent.GetInstance<T>()?.Type ?? 0;
 
 		internal readonly struct CustomPreviews
 		{
