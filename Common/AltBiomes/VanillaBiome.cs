@@ -57,6 +57,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override Color OuterColor => new(95, 242, 86);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.DemoniteOre;
+			BiomeOre = TileID.Demonite;
 			SeedType = ItemID.CorruptSeeds;
 			ArrowType = ItemID.UnholyArrow;
 
@@ -114,6 +115,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override Color OuterColor => new(255, 237, 131);
 		public override void SetStaticDefaults() {
 			BiomeOreItem = ItemID.CrimtaneOre;
+			BiomeOre = TileID.Crimtane;
 			SeedType = ItemID.CrimsonSeeds;
 
 			BiomeChestItem = ItemID.VampireKnives;
