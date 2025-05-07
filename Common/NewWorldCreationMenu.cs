@@ -259,7 +259,7 @@ namespace AltLibrary.Common {
 				oreHeight += 28;
 			}
 		}
-		static void RefreshSelectionVisuals() {
+		internal static void RefreshSelectionVisuals() {
 			for (int i = 0; i < selectedBiomes.Length; i++) {
 				foreach (GroupOptionButton<AltBiome> button in biomeButtons[i]) {
 					button.SetCurrentOption(selectedBiomes[i]);

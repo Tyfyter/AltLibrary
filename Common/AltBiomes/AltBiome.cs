@@ -16,7 +16,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using static Terraria.GameContent.Bestiary.On_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
