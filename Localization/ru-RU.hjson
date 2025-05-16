@@ -291,8 +291,13 @@ Mods: {
 				}
 
 				OldWorldCreationUI: {
-					// Label: Old World Creation U I
+					// Label: Old World Creation UI
 					// Tooltip: ""
+				}
+
+				DrunkMaxBiomes: {
+					// Label: Drunk World Max Evil Biomes
+					// Tooltip: Set to 0 to not limit the number of evil biomes which can generate in drunk worlds
 				}
 			}
 

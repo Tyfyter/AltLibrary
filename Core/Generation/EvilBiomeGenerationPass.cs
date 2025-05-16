@@ -79,6 +79,9 @@ namespace AltLibrary.Core.Generation {
 			numberPasses /= EvilBiomes.Count;
 
 			int drunkIter = 0;
+			if (AltLibraryConfig.Config.DrunkMaxBiomes != 0 && EvilBiomes.Count > AltLibraryConfig.Config.DrunkMaxBiomes) {
+				EvilBiomes.RemoveRange(AltLibraryConfig.Config.DrunkMaxBiomes, EvilBiomes.Count - AltLibraryConfig.Config.DrunkMaxBiomes);
+			}
 			int drunkMax = EvilBiomes.Count;
 			evilRanges = [];
 			EvilBiomes.ForEach(i => {
