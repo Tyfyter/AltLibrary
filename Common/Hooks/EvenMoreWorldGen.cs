@@ -10,15 +10,16 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
+using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
+using static Terraria.WorldGen;
 
 namespace AltLibrary.Common.Hooks {
 	internal static class EvenMoreWorldGen {
 		public static void Init() {
 			IL_WorldGen.GenerateWorld += GenPasses.ILGenerateWorld;
-			GenPasses.HookGenPassReset += GenPasses_HookGenPassReset;
 			GenPasses.HookGenPassShinies += GenPasses_HookGenPassShinies;
 			GenPasses.HookGenPassUnderworld += GenPasses_HookGenPassUnderworld;
 			GenPasses.HookGenPassAltars += ILGenPassAltars;
@@ -161,103 +162,6 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 			placedAltar.Target = origPlacedAltar.Target;
-		}
-
-		//TODO: completely rewrite alt ore support
-		private static void GenPasses_HookGenPassReset(ILContext il) {
-			ILCursor c = new(il);
-			FieldReference copper = null;
-			FieldReference iron = null;
-			FieldReference silver = null;
-			FieldReference gold = null;
-
-			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
-				AltLibrary.Instance.Logger.Error	("f $ 1");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
-				AltLibrary.Instance.Logger.Error("f $ 2");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(166))) {
-				AltLibrary.Instance.Logger.Error("f $ 3");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out copper))) {
-				AltLibrary.Instance.Logger.Error("f $ 4");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(167))) {
-				AltLibrary.Instance.Logger.Error("f $ 5");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out iron))) {
-				AltLibrary.Instance.Logger.Error("f $ 6");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(168))) {
-				AltLibrary.Instance.Logger.Error("f $ 7");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out silver))) {
-				AltLibrary.Instance.Logger.Error("f $ 8");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchLdcI4(169))) {
-				AltLibrary.Instance.Logger.Error("f $ 9");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(out gold))) {
-				AltLibrary.Instance.Logger.Error("f $ 10");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchStsfld(typeof(WorldGen).GetField(nameof(WorldGen.crimson), BindingFlags.Public | BindingFlags.Static)))) {
-				AltLibrary.Instance.Logger.Error("f $ 11");
-				return;
-			}
-			if (!c.TryGotoNext(i => i.MatchRet())) {
-				AltLibrary.Instance.Logger.Error("f $ 12");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchBneUn(out _))) {
-				AltLibrary.Instance.Logger.Error("f $ 13");
-				return;
-			}
-			if (!c.TryGotoPrev(i => i.MatchLdcI4(-1))) {
-				AltLibrary.Instance.Logger.Error("f $ 14");
-				return;
-			}
-
-			replaceValues(() => WorldBiomeManager.Copper, (-1, TileID.Copper), (-2, TileID.Tin), copper);
-			replaceValues(() => WorldBiomeManager.Iron, (-3, TileID.Iron), (-4, TileID.Lead), iron);
-			replaceValues(() => WorldBiomeManager.Silver, (-5, TileID.Silver), (-6, TileID.Tungsten), silver);
-			replaceValues(() => WorldBiomeManager.Gold, (-7, TileID.Gold), (-8, TileID.Platinum), gold);
-
-			void replaceValues(Func<int> type, ValueTuple<int, int> value1, ValueTuple<int, int> value2, FieldReference field) {
-				var label = c.DefineLabel();
-				var label2 = c.DefineLabel();
-				var label3 = c.DefineLabel();
-				c.EmitDelegate(type);
-				c.Emit(OpCodes.Ldc_I4, value1.Item1);
-				c.Emit(OpCodes.Bne_Un_S, label);
-				c.Emit(OpCodes.Ldarg, 0);
-				c.Emit(OpCodes.Ldc_I4, value1.Item2);
-				c.Emit(OpCodes.Stfld, field);
-				c.Emit(OpCodes.Br_S, label3);
-				c.MarkLabel(label);
-				c.EmitDelegate(type);
-				c.Emit(OpCodes.Ldc_I4, value2.Item1);
-				c.Emit(OpCodes.Bne_Un_S, label2);
-				c.Emit(OpCodes.Ldarg, 0);
-				c.Emit(OpCodes.Ldc_I4, value2.Item2);
-				c.Emit(OpCodes.Stfld, field);
-				c.Emit(OpCodes.Br_S, label3);
-				c.MarkLabel(label2);
-				c.Emit(OpCodes.Ldarg, 0);
-				c.EmitDelegate<Func<int>>(() => AltLibrary.Ores[type() - 1].ore);
-				c.Emit(OpCodes.Stfld, field);
-				c.MarkLabel(label3);
-			}
 		}
 
 		//TODO: make alt ores so I can test this

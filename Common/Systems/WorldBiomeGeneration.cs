@@ -288,43 +288,43 @@ namespace AltLibrary.Common.Systems {
 
 		private void WorldSetupTask(GenerationProgress progress, GameConfiguration configuration) {
 			if (WorldBiomeManager.Copper == -1) {
-				WorldGen.SavedOreTiers.Copper = TileID.Copper;
+				GenVars.copper = WorldGen.SavedOreTiers.Copper = TileID.Copper;
 				GenVars.copperBar = ItemID.CopperBar;
 			} else if (WorldBiomeManager.Copper == -2) {
-				WorldGen.SavedOreTiers.Copper = TileID.Tin;
+				GenVars.copper = WorldGen.SavedOreTiers.Copper = TileID.Tin;
 				GenVars.copperBar = ItemID.TinBar;
 			} else {
-				WorldGen.SavedOreTiers.Copper = AltLibrary.Ores[WorldBiomeManager.Copper - 1].ore;
+				GenVars.copper = WorldGen.SavedOreTiers.Copper = AltLibrary.Ores[WorldBiomeManager.Copper - 1].ore;
 				GenVars.copperBar = AltLibrary.Ores[WorldBiomeManager.Copper - 1].bar;
 			}
 			if (WorldBiomeManager.Iron == -3) {
-				WorldGen.SavedOreTiers.Iron = TileID.Iron;
+				GenVars.iron = WorldGen.SavedOreTiers.Iron = TileID.Iron;
 				GenVars.ironBar = ItemID.IronBar;
 			} else if (WorldBiomeManager.Iron == -4) {
-				WorldGen.SavedOreTiers.Iron = TileID.Lead;
+				GenVars.iron = WorldGen.SavedOreTiers.Iron = TileID.Lead;
 				GenVars.ironBar = ItemID.LeadBar;
 			} else {
-				WorldGen.SavedOreTiers.Iron = AltLibrary.Ores[WorldBiomeManager.Iron - 1].ore;
+				GenVars.iron = WorldGen.SavedOreTiers.Iron = AltLibrary.Ores[WorldBiomeManager.Iron - 1].ore;
 				GenVars.ironBar = AltLibrary.Ores[WorldBiomeManager.Iron - 1].bar;
 			}
 			if (WorldBiomeManager.Silver == -5) {
-				WorldGen.SavedOreTiers.Silver = TileID.Silver;
+				GenVars.silver = WorldGen.SavedOreTiers.Silver = TileID.Silver;
 				GenVars.silverBar = ItemID.SilverBar;
 			} else if (WorldBiomeManager.Silver == -6) {
-				WorldGen.SavedOreTiers.Silver = TileID.Tungsten;
+				GenVars.silver = WorldGen.SavedOreTiers.Silver = TileID.Tungsten;
 				GenVars.silverBar = ItemID.TungstenBar;
 			} else {
-				WorldGen.SavedOreTiers.Silver = AltLibrary.Ores[WorldBiomeManager.Silver - 1].ore;
+				GenVars.silver = WorldGen.SavedOreTiers.Silver = AltLibrary.Ores[WorldBiomeManager.Silver - 1].ore;
 				GenVars.silverBar = AltLibrary.Ores[WorldBiomeManager.Silver - 1].bar;
 			}
 			if (WorldBiomeManager.Gold == -7) {
-				WorldGen.SavedOreTiers.Gold = TileID.Gold;
+				GenVars.gold = WorldGen.SavedOreTiers.Gold = TileID.Gold;
 				GenVars.goldBar = ItemID.GoldBar;
 			} else if (WorldBiomeManager.Gold == -8) {
-				WorldGen.SavedOreTiers.Gold = TileID.Platinum;
+				GenVars.gold = WorldGen.SavedOreTiers.Gold = TileID.Platinum;
 				GenVars.goldBar = ItemID.PlatinumBar;
 			} else {
-				WorldGen.SavedOreTiers.Gold = AltLibrary.Ores[WorldBiomeManager.Gold - 1].ore;
+				GenVars.gold = WorldGen.SavedOreTiers.Gold = AltLibrary.Ores[WorldBiomeManager.Gold - 1].ore;
 				GenVars.goldBar = AltLibrary.Ores[WorldBiomeManager.Gold - 1].bar;
 			}
 			if (WorldBiomeManager.Cobalt == -9) {
