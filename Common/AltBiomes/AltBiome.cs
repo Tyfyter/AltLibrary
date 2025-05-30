@@ -220,7 +220,8 @@ namespace AltLibrary.Common.AltBiomes {
 		/// For Evil and Hallow alts. You may list additional tiles that this biome can convert into its own blocks during GERunner.
 		/// The first value is the pure tile, the second value is its infected counterpart.
 		/// </summary>
-		public virtual Dictionary<int, int> GERunnerConversion => new();
+		public virtual Dictionary<int, int> GERunnerConversion => _geRunnerConversion;
+		Dictionary<int, int> _geRunnerConversion = [];
 
 		/// <summary>
 		/// For Evil Alts. The ItemID of the seeds that Eye of Cthulhu will drop in worlds with this biome.

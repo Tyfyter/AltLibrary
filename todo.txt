@@ -30,3 +30,21 @@ Common/Hooks/UnderworldVisual.cs
 Common/Hooks/WorldIcons.cs
 Common/Hooks/BackgroundsAlternating.cs
 Fix Hell & Jungle still using ModContent.Find instead of actually being stored
+
+Implement (feature missing from original AltLib that I found out should be here because of Avalon):
+Evil biomes avoid dungeon overlap
+
+WorldGen.GetDesiredStalagtiteStyle
+WorldGen.hardUpdateWorld
+WorldGen.UpdateWorld_OvergroundTile
+WorldGen.UpdateWorld_UndergroundTile
+WorldGen.SpreadDesertWalls
+stalactite checks for:
+WorldGen.PaintTheSand
+WorldGen.PlaceTile
+WorldGen.PlaceTight
+WorldGen.BlockBelowMakesSandFall
+WorldGen.TileFrame
+WorldGen.UpdateWorld_OvergroundTile
+WorldGen.UpdateWorld_UndergroundTile
+WorldGen.ReplaceTile_EliminateNaturalExtras
