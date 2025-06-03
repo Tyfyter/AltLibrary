@@ -26,7 +26,7 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldloc, 0);
 			c.Emit(OpCodes.Ldloc, 2);
 			c.EmitDelegate<Func<int, Texture2D, Texture2D>>((index, orig) => {
-				if (WorldBiomeManager.WorldHellName != "") {
+				if (WorldBiomeManager.WorldHell is not VanillaBiome and not null) {
 					return WorldBiomeManager.GetWorldHell().AltUnderworldBackgrounds[index].Value;
 				}
 				return orig;
@@ -42,7 +42,7 @@ namespace AltLibrary.Common.Hooks {
 			}
 
 			c.EmitDelegate<Func<Color, Color>>((orig) => {
-				if (WorldBiomeManager.WorldHellName != "") {
+				if (WorldBiomeManager.WorldHell is not VanillaBiome and not null) {
 					return WorldBiomeManager.GetWorldHell().AltUnderworldColor;
 				}
 				return orig;

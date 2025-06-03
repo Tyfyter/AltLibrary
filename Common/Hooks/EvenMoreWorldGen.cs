@@ -77,7 +77,7 @@ namespace AltLibrary.Common.Hooks {
 			}
 
 			ILLabel label = c.DefineLabel();
-			c.EmitDelegate(() => WorldBiomeManager.WorldHellName == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldHell is VanillaBiome or null);
 			c.Emit(OpCodes.Brfalse_S, label);
 			c.Index++;
 			c.MarkLabel(label);
@@ -96,7 +96,7 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 
-			c.EmitDelegate(() => WorldBiomeManager.WorldJungleName == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldJungle is VanillaBiome or null);
 			c.Emit(OpCodes.Brfalse_S, label);
 		}
 

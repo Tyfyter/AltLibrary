@@ -432,72 +432,72 @@ Mods: {
 			}
 
 			AdamantiteAltOre: {
-				// DisplayName: Adamantite Alt Ore
+				// DisplayName: Adamantite
 				// Description: ""
 			}
 
 			CobaltAltOre: {
-				// DisplayName: Cobalt Alt Ore
+				// DisplayName: Cobalt
 				// Description: ""
 			}
 
 			CopperAltOre: {
-				// DisplayName: Copper Alt Ore
+				// DisplayName: Copper
 				// Description: ""
 			}
 
 			GoldAltOre: {
-				// DisplayName: Gold Alt Ore
+				// DisplayName: Gold
 				// Description: ""
 			}
 
 			IronAltOre: {
-				// DisplayName: Iron Alt Ore
+				// DisplayName: Iron
 				// Description: ""
 			}
 
 			LeadAltOre: {
-				// DisplayName: Lead Alt Ore
+				// DisplayName: Lead
 				// Description: ""
 			}
 
 			MythrilAltOre: {
-				// DisplayName: Mythril Alt Ore
+				// DisplayName: Mythril
 				// Description: ""
 			}
 
 			OrichalcumAltOre: {
-				// DisplayName: Orichalcum Alt Ore
+				// DisplayName: Orichalcum
 				// Description: ""
 			}
 
 			PalladiumAltOre: {
-				// DisplayName: Palladium Alt Ore
+				// DisplayName: Palladium
 				// Description: ""
 			}
 
 			PlatinumAltOre: {
-				// DisplayName: Platinum Alt Ore
+				// DisplayName: Platinum
 				// Description: ""
 			}
 
 			SilverAltOre: {
-				// DisplayName: Silver Alt Ore
+				// DisplayName: Silver
 				// Description: ""
 			}
 
 			TinAltOre: {
-				// DisplayName: Tin Alt Ore
+				// DisplayName: Tin
 				// Description: ""
 			}
 
 			TitaniumAltOre: {
-				// DisplayName: Titanium Alt Ore
+				// DisplayName: Titanium
 				// Description: ""
 			}
 
 			TungstenAltOre: {
-				// DisplayName: Tungsten Alt Ore
+				// DisplayName: Tungsten
 				// Description: ""
 			}
 		}

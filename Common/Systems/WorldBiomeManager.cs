@@ -252,8 +252,8 @@ namespace AltLibrary.Common.Systems {
 		public override void SaveWorldHeader(TagCompound tag) {
 			tag.Add("WorldEvil", WorldEvilName);
 			tag.Add("WorldHallow", WorldHallowName);
-			tag.Add("WorldHell", WorldHell);
-			tag.Add("WorldJungle", WorldJungle);
+			tag.Add("WorldHell", WorldHellName);
+			tag.Add("WorldJungle", WorldJungleName);
 			tag.Add("DrunkEvil", drunkEvilName);
 		}
 		public override void LoadWorldData(TagCompound tag) {
