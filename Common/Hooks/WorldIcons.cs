@@ -242,23 +242,62 @@ namespace AltLibrary.Common.Hooks {
 			CalculatedStyle innerDimensions = self.GetInnerDimensions();
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();
 			float num7 = innerDimensions.X + innerDimensions.Width;
-			if (tempDict.ContainsKey(path2)) {
+			if (tempDict.TryGetValue(path2, out AltLibraryConfig.WorldDataValues worldData)) {
 				for (int i = 0; i < 4; i++) {
 					Asset<Texture2D> asset = ALTextureAssets.BestiaryIcons;
-					if (i == 0 && tempDict[path2].worldHallow != "" && ModContent.TryFind(tempDict[path2].worldHallow, out AltBiome hallow)) asset = ModContent.Request<Texture2D>(hallow.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHallow");
-					if (i == 1 && tempDict[path2].worldEvil != "" && ModContent.TryFind(tempDict[path2].worldEvil, out AltBiome evil)) asset = ModContent.Request<Texture2D>(evil.IconSmall ?? "AltLibrary/Assets/Menu/ButtonCorrupt");
-					if (i == 2 && tempDict[path2].worldHell != "" && ModContent.TryFind(tempDict[path2].worldHell, out AltBiome hell)) asset = ModContent.Request<Texture2D>(hell.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHell");
-					if (i == 3 && tempDict[path2].worldJungle != "" && ModContent.TryFind(tempDict[path2].worldJungle, out AltBiome jungle)) asset = ModContent.Request<Texture2D>(jungle.IconSmall ?? "AltLibrary/Assets/Menu/ButtonJungle");
-					if (i == 0 && tempDict[path2].worldHallow != "" && !ModContent.TryFind(tempDict[path2].worldHallow, out AltBiome _)) asset = ALTextureAssets.ButtonHallow;
-					if (i == 1 && tempDict[path2].worldEvil != "" && !ModContent.TryFind(tempDict[path2].worldEvil, out AltBiome _)) asset = ALTextureAssets.ButtonCorrupt;
-					if (i == 2 && tempDict[path2].worldHell != "" && !ModContent.TryFind(tempDict[path2].worldHell, out AltBiome _)) asset = ALTextureAssets.ButtonHell;
-					if (i == 3 && tempDict[path2].worldJungle != "" && !ModContent.TryFind(tempDict[path2].worldJungle, out AltBiome _)) asset = ALTextureAssets.ButtonJungle;
-					Rectangle? rectangle = null;
-					if (i == 0 && tempDict[path2].worldHallow == "") rectangle = new(30, 30, 30, 30);
-					if (i == 1 && tempDict[path2].worldEvil == "") rectangle = new(_data.HasCorruption ? 210 : 360, 0, 30, 30);
-					if (i == 2 && tempDict[path2].worldHell == "") rectangle = new(30, 60, 30, 30);
-					if (i == 3 && tempDict[path2].worldJungle == "") rectangle = new(180, 30, 30, 30);
-					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, rectangle);
+					Rectangle? frame = null;
+					AltBiome biome;
+					switch (i) {
+						case 0:
+						if (worldData.worldHallow == "") worldData.worldHallow = "AltLibrary/HallowBiome";
+						if (ModContent.TryFind(worldData.worldHallow, out biome)) {
+							if (biome is VanillaBiome) {
+								frame = new(30, 30, 30, 30);
+							} else {
+								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHallow");
+							}
+						} else {
+							asset = ALTextureAssets.ButtonHallow;
+						}
+						break;
+						case 1:
+						if (worldData.worldEvil == "") worldData.worldEvil = _data.HasCorruption ? "AltLibrary/CorruptBiome" : "AltLibrary/CrimsonBiome";
+						if (ModContent.TryFind(worldData.worldEvil, out biome)) {
+							if (biome is VanillaBiome) {
+								frame = new(_data.HasCorruption ? 210 : 360, 0, 30, 30);
+							} else {
+								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonCorrupt");
+							}
+						} else {
+							asset = ALTextureAssets.ButtonCorrupt;
+						}
+						break;
+						case 2:
+						if (worldData.worldHell == "") worldData.worldHell = "AltLibrary/UnderworldBiome";
+						if (ModContent.TryFind(worldData.worldHell, out biome)) {
+							if (biome is VanillaBiome) {
+								frame = new(30, 60, 30, 30);
+							} else {
+								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHell");
+							}
+						} else {
+							asset = ALTextureAssets.ButtonHell;
+						}
+						break;
+						case 3:
+						if (worldData.worldJungle == "") worldData.worldJungle = "AltLibrary/JungleBiome";
+						if (ModContent.TryFind(worldData.worldJungle, out biome)) {
+							if (biome is VanillaBiome) {
+								frame = new(180, 30, 30, 30);
+							} else {
+								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonJungle");
+							}
+						} else {
+							asset = ALTextureAssets.ButtonJungle;
+						}
+						break;
+					}
+					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, frame);
 					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(num7 - 26f * (i + 1), dimensions.Y - 2f), Color.White);
 					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(num7 - 26f * (i + 1) + 3f, dimensions.Y + 1f), valueTuple.Item2, Color.White, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
 				}
