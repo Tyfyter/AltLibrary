@@ -242,11 +242,13 @@ namespace AltLibrary.Common.Hooks {
 			CalculatedStyle innerDimensions = self.GetInnerDimensions();
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();
 			float num7 = innerDimensions.X + innerDimensions.Width;
+			Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
 			if (tempDict.TryGetValue(path2, out AltLibraryConfig.WorldDataValues worldData)) {
 				for (int i = 0; i < 4; i++) {
 					Asset<Texture2D> asset = ALTextureAssets.BestiaryIcons;
 					Rectangle? frame = null;
 					AltBiome biome;
+					string text = "";
 					switch (i) {
 						case 0:
 						if (worldData.worldHallow == "") worldData.worldHallow = "AltLibrary/HallowBiome";
@@ -256,8 +258,10 @@ namespace AltLibrary.Common.Hooks {
 							} else {
 								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHallow");
 							}
+							text = biome.DisplayName.Value;
 						} else {
 							asset = ALTextureAssets.ButtonHallow;
+							text = worldData.worldHallow;
 						}
 						break;
 						case 1:
@@ -268,8 +272,10 @@ namespace AltLibrary.Common.Hooks {
 							} else {
 								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonCorrupt");
 							}
+							text = biome.DisplayName.Value;
 						} else {
 							asset = ALTextureAssets.ButtonCorrupt;
+							text = worldData.worldEvil;
 						}
 						break;
 						case 2:
@@ -280,8 +286,10 @@ namespace AltLibrary.Common.Hooks {
 							} else {
 								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonHell");
 							}
+							text = biome.DisplayName.Value;
 						} else {
 							asset = ALTextureAssets.ButtonHell;
+							text = worldData.worldHell;
 						}
 						break;
 						case 3:
@@ -292,19 +300,23 @@ namespace AltLibrary.Common.Hooks {
 							} else {
 								asset = ModContent.Request<Texture2D>(biome.IconSmall ?? "AltLibrary/Assets/Menu/ButtonJungle");
 							}
+							text = biome.DisplayName.Value;
 						} else {
 							asset = ALTextureAssets.ButtonJungle;
+							text = worldData.worldJungle;
 						}
 						break;
 					}
 					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, frame);
 					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(num7 - 26f * (i + 1), dimensions.Y - 2f), Color.White);
 					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(num7 - 26f * (i + 1) + 3f, dimensions.Y + 1f), valueTuple.Item2, Color.White, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
+					if (mouseRectangle.Intersects(new Rectangle((int)(num7 - 26f * (i + 1)), (int)(dimensions.Y - 2f), 22, 22))) {
+						Main.instance.MouseText(text);
+					}
 				}
 			}
 
 			if (!ALUtils.IsWorldValid(self)) {
-				Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
 				Asset<Texture2D> asset = ALTextureAssets.ButtonWarn;
 				int num = WarnUpdate % 120;
 				int num2 = num < 60 ? 0 : 1;
