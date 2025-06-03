@@ -1,4 +1,5 @@
-﻿using AltLibrary.Common.Systems;
+﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.Systems;
 using Humanizer;
 using Mono.Cecil;
 using MonoMod.Cil;
@@ -71,10 +72,10 @@ namespace AltLibrary.Common {
 				[
 					WorldBiomeManager.WorldEvilBiome.Type < 0 ? (WorldBiomeManager.IsCrimson ? -666 : -333) : WorldBiomeManager.WorldEvilBiome.Type,
 					!WorldBiomeManager.IsAnyModdedEvil ? "NONE" : WorldBiomeManager.WorldEvilBiome.DisplayName,
-					WorldBiomeManager.WorldJungle == "" ? -1 : AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldJungle).Type,
-					WorldBiomeManager.WorldJungle == "" ? "NONE" : WorldBiomeManager.WorldJungle,
-					WorldBiomeManager.WorldHell == "" ? -1 : AltLibrary.Biomes.Find(x => x.FullName == WorldBiomeManager.WorldHell).Type,
-					WorldBiomeManager.WorldHell == "" ? "NONE" : WorldBiomeManager.WorldHell,
+					WorldBiomeManager.WorldJungle?.Type,
+					WorldBiomeManager.WorldJungle?.FullName,
+					WorldBiomeManager.WorldHell?.Type,
+					WorldBiomeManager.WorldHell?.FullName,
 					WorldBiomeManager.WorldHallowName == "" ? -1 : WorldBiomeManager.WorldHallowBiome.Type,
 					WorldBiomeManager.WorldHallowName == "" ? "NONE" : WorldBiomeManager.WorldHallowBiome.DisplayName,
 				]));

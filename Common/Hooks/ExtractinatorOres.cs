@@ -48,7 +48,7 @@ namespace AltLibrary.Common.Hooks {
 
 			foreach (AltOre o in AltLibrary.Ores.Where(x => x.IncludeInExtractinator)) {
 				int oreItem = TileLoader.GetItemDropFromTypeAndStyle(o.ore);
-				if (o.OreType >= OreType.Copper && o.OreType <= OreType.Gold) PrehardmodeOres.Add(oreItem);
+				if (!o.OreSlot.Hardmode) PrehardmodeOres.Add(oreItem);
 				Ores.Add(oreItem);
 			}
 		}

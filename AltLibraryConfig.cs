@@ -52,8 +52,8 @@ namespace AltLibrary {
 		[DefaultValue(0), CustomModConfigItem(typeof(EvilBiomeCountRangeElement))]
 		public int DrunkMaxBiomes;
 
-		[DefaultValue(false), ReloadRequired]
-		public bool OldWorldCreationUI;
+		[JsonIgnore]
+		public bool OldWorldCreationUI => false;
 
 #pragma warning restore CS0649
 

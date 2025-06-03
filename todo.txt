@@ -33,6 +33,7 @@ Fix Hell & Jungle still using ModContent.Find instead of actually being stored
 
 Implement (feature missing from original AltLib that I found out should be here because of Avalon):
 Evil biomes avoid dungeon overlap
+ChlorophyteDefense
 
 WorldGen.GetDesiredStalagtiteStyle
 WorldGen.hardUpdateWorld

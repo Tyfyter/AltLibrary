@@ -43,7 +43,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// </summary>
 		public virtual LocalizedText Description => this.GetLocalization("Description", PrettyPrintName);
 		/// <summary>
-		/// The message that will appear during world generation. Used by Underworld and Jungle alts. Yet.
+		/// The message that will appear during world generation. Used by Evil alts.
 		/// </summary>
 		public virtual LocalizedText GenPassName => this.GetLocalization("GenPassName", PrettyPrintName);
 		/// <summary>
@@ -60,20 +60,6 @@ namespace AltLibrary.Common.AltBiomes {
 		/// Set this to something so your evil biome can generate
 		/// </summary>
 		public EvilBiomeGenerationPass EvilBiomeGenerationPass = null;
-
-		/// <summary>
-		/// For Jungle alts. Set this to something to replace Beehives.
-		/// </summary>
-		public virtual WorldGenLegacyMethod GetHiveGenerationPass() => HiveGenerationPass;
-		public WorldGenLegacyMethod HiveGenerationPass = null;
-
-		/// <summary>
-		/// For Jungle alts. Set this to something to replace the Lihzahrd Temple.
-		/// </summary>
-		public virtual WorldGenLegacyMethod GetTempleGenerationPass() => TempleGenPass;
-		public WorldGenLegacyMethod TempleGenPass = null;
-
-		public virtual WorldGenLegacyMethod GetHellforgeGenerationPass() => null;
 
 		/// <summary>
 		/// For all biome types, only used used by AltLibrary if NPCsHate returns true, but should be overridden if a biome is associated with this biome
@@ -277,7 +263,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <summary>
 		/// Whether or not this biome will appear on the selection menu.
 		/// </summary>
-		public bool Selectable = true;
+		public virtual bool Selectable => true;
 		#endregion
 
 		#region Remix Worlds
@@ -354,10 +340,6 @@ namespace AltLibrary.Common.AltBiomes {
 		/// If this is set to true, none of this biome's conversions will be reversed by purification powder or green solution
 		/// </summary>
 		public bool NoDeconversion = false;
-		/// <summary>
-		/// For Underworld alts, the generation pass that will be inserted after the vanilla underworld pass
-		/// </summary>
-		public PassLegacy WorldGenPassLegacy = null;
 		public virtual Color AltUnderworldColor => Color.Black;
 		public virtual Asset<Texture2D>[] AltUnderworldBackgrounds => new Asset<Texture2D>[14];
 		public virtual AltMaterialContext MaterialContext => null;
@@ -401,7 +383,7 @@ namespace AltLibrary.Common.AltBiomes {
 			_ = DisplayName.Value;
 			_ = Description.Value;
 			_ = GenPassName.Value;
-			_ = DryadTextDescriptor.Value;
+			if (BiomeType is BiomeType.Evil or BiomeType.Hallow) _ = DryadTextDescriptor.Value;
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
 				return;
@@ -539,6 +521,7 @@ namespace AltLibrary.Common.AltBiomes {
 			return true;
 		}
 		public virtual void ConvertMultitileTo(int i, int j, int width, int height, int newTile, AltBiome fromBiome) { }
+		public virtual void ModifyGenPass(List<GenPass> passes, GenPass originalPass) { }
 		public static bool operator ==(AltBiome a, AltBiome b) {
 			if (a is null) return b is null;
 			if (b is null) return false;

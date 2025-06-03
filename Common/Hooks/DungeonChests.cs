@@ -29,7 +29,7 @@ namespace AltLibrary.Common.Hooks {
 				chestData = (0, 0, 0);
 				return false;
 			}
-			if (ModContent.TryFind(WorldBiomeManager.WorldJungle, out AltBiome altJungle) && GetBiomeChest(altJungle, out var chestData)) {
+			if (ModContent.TryFind(WorldBiomeManager.WorldJungleName, out AltBiome altJungle) && GetBiomeChest(altJungle, out var chestData)) {
 				biomeChests.Add(chestData);
 			} else {
 				biomeChests.Add((TileID.Containers, ItemID.PiranhaGun, 23));

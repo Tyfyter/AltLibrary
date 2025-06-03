@@ -23,7 +23,7 @@ namespace AltLibrary.Core.Generation {
 				int snowJungleIter = (int)GenVars.worldSurfaceLow - 10;
 				while (snowJungleIter < GenVars.worldSurfaceHigh - 50) {
 					if (Main.tile[i, snowJungleIter].HasTile) {
-						if (Main.tile[i, snowJungleIter].TileType == (WorldBiomeManager.WorldJungle == "" ? TileID.JungleGrass : ModContent.Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass.Value)) {
+						if (Main.tile[i, snowJungleIter].TileType == (WorldBiomeManager.WorldJungle?.BiomeGrass ?? TileID.JungleGrass)) {
 							if (i < JungleBoundMinX) {
 								JungleBoundMinX = i;
 							}

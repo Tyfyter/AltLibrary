@@ -23,11 +23,11 @@ namespace AltLibrary.Core.Baking {
 			}
 		}
 
-		private static void SendOriginalToToBackOfList(AltOre[] list, int original) {
+		private static void SendOriginalToToBackOfList(AltOre[] list, AltOre original) {
 			if (list.Length <= 1)
 				return;
 			for (int x = 0; x < list.Length - 1; x++) {
-				if (list[x].Type == original) {
+				if (list[x] == original) {
 					(list[^1], list[x]) = (list[x], list[^1]);
 					return;
 				}
@@ -36,15 +36,15 @@ namespace AltLibrary.Core.Baking {
 
 		internal static void BakeDrunken() {
 			UnifiedRandom rngSeed = new(WorldGen._genRandSeed); //bake seed later
-			List<AltOre> hardmodeListing = ALWorldCreationLists.prehmOreData.Types.FindAll(x => x.includeInHardmodeDrunken || x.OreType >= OreType.Cobalt & x.OreType != OreType.None);
+			List<AltOre> hardmodeListing = AltLibrary.Ores.FindAll(x => x.includeInHardmodeDrunken || x.OreSlot.Hardmode);
 
-			WorldBiomeManager.drunkCobaltCycle = hardmodeListing.Where(x => x.OreType == OreType.Cobalt && x.Selectable).ToArray();
-			WorldBiomeManager.drunkMythrilCycle = hardmodeListing.Where(x => x.OreType == OreType.Mythril && x.Selectable).ToArray();
-			WorldBiomeManager.drunkAdamantiteCycle = hardmodeListing.Where(x => x.OreType == OreType.Adamantite && x.Selectable).ToArray();
+			WorldBiomeManager.drunkCobaltCycle = OreSlotLoader.GetOres<CobaltOreSlot>().Where(o => o.Selectable).ToArray();
+			WorldBiomeManager.drunkMythrilCycle = OreSlotLoader.GetOres<MythrilOreSlot>().Where(o => o.Selectable).ToArray();
+			WorldBiomeManager.drunkAdamantiteCycle = OreSlotLoader.GetOres<AdamantiteOreSlot>().Where(o => o.Selectable).ToArray();
 
-			SendOriginalToToBackOfList(WorldBiomeManager.drunkCobaltCycle, WorldBiomeManager.Cobalt);
-			SendOriginalToToBackOfList(WorldBiomeManager.drunkMythrilCycle, WorldBiomeManager.Mythril);
-			SendOriginalToToBackOfList(WorldBiomeManager.drunkAdamantiteCycle, WorldBiomeManager.Adamantite);
+			SendOriginalToToBackOfList(WorldBiomeManager.drunkCobaltCycle, WorldBiomeManager.GetAltOre<CobaltOreSlot>());
+			SendOriginalToToBackOfList(WorldBiomeManager.drunkMythrilCycle, WorldBiomeManager.GetAltOre<MythrilOreSlot>());
+			SendOriginalToToBackOfList(WorldBiomeManager.drunkAdamantiteCycle, WorldBiomeManager.GetAltOre<AdamantiteOreSlot>());
 
 			ShuffleArrayUsingSeed(WorldBiomeManager.drunkCobaltCycle, rngSeed);
 			ShuffleArrayUsingSeed(WorldBiomeManager.drunkMythrilCycle, rngSeed);

@@ -1,4 +1,4 @@
-﻿#if DEBUG
+﻿#if DEBUG && false
 namespace AltLibrary.Common.AltBiomes {
 	public class DebuggingHallowBiome : AltBiome {
 		public override void SetStaticDefaults() {

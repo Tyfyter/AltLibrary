@@ -1,4 +1,5 @@
-﻿using AltLibrary.Common.Systems;
+﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.Systems;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -26,7 +27,7 @@ namespace AltLibrary.Common.Hooks {
 			c.MoveAfterLabels();
 			ILLabel label = il.DefineLabel();
 
-			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldJungle is VanillaBiome);
 			c.Emit(OpCodes.Brfalse_S, label);
 
 			c.EmitDelegate(() => HouseBuilder.Invalid);

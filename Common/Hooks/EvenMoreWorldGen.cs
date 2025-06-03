@@ -1,4 +1,5 @@
 using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.AltOres;
 using AltLibrary.Common.Systems;
 using AltLibrary.Core;
 using Mono.Cecil;
@@ -76,7 +77,7 @@ namespace AltLibrary.Common.Hooks {
 			}
 
 			ILLabel label = c.DefineLabel();
-			c.EmitDelegate(() => WorldBiomeManager.WorldHell == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldHellName == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 			c.Index++;
 			c.MarkLabel(label);
@@ -95,7 +96,7 @@ namespace AltLibrary.Common.Hooks {
 				return;
 			}
 
-			c.EmitDelegate(() => WorldBiomeManager.WorldJungle == "");
+			c.EmitDelegate(() => WorldBiomeManager.WorldJungleName == "");
 			c.Emit(OpCodes.Brfalse_S, label);
 		}
 
@@ -183,43 +184,41 @@ namespace AltLibrary.Common.Hooks {
 			)) {
 				c.SkipIf(false, true);
 				List<int> list = null;
-				OreType oreType = default;
+				OreSlot oreSlot = null;
 				switch (oreField.Name) {
 					case nameof(GenVars.copper):
-					oreType = OreType.Copper;
-					list = new() {
+					oreSlot = ModContent.GetInstance<CopperOreSlot>();
+					list = [
 						TileID.Copper,
 						TileID.Tin
-					};
+					];
 					break;
 
 					case nameof(GenVars.iron):
-					oreType = OreType.Iron;
-					list = new() {
+					oreSlot = ModContent.GetInstance<IronOreSlot>();
+					list = [
 						TileID.Iron,
 						TileID.Lead
-					};
+					];
 					break;
 
 					case nameof(GenVars.silver):
-					oreType = OreType.Silver;
-					list = new() {
+					oreSlot = ModContent.GetInstance<SilverOreSlot>();
+					list = [
 						TileID.Silver,
 						TileID.Tungsten
-					};
+					];
 					break;
 
 					case nameof(GenVars.gold):
-					oreType = OreType.Gold;
-					list = new() {
+					oreSlot = ModContent.GetInstance<GoldOreSlot>();
+					list = [
 						TileID.Gold,
 						TileID.Platinum
-					};
+					];
 					break;
 				}
-				foreach (var ore in AltLibrary.Ores) {
-					if (ore.OreType == oreType) list.Add(ore.ore);
-				}
+				if (oreSlot is not null) list.AddRange(OreSlotLoader.GetOres(oreSlot).Select(o => o.ore));
 				c.EmitDelegate<Func<int>>(() => WorldGen.genRand.Next(list));
 				c.Emit(OpCodes.Stsfld, oreField);
 			}

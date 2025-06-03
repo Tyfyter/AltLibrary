@@ -424,5 +424,92 @@ Mods: {
 				DryadTextDescriptor: Debugging None Biome2
 			}
 		}
+
+		AltOres: {
+			RandomOptionOre: {
+				DisplayName: Random {0}
+				Description: Chooses a random {0} for you
+			}
+
+			AdamantiteAltOre: {
+				DisplayName: Adamantite
+				Description: ""
+			}
+
+			CobaltAltOre: {
+				DisplayName: Cobalt
+				Description: ""
+			}
+
+			CopperAltOre: {
+				DisplayName: Copper
+				Description: ""
+			}
+
+			GoldAltOre: {
+				DisplayName: Gold
+				Description: ""
+			}
+
+			IronAltOre: {
+				DisplayName: Iron
+				Description: ""
+			}
+
+			LeadAltOre: {
+				DisplayName: Lead
+				Description: ""
+			}
+
+			MythrilAltOre: {
+				DisplayName: Mythril
+				Description: ""
+			}
+
+			OrichalcumAltOre: {
+				DisplayName: Orichalcum
+				Description: ""
+			}
+
+			PalladiumAltOre: {
+				DisplayName: Palladium
+				Description: ""
+			}
+
+			PlatinumAltOre: {
+				DisplayName: Platinum
+				Description: ""
+			}
+
+			SilverAltOre: {
+				DisplayName: Silver
+				Description: ""
+			}
+
+			TinAltOre: {
+				DisplayName: Tin
+				Description: ""
+			}
+
+			TitaniumAltOre: {
+				DisplayName: Titanium
+				Description: ""
+			}
+
+			TungstenAltOre: {
+				DisplayName: Tungsten
+				Description: ""
+			}
+		}
+
+		AltOreSlot: {
+			AdamantiteOreSlot.DisplayName: Adamantite-Tier Ore
+			CobaltOreSlot.DisplayName: Cobalt-Tier Ore
+			CopperOreSlot.DisplayName: Copper-Tier Ore
+			GoldOreSlot.DisplayName: Gold-Tier Ore
+			IronOreSlot.DisplayName: Iron-Tier Ore
+			MythrilOreSlot.DisplayName: Mythril-Tier Ore
+			SilverOreSlot.DisplayName: Silver-Tier Ore
+		}
 	}
 }

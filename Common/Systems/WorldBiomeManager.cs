@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using static Terraria.ModLoader.ModContent;
 using System;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AltLibrary.Common.Systems {
 	public class WorldBiomeManager : ModSystem {
@@ -38,18 +39,12 @@ namespace AltLibrary.Common.Systems {
 			return null;
 		}
 		public static AltBiome GetWorldHell(bool includeVanilla = true) {
-			if (TryFind(WorldHell, out AltBiome worldHell)) return worldHell;
-			if (includeVanilla) {
-				return GetInstance<UnderworldAltBiome>();
-			}
-			return null;
+			if (!includeVanilla && worldHell is VanillaBiome) return null;
+			return worldHell;
 		}
 		public static AltBiome GetWorldJungle(bool includeVanilla = true) {
-			if (TryFind(WorldJungle, out AltBiome worldJungle)) return worldJungle;
-			if (includeVanilla) {
-				return GetInstance<JungleAltBiome>();
-			}
-			return null;
+			if (!includeVanilla && worldJungle is VanillaBiome) return null;
+			return worldJungle;
 		}
 		public static string WorldEvilName {
 			get => worldEvilName;
@@ -67,7 +62,7 @@ namespace AltLibrary.Common.Systems {
 		static AltBiome worldEvilBiome;
 		public static AltBiome WorldEvilBiome {
 			get => worldEvilBiome;
-			internal set {
+			set {
 				worldEvilBiome = value;
 				if (value.Type < 0) {
 					worldEvilName = "";
@@ -85,7 +80,7 @@ namespace AltLibrary.Common.Systems {
 		static AltBiome worldHallowBiome;
 		public static AltBiome WorldHallowBiome {
 			get => worldHallowBiome;
-			internal set {
+			set {
 				worldHallowBiome = value;
 				if (value.Type < 0) {
 					worldHallowName = "";
@@ -113,8 +108,58 @@ namespace AltLibrary.Common.Systems {
 			get => worldHallowName;
 			internal set => WorldHallowName = value;
 		}
-		public static string WorldHell { get; internal set; } = "";
-		public static string WorldJungle { get; internal set; } = "";
+		static AltBiome worldHell;
+		public static AltBiome WorldHell {
+			get => worldHell;
+			set {
+				worldHell = value;
+				if (value.Type < 0) {
+					worldHellName = "";
+				} else {
+					worldHellName = value.FullName;
+				}
+			}
+		}
+		public static string WorldHellName {
+			get => worldHellName;
+			internal set {
+				worldHellName = value;
+				if (value == "") {
+					worldHell = GetInstance<UnderworldAltBiome>();
+				} else if (TryFind(worldHellName, out AltBiome altHell)) {
+					worldHell = altHell;
+				} else {
+					worldHell = new UnloadedAltBiome(value, BiomeType.Hell);
+				}
+			}
+		}
+		static string worldHellName = "";
+		static AltBiome worldJungle;
+		public static AltBiome WorldJungle {
+			get => worldJungle;
+			set {
+				worldJungle = value;
+				if (value.Type < 0) {
+					worldJungleName = "";
+				} else {
+					worldJungleName = value.FullName;
+				}
+			}
+		}
+		public static string WorldJungleName {
+			get => worldJungleName;
+			internal set {
+				worldJungleName = value;
+				if (value == "") {
+					worldJungle = GetInstance<JungleAltBiome>();
+				} else if (TryFind(worldJungleName, out AltBiome altJungle)) {
+					worldJungle = altJungle;
+				} else {
+					worldJungle = new UnloadedAltBiome(value, BiomeType.Jungle);
+				}
+			}
+		}
+		static string worldJungleName = "";
 		internal static string drunkEvilName = "";
 		private static AltBiome drunkEvil;
 		public static AltBiome DrunkEvil {
@@ -146,13 +191,10 @@ namespace AltLibrary.Common.Systems {
 				}
 			}
 		}
-		public static int Copper { get; internal set; } = 0;
-		public static int Iron { get; internal set; } = 0;
-		public static int Silver { get; internal set; } = 0;
-		public static int Gold { get; internal set; } = 0;
-		public static int Cobalt { get; internal set; } = 0;
-		public static int Mythril { get; internal set; } = 0;
-		public static int Adamantite { get; internal set; } = 0;
+		internal static AltOre[] ores;
+		static List<(string slot, string ore)> unloadedOres;
+		public static ref AltOre GetAltOre<TOreSlot>() where TOreSlot : OreSlot => ref GetAltOre(GetInstance<TOreSlot>());
+		public static ref AltOre GetAltOre(OreSlot slot) => ref ores[slot.Type];
 		internal static int hmOreIndex = 0;
 
 		public static bool IsCorruption => WorldEvilName == "" && !WorldGen.crimson;
@@ -189,13 +231,6 @@ namespace AltLibrary.Common.Systems {
 			WorldJungle = null;
 			drunkEvilName = null;
 			drunkEvil = null;
-			Copper = 0;
-			Iron = 0;
-			Silver = 0;
-			Gold = 0;
-			Cobalt = 0;
-			Mythril = 0;
-			Adamantite = 0;
 			hmOreIndex = 0;
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
@@ -205,31 +240,14 @@ namespace AltLibrary.Common.Systems {
 		public override void SaveWorldData(TagCompound tag) {
 			tag.Add("AltLibrary:WorldEvil", WorldEvilName);
 			tag.Add("AltLibrary:WorldHallow", WorldHallowName);
-			tag.Add("AltLibrary:WorldHell", WorldHell);
-			tag.Add("AltLibrary:WorldJungle", WorldJungle);
+			tag.Add("AltLibrary:WorldHell", WorldHell?.FullName ?? "AltLibrary/UnderworldAltBiome");
+			tag.Add("AltLibrary:WorldJungle", WorldJungle?.FullName ?? "AltLibrary/JungleAltBiome");
 			tag.Add("AltLibrary:DrunkEvil", drunkEvilName);
-			tag.Add("AltLibrary:Copper", Copper);
-			tag.Add("AltLibrary:Iron", Iron);
-			tag.Add("AltLibrary:Silver", Silver);
-			tag.Add("AltLibrary:Gold", Gold);
-			tag.Add("AltLibrary:Cobalt", Cobalt);
-			tag.Add("AltLibrary:Mythril", Mythril);
-			tag.Add("AltLibrary:Adamantite", Adamantite);
+			tag.Add("AltLibrary:Ores", ores.Select(ore => new TagCompound {
+				["Slot"] = ore.OreSlot.FullName,
+				["Ore"] = ore.FullName
+			}).ToList());
 			tag.Add("AltLibrary:HardmodeOreIndex", hmOreIndex);
-
-			Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict = AltLibraryConfig.Config.GetWorldData();
-			AltLibraryConfig.WorldDataValues worldData;
-
-			worldData.worldEvil = WorldEvilName;
-			worldData.worldHallow = WorldHallowName;
-			worldData.worldHell = WorldHell;
-			worldData.worldJungle = WorldJungle;
-			worldData.drunkEvil = drunkEvilName;
-
-			string path = Path.ChangeExtension(Main.worldPathName, ".twld");
-			tempDict[path] = worldData;
-			AltLibraryConfig.Config.SetWorldData(tempDict);
-			AltLibraryConfig.Save(AltLibraryConfig.Config);
 		}
 		public override void SaveWorldHeader(TagCompound tag) {
 			tag.Add("WorldEvil", WorldEvilName);
@@ -241,16 +259,47 @@ namespace AltLibrary.Common.Systems {
 		public override void LoadWorldData(TagCompound tag) {
 			WorldEvilName = tag.GetString("AltLibrary:WorldEvil");
 			WorldHallowName = tag.GetString("AltLibrary:WorldHallow");
-			WorldHell = tag.GetString("AltLibrary:WorldHell");
-			WorldJungle = tag.GetString("AltLibrary:WorldJungle");
+			WorldHellName = tag.GetString("AltLibrary:WorldHell");
+			WorldJungleName = tag.GetString("AltLibrary:WorldJungle");
 			drunkEvilName = tag.GetString("AltLibrary:DrunkEvil");
-			Copper = tag.GetInt("AltLibrary:Copper");
-			Iron = tag.GetInt("AltLibrary:Iron");
-			Silver = tag.GetInt("AltLibrary:Silver");
-			Gold = tag.GetInt("AltLibrary:Gold");
-			Cobalt = tag.GetInt("AltLibrary:Cobalt");
-			Mythril = tag.GetInt("AltLibrary:Mythril");
-			Adamantite = tag.GetInt("AltLibrary:Adamantite");
+			ores = new AltOre[OreSlotLoader.OreSlotCount];
+			unloadedOres = [];
+			if (tag.TryGet("AltLibrary:Ores", out List<TagCompound> selectedOres)) {
+				for (int i = 0; i < selectedOres.Count; i++) {
+					if (!selectedOres[i].TryGet("Slot", out string slot) || !selectedOres[i].TryGet("Ore", out string ore)) continue;
+					if (TryFind(slot, out OreSlot oreSlot)) {
+						if (!TryFind(ore, out ores[oreSlot.Type])) {
+							ores[oreSlot.Type] = new UnloadedOre(oreSlot, ore);
+						}
+					} else {
+						unloadedOres.Add((slot, ore));
+					}
+				}
+			}
+			for (int i = 0; i < ores.Length; i++) {
+				if (ores[i] is null) {
+					OreSlot slot = OreSlotLoader.GetOreSlot(i);
+					if (slot is CopperOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Copper) ?? GetInstance<CopperAltOre>();
+					} else if (slot is IronOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Iron) ?? GetInstance<IronAltOre>();
+					} else if (slot is SilverOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Silver) ?? GetInstance<SilverAltOre>();
+					} else if (slot is GoldOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Gold) ?? GetInstance<GoldAltOre>();
+					} else if (slot is GoldOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Gold) ?? GetInstance<GoldAltOre>();
+					} else if (slot is CobaltOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Cobalt) ?? GetInstance<CobaltAltOre>();
+					} else if (slot is MythrilOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Mythril) ?? GetInstance<MythrilAltOre>();
+					} else if (slot is AdamantiteOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Adamantite) ?? GetInstance<AdamantiteAltOre>();
+					} else {
+						ores[i] = OreSlotLoader.GetOres(slot).FirstOrDefault();
+					}
+				}
+			}
 			hmOreIndex = tag.GetInt("AltLibrary:HardmodeOreIndex");
 			DrunkEvil = null;
 
@@ -263,34 +312,26 @@ namespace AltLibrary.Common.Systems {
 		public override void NetSend(BinaryWriter writer) {
 			writer.Write(WorldEvilName);
 			writer.Write(WorldHallowName);
-			writer.Write(WorldHell);
-			writer.Write(WorldJungle);
+			writer.Write(WorldHellName);
+			writer.Write(WorldJungleName);
 			writer.Write(drunkEvilName);
-			writer.Write(Copper);
-			writer.Write(Iron);
-			writer.Write(Silver);
-			writer.Write(Gold);
-			writer.Write(Cobalt);
-			writer.Write(Mythril);
-			writer.Write(Adamantite);
+			for (int i = 0; i < ores.Length; i++) {
+				writer.Write(ores[i].Type);
+			}
 			writer.Write(hmOreIndex);
 		}
 
 		public override void NetReceive(BinaryReader reader) {
 			WorldEvilName = reader.ReadString();
 			WorldHallowName = reader.ReadString();
-			WorldHell = reader.ReadString();
-			WorldJungle = reader.ReadString();
+			WorldHellName = reader.ReadString();
+			WorldJungleName = reader.ReadString();
 			string oldDrunkEvilName = drunkEvilName;
 			drunkEvilName = reader.ReadString();
 			if (drunkEvilName != oldDrunkEvilName) DrunkEvil = null;
-			Copper = reader.ReadInt32();
-			Iron = reader.ReadInt32();
-			Silver = reader.ReadInt32();
-			Gold = reader.ReadInt32();
-			Cobalt = reader.ReadInt32();
-			Mythril = reader.ReadInt32();
-			Adamantite = reader.ReadInt32();
+			for (int i = 0; i < ores.Length; i++) {
+				ores[i] = AltLibrary.Ores[reader.ReadInt32()];
+			}
 			hmOreIndex = reader.ReadInt32();
 		}
 	}

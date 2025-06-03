@@ -1,6 +1,8 @@
 ﻿using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.AltOres;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -388,69 +390,82 @@ namespace AltLibrary.Common.Systems {
 			});
 
 
-			array = [ItemID.CopperBar, ItemID.TinBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Copper).ForEach(x => array.Add(x.bar));
-			CopperBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperBars")}", array.ToArray());
+			CopperBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperBars")}",
+				OreSlotLoader.GetOres<CopperOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("CopperBars", CopperBars);
 
-			array = [ItemID.IronOre, ItemID.LeadOre];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Iron).ForEach(x => array.Add(x.ore));
-			IronOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronOres")}", array.ToArray());
+			IronOres = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronOres")}",
+				OreSlotLoader.GetOres<IronOreSlot>().Select(o => o.oreItem).ToArray()
+			);
 			RecipeGroup.RegisterGroup("IronOres", IronOres);
 
-			array = [ItemID.IronBar, ItemID.LeadBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Iron).ForEach(x => array.Add(x.bar));
-			IronBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronBars")}", array.ToArray());
+			IronBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronBars")}",
+				OreSlotLoader.GetOres<IronOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("IronBars", IronBars);
 
-			array = [ItemID.SilverBar, ItemID.TungstenBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Silver).ForEach(x => array.Add(x.bar));
-			SilverBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverBars")}", array.ToArray());
+			SilverBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverBars")}",
+				OreSlotLoader.GetOres<SilverOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("SilverBars", SilverBars);
-
-			array = [ItemID.GoldOre, ItemID.PlatinumOre];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold).ForEach(x => array.Add(x.ore));
-			GoldOres = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldOres")}", array.ToArray());
+			
+			GoldOres = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldOres")}",
+				OreSlotLoader.GetOres<GoldOreSlot>().Select(o => o.oreItem).ToArray()
+			);
 			RecipeGroup.RegisterGroup("GoldOres", GoldOres);
 
-			array = [ItemID.GoldBar, ItemID.PlatinumBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold).ForEach(x => array.Add(x.bar));
-			GoldBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldBars")}", array.ToArray());
+			GoldBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldBars")}",
+				OreSlotLoader.GetOres<GoldOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("GoldBars", GoldBars);
 
-			array = [ItemID.CobaltBar, ItemID.PalladiumBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Cobalt).ForEach(x => array.Add(x.bar));
-			CobaltBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CobaltBars")}", array.ToArray());
+			CobaltBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CobaltBars")}",
+				OreSlotLoader.GetOres<CobaltOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("CobaltBars", CobaltBars);
 
-			array = [ItemID.MythrilBar, ItemID.OrichalcumBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Mythril).ForEach(x => array.Add(x.bar));
-			MythrilBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.MythrilBars")}", array.ToArray());
+			MythrilBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.MythrilBars")}",
+				OreSlotLoader.GetOres<MythrilOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("MythrilBars", MythrilBars);
 
-			array = [ItemID.AdamantiteBar, ItemID.TitaniumBar];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Adamantite).ForEach(x => array.Add(x.bar));
-			AdamantiteBars = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.AdamantiteBars")}", array.ToArray());
+			AdamantiteBars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.AdamantiteBars")}",
+				OreSlotLoader.GetOres<AdamantiteOreSlot>().Select(o => o.bar).ToArray()
+			);
 			RecipeGroup.RegisterGroup("AdamantiteBars", AdamantiteBars);
 
-			array = [ItemID.Candle, ItemID.PlatinumCandle];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold && x.Candle.HasValue).ForEach(x => array.Add(x.Candle.Value));
-			GoldCandles = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldCandles")}", array.ToArray());
+			GoldCandles = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldCandles")}",
+				OreSlotLoader.GetOres<GoldOreSlot>().Select(o => o.Candle ?? -1).Where(x => x != -1).ToArray()
+			);
 			RecipeGroup.RegisterGroup("GoldCandles", GoldCandles);
 
-			array = [ItemID.CopperWatch, ItemID.TinWatch];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Copper && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
-			CopperWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperWatches")}", array.ToArray());
+			CopperWatches = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperWatches")}",
+				OreSlotLoader.GetOres<CopperOreSlot>().Select(o => o.Watch ?? -1).Where(x => x != -1).ToArray()
+			);
 			RecipeGroup.RegisterGroup("CopperWatches", CopperWatches);
 
-			array = [ItemID.SilverWatch, ItemID.TungstenWatch];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Silver && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
-			SilverWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverWatches")}", array.ToArray());
+			SilverWatches = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverWatches")}",
+				OreSlotLoader.GetOres<SilverOreSlot>().Select(o => o.Watch ?? -1).Where(x => x != -1).ToArray()
+			);
 			RecipeGroup.RegisterGroup("SilverWatches", SilverWatches);
 
-			array = [ItemID.GoldWatch, ItemID.PlatinumWatch];
-			AltLibrary.Ores.FindAll(x => x.OreType == OreType.Gold && x.Watch.HasValue).ForEach(x => array.Add(x.Watch.Value));
-			GoldWatches = new RecipeGroup(() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldWatches")}", array.ToArray());
+			GoldWatches = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldWatches")}",
+				OreSlotLoader.GetOres<GoldOreSlot>().Select(o => o.Watch ?? -1).Where(x => x != -1).ToArray()
+			);
 			RecipeGroup.RegisterGroup("GoldWatches", GoldWatches);
 		}
 	}

@@ -27,6 +27,7 @@ namespace AltLibrary.Common.AltBiomes
 		internal static readonly EvilBiomeGenerationPass corruptPass = new CorruptionEvilBiomeGenerationPass();
 		internal static readonly EvilBiomeGenerationPass crimsonPass = new CrimsonEvilBiomeGenerationPass();
 
+		public override bool Selectable => BiomeType != BiomeType.None;
 		protected internal VanillaBiome(string name, BiomeType biome, int type, Color nameColor, bool? fix = null) {
 			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
@@ -43,7 +44,6 @@ namespace AltLibrary.Common.AltBiomes
 			FleshChairTile = TileID.Chairs;
 			FleshTableTile = TileID.Tables;
 			FleshChestTile = TileID.Containers;
-			if (biome == BiomeType.None) Selectable = false;
 		}
 	}
 	public class CorruptionAltBiome : VanillaBiome {
@@ -196,7 +196,7 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class JungleAltBiome : VanillaBiome {
-		public JungleAltBiome() : base("JungleBiome", BiomeType.Jungle, -4, Color.SpringGreen) { }
+		public JungleAltBiome() : base("JungleBiome", BiomeType.Jungle, -4, new(107, 182, 0)) { }
 		public override void SetStaticDefaults() {
 			BiomeChestItem = ItemID.PiranhaGun;
 			BiomeChestTile = TileID.Containers;

@@ -1,6 +1,8 @@
-﻿using Mono.Cecil.Cil;
+﻿using AltLibrary.Common.AltOres;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -26,14 +28,16 @@ namespace AltLibrary.Common.Hooks {
 
 			c.Index += 3;
 			c.EmitDelegate(() => {
-				int ore = WorldGen.SavedOreTiers.Adamantite;
-				string key = "";
-				if (ore == TileID.Titanium) {
+				int oreTile = WorldGen.SavedOreTiers.Adamantite;
+				string key;
+				if (oreTile == TileID.Titanium) {
 					key = Language.GetTextValue("GuideHelpTextSpecific.Help_1148");
-				} else if (ore == TileID.Adamantite) {
+				} else if (oreTile == TileID.Adamantite) {
 					key = Language.GetTextValue("GuideHelpTextSpecific.Help_1147");
-				} else {
-					key = AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).GuideHelpText.Value ?? Language.GetTextValue("Mods.AltLibrary.OreHelpTextBase", AltLibrary.Ores.Find(x => x.OreType == OreType.Adamantite && x.ore == ore).DisplayName.Value.ToLowerInvariant());
+				} else if (OreSlotLoader.GetOres<AdamantiteOreSlot>().FirstOrDefault(x => x.ore == oreTile) is AltOre ore) {
+					key = ore.GuideHelpText.Value ?? Language.GetTextValue("Mods.AltLibrary.OreHelpTextBase", ore.DisplayName.Value.ToLowerInvariant());
+				} else {// TODO: 
+					key = "";
 				}
 				Main.npcChatText = key;
 			});

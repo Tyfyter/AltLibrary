@@ -48,10 +48,6 @@ namespace AltLibrary {
 			ALReflection.Init();
 			Instance = this;
 		}
-
-		public static void AddInFinishList(AltOre ore) => UIWorldCreationEdits.AddInFinishedCreation.Add(ore);
-		public static void AddInFinishList(AltBiome ore) => UIWorldCreationEdits.AddInFinishedCreation2.Add(ore);
-
 		public override void Load() {
 			ALTextureAssets.Load();
 			ILHooks.OnInitialize();

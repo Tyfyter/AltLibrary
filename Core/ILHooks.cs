@@ -20,11 +20,7 @@ namespace AltLibrary.Core {
 			WorldIcons.Init();
 			EvenMoreWorldGen.Init();
 			UnderworldVisual.Init();
-			if (AltLibraryConfig.Config.OldWorldCreationUI) {
-				UIWorldCreationEdits.Init();
-			} else {
-				NewWorldCreationMenu.Init();
-			}
+			NewWorldCreationMenu.Init();
 			HardmodeWorldGen.Init();
 			DungeonChests.Init();
 			SmashAltarMessage.Init();
@@ -44,7 +40,6 @@ namespace AltLibrary.Core {
 			WorldIcons.Unload();
 			EvenMoreWorldGen.Unload();
 			UnderworldVisual.Unload();
-			UIWorldCreationEdits.Unload();
 			HardmodeWorldGen.Unload();
 			DungeonChests.Unload();
 			SmashAltarMessage.Unload();

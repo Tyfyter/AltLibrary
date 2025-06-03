@@ -10,15 +10,15 @@ namespace AltLibrary.Common.Systems {
 		public override void OnWorldLoad() {
 			WorldBiomeManager.WorldEvilName ??= "";
 			WorldBiomeManager.WorldHallowName ??= "";
-			WorldBiomeManager.WorldHell ??= "";
-			WorldBiomeManager.WorldJungle ??= "";
+			WorldBiomeManager.WorldHellName ??= "";
+			WorldBiomeManager.WorldJungleName ??= "";
 			WorldBiomeManager.drunkEvilName ??= "";
 			WorldBiomeManager.DrunkEvil = null;
 
 			string evil = WorldBiomeManager.WorldEvilName;
 			string hallow = WorldBiomeManager.WorldHallowName;
-			string hell = WorldBiomeManager.WorldHell;
-			string jungle = WorldBiomeManager.WorldJungle;
+			string hell = WorldBiomeManager.WorldHellName;
+			string jungle = WorldBiomeManager.WorldJungleName;
 			int[] causedIssueBy = [-1, -1, -1, -1];
 			if (evil != "" && ModContent.Find<AltBiome>(evil).BiomeType != BiomeType.Evil) {
 				List<string> checks = [hallow, hell, jungle];
@@ -77,14 +77,14 @@ namespace AltLibrary.Common.Systems {
 								case 2: {
 									string evil2 = evil;
 									string hallow2 = hell;
-									WorldBiomeManager.WorldHell = evil2;
+									WorldBiomeManager.WorldHellName = evil2;
 									WorldBiomeManager.WorldEvilName = hallow2;
 									break;
 								}
 								case 3: {
 									string evil2 = evil;
 									string hallow2 = jungle;
-									WorldBiomeManager.WorldJungle = evil2;
+									WorldBiomeManager.WorldJungleName = evil2;
 									WorldBiomeManager.WorldEvilName = hallow2;
 									break;
 								}
@@ -104,14 +104,14 @@ namespace AltLibrary.Common.Systems {
 									string evil2 = hell;
 									string hallow2 = hallow;
 									WorldBiomeManager.WorldHallowName = evil2;
-									WorldBiomeManager.WorldHell = hallow2;
+									WorldBiomeManager.WorldHellName = hallow2;
 									break;
 								}
 								case 3: {
 									string evil2 = jungle;
 									string hallow2 = hallow;
 									WorldBiomeManager.WorldHallowName = evil2;
-									WorldBiomeManager.WorldJungle = hallow2;
+									WorldBiomeManager.WorldJungleName = hallow2;
 									break;
 								}
 							}
@@ -122,7 +122,7 @@ namespace AltLibrary.Common.Systems {
 								case 0: {
 									string evil2 = evil;
 									string hallow2 = hell;
-									WorldBiomeManager.WorldHell = evil2;
+									WorldBiomeManager.WorldHellName = evil2;
 									WorldBiomeManager.WorldEvilName = hallow2;
 									break;
 								}
@@ -130,14 +130,14 @@ namespace AltLibrary.Common.Systems {
 									string evil2 = hell;
 									string hallow2 = hallow;
 									WorldBiomeManager.WorldHallowName = evil2;
-									WorldBiomeManager.WorldHell = hallow2;
+									WorldBiomeManager.WorldHellName = hallow2;
 									break;
 								}
 								case 3: {
 									string evil2 = jungle;
 									string hallow2 = hell;
-									WorldBiomeManager.WorldHell = evil2;
-									WorldBiomeManager.WorldJungle = hallow2;
+									WorldBiomeManager.WorldHellName = evil2;
+									WorldBiomeManager.WorldJungleName = hallow2;
 									break;
 								}
 							}
@@ -148,7 +148,7 @@ namespace AltLibrary.Common.Systems {
 								case 0: {
 									string evil2 = evil;
 									string hallow2 = jungle;
-									WorldBiomeManager.WorldJungle = evil2;
+									WorldBiomeManager.WorldJungleName = evil2;
 									WorldBiomeManager.WorldEvilName = hallow2;
 									break;
 								}
@@ -156,14 +156,14 @@ namespace AltLibrary.Common.Systems {
 									string evil2 = jungle;
 									string hallow2 = hallow;
 									WorldBiomeManager.WorldHallowName = evil2;
-									WorldBiomeManager.WorldJungle = hallow2;
+									WorldBiomeManager.WorldJungleName = hallow2;
 									break;
 								}
 								case 2: {
 									string evil2 = jungle;
 									string hallow2 = hell;
-									WorldBiomeManager.WorldHell = evil2;
-									WorldBiomeManager.WorldJungle = hallow2;
+									WorldBiomeManager.WorldHellName = evil2;
+									WorldBiomeManager.WorldJungleName = hallow2;
 									break;
 								}
 							}

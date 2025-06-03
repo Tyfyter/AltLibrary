@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace AltLibrary.Common.Hooks {
 	public class AltOreInsideBodies {
 		internal static void Setup() {
-			foreach (AltOre ore in AltLibrary.Ores.Where(x => x.OreType < OreType.Cobalt)) {
+			foreach (AltOre ore in AltLibrary.Ores.Where(x => !x.OreSlot.Hardmode)) {
 				ItemID.Sets.OreDropsFromSlime.TryAdd(TileLoader.GetItemDropFromTypeAndStyle(ore.ore), (3, 13));
 			}
 		}

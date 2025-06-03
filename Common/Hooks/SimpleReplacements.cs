@@ -74,23 +74,23 @@ namespace AltLibrary.Common.Hooks {
 		private static void WorldGen_AddBuriedChest_int_int_int_bool_int_bool_ushort(ILContext il) {
 			ALUtils.ReplaceIDs<int>(il,
 				ItemID.ShadowKey,
-				(orig) => Find<AltBiome>(WorldBiomeManager.WorldHell).ShadowKeyAlt ?? orig,
-				(orig) => WorldBiomeManager.WorldHell != "" && Find<AltBiome>(WorldBiomeManager.WorldHell).ShadowKeyAlt.HasValue);
+				(orig) => WorldBiomeManager.WorldHell?.ShadowKeyAlt ?? orig,
+				(orig) => (WorldBiomeManager.WorldHell?.ShadowKeyAlt).HasValue);
 		}
 		//TODO: make alt jungle so I can test this
 		private static void WorldGen_GrowUndergroundTree(ILContext il) {
 			ALUtils.ReplaceIDs<int>(il, TileID.JungleGrass,
-				(orig) => Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass ?? orig,
-				(orig) => WorldBiomeManager.WorldJungle != "" && Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass.HasValue);
+				(orig) => WorldBiomeManager.WorldJungle?.BiomeGrass ?? orig,
+				(orig) => (WorldBiomeManager.WorldJungle?.BiomeGrass).HasValue);
 		}
 		//TODO: make alt jungle so I can test this
 		private static void DesertDescription_RowHasInvalidTiles(ILContext il) {
 			ALUtils.ReplaceIDs<int>(il, TileID.JungleGrass,
-				(orig) => Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass ?? orig,
-				(orig) => WorldBiomeManager.WorldJungle != "" && Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeGrass.HasValue);
+				(orig) => WorldBiomeManager.WorldJungle?.BiomeGrass ?? orig,
+				(orig) => (WorldBiomeManager.WorldJungle?.BiomeGrass).HasValue);
 			ALUtils.ReplaceIDs<int>(il, TileID.Mud,
-				(orig) => Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeMud ?? orig,
-				(orig) => WorldBiomeManager.WorldJungle != "" && Find<AltBiome>(WorldBiomeManager.WorldJungle).BiomeMud.HasValue);
+				(orig) => WorldBiomeManager.WorldJungle?.BiomeMud ?? orig,
+				(orig) => (WorldBiomeManager.WorldJungle?.BiomeMud).HasValue);
 		}
 	}
 }
