@@ -1,16 +1,40 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core.Baking;
+using MonoMod.Cil;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AltLibrary.Core {
 	internal class Spreading : GlobalTile {
+		public override void Load() {
+			IL_WorldGen.hardUpdateWorld += IL_WorldGen_hardUpdateWorld;
+		}
+
+		private void IL_WorldGen_hardUpdateWorld(ILContext il) {
+			ILCursor c = new(il);
+			c.GotoNext(MoveType.After, i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.AllowedToSpreadInfections)));
+			c.EmitLdarg0();
+			c.EmitLdarg1();
+			c.EmitDelegate((bool allowedToSpreadInfections, int i, int j) => {
+				if (!allowedToSpreadInfections) return false;
+				ushort type = Main.tile[i, j].TileType;
+				ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
+				AltBiome biome = parent.fromBiome;
+				if (biome is null or VanillaBiome) {
+					return true;
+				}
+				if (biome.SpreadingTiles.Contains(type)) {
+					SpreadInfection(i, j, biome);
+				}
+				return false;
+			});
+		}
+
 		public override void RandomUpdate(int i, int j, int type) {
 			if (Main.tile[i, j].IsActuated) {
 				return;
 			}
-			bool isSpreadingTile = false;
 			bool isOreGrowingTile = false;
 			bool isJungleSpreadingOre = false;
 			bool isGrass = false;
@@ -25,10 +49,6 @@ namespace AltLibrary.Core {
 					isGrass = true;
 					biomeToSpread = biome;
 				}
-				if (biome.SpreadingTiles.Contains(type)) {
-					isSpreadingTile = true;
-					biomeToSpread = biome;
-				}
 			} else if (biome.BiomeType == BiomeType.Jungle) {
 				if (type == biome.BiomeGrass || !biome.BiomeGrass.HasValue && type == biome.BiomeJungleGrass) {
 					isGrass = true;
@@ -38,9 +58,6 @@ namespace AltLibrary.Core {
 					isJungleSpreadingOre = true;
 					biomeToSpread = biome;
 				}
-			}
-			if (isSpreadingTile) {
-				SpreadInfection(i, j, biomeToSpread);
 			}
 
 			if (isGrass) {
@@ -168,13 +185,20 @@ namespace AltLibrary.Core {
 					int targetX = i + xdif;
 					int targetY = j + ydif;
 
-					if (WorldGen.InWorld(targetX, targetY)) {
+					if (WorldGen.InWorld(targetX, targetY, 10)) {
 						Tile target = Main.tile[targetX, targetY];
 						bool canSpread = target.HasUnactuatedTile && Main.tileSolid[target.TileType];
 						ushort oldTileType = target.TileType;
 						int newTileType = -1;
 
-						if (biome.BiomeType == BiomeType.Evil && WorldGen.CountNearBlocksTypes(targetX, targetY, 2, 1, TileID.Sunflower) > 0 && NearbyEvilSlowingOres(targetX, targetY)) continue;
+						if (biome.BiomeType == BiomeType.Evil) {
+							if (WorldGen.nearbyChlorophyte(targetX, targetY)) {
+								WorldGen.ChlorophyteDefense(targetX, targetY);
+								continue;
+							}
+							if (WorldGen.CountNearBlocksTypes(targetX, targetY, 2, 1, TileID.Sunflower) > 0) continue;
+							if (NearbyEvilSlowingOres(targetX, targetY)) continue;
+						}
 						if (canSpread) {
 							newTileType = biome.GetAltBlock(oldTileType, targetX, targetY);
 

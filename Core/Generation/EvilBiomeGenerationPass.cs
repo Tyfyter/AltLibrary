@@ -112,7 +112,7 @@ namespace AltLibrary.Core.Generation {
 		private const int evilBiomeBeachAvoidance = beachSandRandomCenter + 60;
 		public virtual int EvilBiomeAvoidanceMidFixer => 50;
 		public virtual int NonDrunkBorderDist => 500;
-		public virtual int DungeonGive => 100;
+		public virtual int DungeonGive => 150;
 
 		public virtual int DrunkRNGMapCenterGive => 200; //100 if crimson
 
@@ -183,11 +183,11 @@ namespace AltLibrary.Core.Generation {
 					rand.Multiply(min - padding, max + padding, 0.5);
 				}
 				int beachPadding = minPriority < 2 ? 100 : 0;
-				ProtectRange(0, evilBiomeBeachAvoidance, 5, beachPadding);
-				ProtectRange(Main.maxTilesX - evilBiomeBeachAvoidance, Main.maxTilesX, 5, beachPadding);
+				ProtectRange(0, evilBiomeBeachAvoidance, 3, beachPadding);
+				ProtectRange(Main.maxTilesX - evilBiomeBeachAvoidance, Main.maxTilesX, 3, beachPadding);
 				if (!Main.remixWorld) ProtectRange(MapCenter - MapCenterGive, MapCenter + MapCenterGive, 5, 100);
 				ProtectRange(GenVars.UndergroundDesertLocation.X, GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width, 4);
-				ProtectRange(GenVars.dungeonLocation - DungeonGive, GenVars.dungeonLocation + DungeonGive, 3, 100 - minPriority * 20);
+				ProtectRange(GenVars.dungeonLocation - DungeonGive, GenVars.dungeonLocation + DungeonGive, 5, 100 - minPriority * 20);
 				ProtectRange(SnowBoundMinX, SnowBoundMaxX, 3);
 				foreach ((int min, int max, float edgeGivePercent) in EvilBiomeGenerationPassHandler.evilRanges) {
 					int padding = (int)((max - min) * edgeGivePercent * 0.5f);
