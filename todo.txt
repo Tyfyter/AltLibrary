@@ -33,16 +33,7 @@ Fix Hell & Jungle still using ModContent.Find instead of actually being stored
 
 Implement (feature missing from original AltLib that I found out should be here because of Avalon):
 
-WorldGen.GetDesiredStalagtiteStyle
 WorldGen.UpdateWorld_OvergroundTile
 WorldGen.UpdateWorld_UndergroundTile
 WorldGen.SpreadDesertWalls
 stalactite checks for:
-WorldGen.PaintTheSand
-WorldGen.PlaceTile
-WorldGen.PlaceTight
-WorldGen.BlockBelowMakesSandFall
-WorldGen.TileFrame
-WorldGen.UpdateWorld_OvergroundTile
-WorldGen.UpdateWorld_UndergroundTile
-WorldGen.ReplaceTile_EliminateNaturalExtras
