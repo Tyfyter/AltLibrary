@@ -5,19 +5,23 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using PegasusLib;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace AltLibrary.Common.Hooks {
-	//TODO: completely redesign and rewrite this, maybe even go out of your way to chastise whoever wrote it
+	//TODO: completely redesign and rewrite this (other than the icons in the top right), maybe even go out of your way to chastise whoever wrote it
+	//but first find a better way
 	internal static class WorldIcons
 	{
 		internal static int WarnUpdate = 0;
@@ -35,7 +39,7 @@ namespace AltLibrary.Common.Hooks {
 		{
 			WarnUpdate = 0;
 		}
-		private static Asset<Texture2D> UIWorldListItem_GetIcon(Terraria.GameContent.UI.Elements.On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
+		private static Asset<Texture2D> UIWorldListItem_GetIcon(On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
 		{
 			Asset<Texture2D> asset = orig(self);
 			if (asset.Height() == 58)
@@ -225,7 +229,7 @@ namespace AltLibrary.Common.Hooks {
 				}
 			}
 		}
-
+		static FastFieldInfo<UIImageButton, Asset<Texture2D>> _texture = "_texture";
 		private static void UIWorldListItem_DrawSelf(On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch)
 		{
 			orig(self, spriteBatch);
@@ -244,6 +248,13 @@ namespace AltLibrary.Common.Hooks {
 			float num7 = innerDimensions.X + innerDimensions.Width;
 			Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
 			if (tempDict.TryGetValue(path2, out AltLibraryConfig.WorldDataValues worldData)) {
+				float warningOffset = 0;
+				foreach (UIElement item in self.Children) {
+					if (item is UIImageButton button && _texture.GetValue(button) == UICommon.ButtonErrorTexture) {
+						float pixels = item.Left.Pixels - item.Width.Pixels;
+						if (warningOffset > pixels) warningOffset = pixels;
+					}
+				}
 				for (int i = 0; i < 4; i++) {
 					Asset<Texture2D> asset = ALTextureAssets.BestiaryIcons;
 					Rectangle? frame = null;
@@ -308,9 +319,9 @@ namespace AltLibrary.Common.Hooks {
 						break;
 					}
 					ValueTuple<Asset<Texture2D>, Rectangle?> valueTuple = new(asset, frame);
-					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(num7 - 26f * (i + 1), dimensions.Y - 2f), Color.White);
-					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(num7 - 26f * (i + 1) + 3f, dimensions.Y + 1f), valueTuple.Item2, Color.White, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
-					if (mouseRectangle.Intersects(new Rectangle((int)(num7 - 26f * (i + 1)), (int)(dimensions.Y - 2f), 22, 22))) {
+					spriteBatch.Draw(ALTextureAssets.Button.Value, new Vector2(num7 - 26f * (i + 1) + warningOffset, dimensions.Y - 2f), Color.White);
+					spriteBatch.Draw(valueTuple.Item1.Value, new Vector2(num7 - 26f * (i + 1) + 3f + warningOffset, dimensions.Y + 1f), valueTuple.Item2, Color.White, 0f, new Vector2(0f, 0f), 0.5f, SpriteEffects.None, 0f);
+					if (mouseRectangle.Intersects(new Rectangle((int)(num7 - 26f * (i + 1) + warningOffset), (int)(dimensions.Y - 2f), 22, 22))) {
 						Main.instance.MouseText(text);
 					}
 				}

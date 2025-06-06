@@ -225,9 +225,7 @@ namespace AltLibrary.Common.AltBiomes {
 		#endregion
 
 		#region Menu Graphics
-		/// <summary>
-		/// The path to the texture of the large icon that will appear on the biome selection screen to represent this biome.
-		/// </summary>
+		[Obsolete("The associated feature has been replaced, and its replacement uses IconSmall", true)]
 		public virtual string IconLarge => null;
 		/// <summary>
 		/// The path to the 30x30 texture of the small icon that will appear on the biome selection screen to represent this biome. This should typically be the same as the biome's main bestiary icon.

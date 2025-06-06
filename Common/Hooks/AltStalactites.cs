@@ -34,7 +34,7 @@ namespace AltLibrary.Common.Hooks {
 				i => i.MatchLdcI4(TileID.Stalactite),
 				i => i.MatchBeq(out _) || i.MatchBneUn(out _)
 			)) {
-				c.EmitDelegate((int type) => IsStalactite[type] ? TileID.Stalactite : type);
+				c.EmitDelegate((int type) => (IsStalactite.IndexInRange(type) && IsStalactite[type]) ? TileID.Stalactite : type);
 				c.Index++;
 			}
 		}

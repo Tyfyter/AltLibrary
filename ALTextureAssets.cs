@@ -36,7 +36,6 @@ namespace AltLibrary
 		internal static Asset<Texture2D> NullPreview;
 		internal static Asset<Texture2D> OuterTexture;
 		internal static Asset<Texture2D> OuterLowerTexture;
-		internal static Asset<Texture2D>[] BiomeIconLarge;
 		internal static Asset<Texture2D>[] BiomeIconSmall;
 		internal static Asset<Texture2D>[] BiomeOuter;
 		internal static Asset<Texture2D>[] BiomeLower;
@@ -103,17 +102,6 @@ namespace AltLibrary
 				return;
 			}
 
-			List<Asset<Texture2D>> biomeLarge = new();
-			biomeLarge.Clear();
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				string path = null;
-				if (ModContent.RequestIfExists(biome.IconLarge, out Asset<Texture2D> asset))
-					path = biome.Mod.Name + "/" + asset.Name;
-				biomeLarge.Add(path != null ? ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad) : null);
-			}
-			BiomeIconLarge = biomeLarge.ToArray();
-
 			List<Asset<Texture2D>> biomeSmall = new();
 			biomeSmall.Clear();
 			foreach (AltBiome biome in AltLibrary.Biomes)
@@ -171,7 +159,6 @@ namespace AltLibrary
 			WorldIconNotTheBees = null;
 			WorldIconAnniversary = null;
 			WorldIconDontStarve = null;
-			BiomeIconLarge = null;
 			BiomeIconSmall = null;
 			BiomeLower = null;
 			BiomeOuter = null;

@@ -45,33 +45,46 @@ namespace AltLibrary.Core.Baking {
 			parent = parents[type];
 			return parent.parentTile != -1 || parent.parentBiome is not null;
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool TryGetParent(int type, out int parentTile, out AltBiome parentBiome) {
+			(parentTile, parentBiome) = parents[type];
+			return parentTile != -1 || parentBiome is not null;
+		}
 	}
 	internal class TileParentageData : BlockParentageData {
 		public override void Bake() {
-			// Mass Parenting
+			AltBiome corruption = ModContent.GetInstance<CorruptionAltBiome>();
+			AltBiome crimson = ModContent.GetInstance<CrimsonAltBiome>();
+			AltBiome hallow = ModContent.GetInstance<HallowAltBiome>();
+			AltBiome GetParentBiome(int type) {
+				if (TileID.Sets.Corrupt[type]) return corruption;
+				if (TileID.Sets.Crimson[type]) return crimson;
+				if (TileID.Sets.Hallow[type]) return hallow;
+				return null;
+			}
 
 			for (int x = 0; x < TileLoader.TileCount; x++) {
 				if (TileID.Sets.Conversion.GolfGrass[x])
-					AddParent(x, (TileID.GolfGrass, null));
+					AddParent(x, (TileID.GolfGrass, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.Grass[x])
-					AddParent(x, (TileID.Grass, null));
+					AddParent(x, (TileID.Grass, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.JungleGrass[x])
-					AddParent(x, (TileID.JungleGrass, null));
+					AddParent(x, (TileID.JungleGrass, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.MushroomGrass[x])
-					AddParent(x, (TileID.MushroomGrass, null));
+					AddParent(x, (TileID.MushroomGrass, GetParentBiome(x)));
 				else if (Main.tileMoss[x] && x != TileID.Stone) {
 					NoDeconversion.Add(x); //prevents deconversion of moss to stone
 					AddParent(x, (TileID.Stone, null));
 				} else if (TileID.Sets.Conversion.Stone[x])
-					AddParent(x, (TileID.Stone, null));
+					AddParent(x, (TileID.Stone, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.Ice[x])
-					AddParent(x, (TileID.IceBlock, null));
+					AddParent(x, (TileID.IceBlock, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.Sandstone[x])
-					AddParent(x, (TileID.Sandstone, null));
+					AddParent(x, (TileID.Sandstone, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.HardenedSand[x])
-					AddParent(x, (TileID.HardenedSand, null));
+					AddParent(x, (TileID.HardenedSand, GetParentBiome(x)));
 				else if (TileID.Sets.Conversion.Sand[x])
-					AddParent(x, (TileID.Sand, null));
+					AddParent(x, (TileID.Sand, GetParentBiome(x)));
 			}
 
 			BreakIfConversionFail.TryAdd(TileID.JungleThorns, new(true, true, true, true));
@@ -85,32 +98,41 @@ namespace AltLibrary.Core.Baking {
 	internal class WallParentageData : BlockParentageData {
 		const int GRASS_UNSAFE_DIFFERENT = -3;
 		public override void Bake() {
+			AltBiome corruption = ModContent.GetInstance<CorruptionAltBiome>();
+			AltBiome crimson = ModContent.GetInstance<CrimsonAltBiome>();
+			AltBiome hallow = ModContent.GetInstance<HallowAltBiome>();
+			AltBiome GetParentBiome(int type) {
+				if (WallID.Sets.Corrupt[type]) return corruption;
+				if (WallID.Sets.Crimson[type]) return crimson;
+				if (WallID.Sets.Hallow[type]) return hallow;
+				return null;
+			}
 			for (int x = 0; x < WallLoader.WallCount; x++) {
 				if (WallID.Sets.Conversion.Grass[x] && x != WallID.Grass) {
 					switch (x) {
 						case WallID.CorruptGrassUnsafe:
 						case WallID.CrimsonGrassUnsafe:
 						case WallID.HallowedGrassUnsafe:
-						AddParent(x, (GRASS_UNSAFE_DIFFERENT, null));
+						AddParent(x, (GRASS_UNSAFE_DIFFERENT, GetParentBiome(x)));
 						break;
 						default:
-						AddParent(x, (WallID.Grass, null));
+						AddParent(x, (WallID.Grass, GetParentBiome(x)));
 						break;
 					}
 				} else if (WallID.Sets.Conversion.Stone[x] && x != WallID.Stone)
-					AddParent(x, (WallID.Stone, null));
+					AddParent(x, (WallID.Stone, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.HardenedSand[x] && x != WallID.HardenedSand)
-					AddParent(x, (WallID.HardenedSand, null));
+					AddParent(x, (WallID.HardenedSand, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.Sandstone[x] && x != WallID.Sandstone)
-					AddParent(x, (WallID.Sandstone, null));
+					AddParent(x, (WallID.Sandstone, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.NewWall1[x] && x != WallID.RocksUnsafe1)
-					AddParent(x, (WallID.RocksUnsafe1, null));
+					AddParent(x, (WallID.RocksUnsafe1, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.NewWall2[x] && x != WallID.RocksUnsafe2)
-					AddParent(x, (WallID.RocksUnsafe2, null));
+					AddParent(x, (WallID.RocksUnsafe2, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.NewWall3[x] && x != WallID.RocksUnsafe3)
-					AddParent(x, (WallID.RocksUnsafe3, null));
+					AddParent(x, (WallID.RocksUnsafe3, GetParentBiome(x)));
 				else if (WallID.Sets.Conversion.NewWall4[x] && x != WallID.RocksUnsafe4)
-					AddParent(x, (WallID.RocksUnsafe4, null));
+					AddParent(x, (WallID.RocksUnsafe4, GetParentBiome(x)));
 			}
 
 			//Manual Grass conversionating to ensure safe grass walls cannot become unsafe through green solution conversion
