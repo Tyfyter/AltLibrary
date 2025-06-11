@@ -107,6 +107,48 @@ namespace AltLibrary.Core.Generation {
 	}
 
 	public abstract class EvilBiomeGenerationPass {
+		internal static Dictionary<string, (InvalidRangeHandler handler, int priority)> invalidRangeHandlers = new() {
+			["Beaches"] = (BeachAvoider, 3),
+			["Center"] = (CenterAvoider, 5),
+			["Desert"] = (DesertAvoider, 4),
+			["Dungeon"] = (DungeonAvoider, 5),
+			["Snow"] = (SnowAvoider, 3),
+			["Evil"] = (EvilAvoider, 4),
+			["Jungle"] = (JungleAvoider, 5),
+		};
+		static IEnumerable<(int min, int max, int padding)> BeachAvoider(object pass, int minPriority) {
+			int beachPadding = minPriority < 2 ? 100 : 0;
+			yield return (0, evilBiomeBeachAvoidance, beachPadding);
+			yield return (Main.maxTilesX - evilBiomeBeachAvoidance, Main.maxTilesX, beachPadding);
+		}
+		static IEnumerable<(int min, int max, int padding)> CenterAvoider(object pass, int minPriority) {
+			if (Main.remixWorld) yield break;
+			int MapCenter = Main.maxTilesX / 2;
+			int MapCenterGive = WorldGen.drunkWorldGen ? ((EvilBiomeGenerationPass)pass).DrunkRNGMapCenterGive : 200;
+			yield return (MapCenter - MapCenterGive, MapCenter + MapCenterGive, 100);
+		}
+		static IEnumerable<(int min, int max, int padding)> DesertAvoider(object pass, int minPriority) {
+			yield return (GenVars.UndergroundDesertLocation.X, GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width, 200);
+		}
+		static IEnumerable<(int min, int max, int padding)> DungeonAvoider(object pass, int minPriority) {
+			yield return (GenVars.dungeonLocation - ((EvilBiomeGenerationPass)pass).DungeonGive, GenVars.dungeonLocation + ((EvilBiomeGenerationPass)pass).DungeonGive, 100 - minPriority * 20);
+		}
+		static IEnumerable<(int min, int max, int padding)> SnowAvoider(object pass, int minPriority) {
+			yield return (WorldInfo.SnowBoundMinX, WorldInfo.SnowBoundMaxX, 200);
+		}
+		static IEnumerable<(int min, int max, int padding)> EvilAvoider(object pass, int minPriority) {
+			foreach ((int min, int max, float edgeGivePercent) in EvilBiomeGenerationPassHandler.evilRanges) {
+				int padding = (int)((max - min) * edgeGivePercent * 0.5f);
+				yield return (min + padding, max - padding, padding);
+			}
+		}
+		static IEnumerable<(int min, int max, int padding)> JungleAvoider(object pass, int minPriority) {
+			yield return (WorldInfo.JungleBoundMinX, WorldInfo.JungleBoundMaxX, 200);
+		}
+		static class WorldInfo {
+			public static int SnowBoundMinX, SnowBoundMaxX, JungleBoundMinX, JungleBoundMaxX;
+		}
+		public delegate IEnumerable<(int min, int max, int padding)> InvalidRangeHandler(object pass, int minPriority);
 		private const int beachBordersWidth = 275;
 		private const int beachSandRandomCenter = beachBordersWidth + 5 + 40;
 		private const int evilBiomeBeachAvoidance = beachSandRandomCenter + 60;
@@ -164,6 +206,10 @@ namespace AltLibrary.Core.Generation {
 			//START GENERATING!
 		}
 		public void DefaultGetEvilSpawnLocation(int SnowBoundMinX, int SnowBoundMaxX, int JungleBoundMinX, int JungleBoundMaxX, int currentDrunkIter, int maxDrunkBorders, out int evilBiomePosition, out int evilBiomePositionWestBound, out int evilBiomePositionEastBound, int baseExtent = 100, int rngExtent = 200) {
+			WorldInfo.SnowBoundMinX = SnowBoundMinX;
+			WorldInfo.SnowBoundMaxX = SnowBoundMaxX;
+			WorldInfo.JungleBoundMinX = JungleBoundMinX;
+			WorldInfo.JungleBoundMaxX = JungleBoundMaxX;
 
 			bool FoundEvilLocation = false;
 			evilBiomePosition = 0;

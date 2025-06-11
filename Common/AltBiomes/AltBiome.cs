@@ -261,7 +261,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <summary>
 		/// Whether or not this biome will appear on the selection menu.
 		/// </summary>
-		public virtual bool Selectable => true;
+		public virtual bool Selectable { get; } = true;
 		#endregion
 
 		#region Remix Worlds

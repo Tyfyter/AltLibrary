@@ -5,10 +5,13 @@ using AltLibrary.Common.Hooks;
 using AltLibrary.Common.Systems;
 using AltLibrary.Core;
 using AltLibrary.Core.Baking;
+using AltLibrary.Core.Generation;
+using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using Terraria;
 using Terraria.ID;
@@ -169,6 +172,16 @@ namespace AltLibrary {
 							}
 							DungeonChests.extraDungeonChests.Add((chestTileType, contain, style, condition));
 							return "Success";
+						}
+						throw new ArgumentException("Incorrect argument count");
+					}
+					case "addinvalidrangehandler": {
+						if (args.Length == 4) {
+							if (args[1] is not string key) throw new ArgumentException("First argument (key) is not string");
+							if (args[2] is not Delegate _handler || !_handler.TryCastDelegate(out EvilBiomeGenerationPass.InvalidRangeHandler handler)) throw new ArgumentException("Second argument (handler) is not InvalidRangeHandler");
+							if (args[3] is not int priority) throw new ArgumentException("Third argument (priority) is not string");
+							EvilBiomeGenerationPass.invalidRangeHandlers.Add(key, (handler, priority));
+							return null;
 						}
 						throw new ArgumentException("Incorrect argument count");
 					}
