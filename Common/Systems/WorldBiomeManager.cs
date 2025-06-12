@@ -227,8 +227,10 @@ namespace AltLibrary.Common.Systems {
 			worldEvilName = null;
 			worldHallowBiome = null;
 			worldHallowName = null;
-			WorldHell = null;
-			WorldJungle = null;
+			worldHell = null;
+			worldHellName = null;
+			worldJungle = null;
+			worldJungleName = null;
 			drunkEvilName = null;
 			drunkEvil = null;
 			hmOreIndex = 0;
