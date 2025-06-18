@@ -33,7 +33,7 @@ namespace AltLibrary.Common.AltOres {
 
 		public int? Candle = null;
 		public int? Watch = null;
-		public bool IncludeInExtractinator = false;
+		public bool IncludeInExtractinator = true;
 		
 		public int Type { get; internal set; }
 		public string LocalizationCategory => "AltOres";

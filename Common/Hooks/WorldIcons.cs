@@ -247,8 +247,8 @@ namespace AltLibrary.Common.Hooks {
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();
 			float num7 = innerDimensions.X + innerDimensions.Width;
 			Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
+			float warningOffset = 0;
 			if (tempDict.TryGetValue(path2, out AltLibraryConfig.WorldDataValues worldData)) {
-				float warningOffset = 0;
 				foreach (UIElement item in self.Children) {
 					if (item is UIImageButton button && _texture.GetValue(button) == UICommon.ButtonErrorTexture) {
 						float pixels = item.Left.Pixels - item.Width.Pixels;
@@ -332,8 +332,8 @@ namespace AltLibrary.Common.Hooks {
 				int num = WarnUpdate % 120;
 				int num2 = num < 60 ? 0 : 1;
 				Rectangle rectangle = new(num2 * 22, 0, 22, 22);
-				spriteBatch.Draw(asset.Value, new Vector2(num7 - 26f * 5, dimensions.Y - 2f), rectangle, Color.White);
-				Vector2 vector2 = new(num7 - 26f * 5, dimensions.Y - 2f);
+				spriteBatch.Draw(asset.Value, new Vector2(num7 - 26f * 5 + warningOffset, dimensions.Y - 2f), rectangle, Color.White);
+				Vector2 vector2 = new(num7 - 26f * 5 + warningOffset, dimensions.Y - 2f);
 				if (mouseRectangle.Intersects(Utils.CenteredRectangle(vector2 + new Vector2(11f, 11f), Utils.Size(new Rectangle(0, 0, 22, 22))))) {
 					string line = Language.GetTextValue("Mods.AltLibrary.WorldBreak");
 					Main.instance.MouseText(line);

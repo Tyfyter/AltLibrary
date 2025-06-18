@@ -19,18 +19,17 @@ namespace AltLibrary.Common.Hooks {
 		public static List<int> Ores { get; private set; }
 		internal static void Setup() {
 			PrehardmodeOres = [
-				ItemID.CopperOre,
+				/*ItemID.CopperOre,
 				ItemID.TinOre,
 				ItemID.IronOre,
 				ItemID.LeadOre,
 				ItemID.SilverOre,
 				ItemID.TungstenOre,
 				ItemID.GoldOre,
-				ItemID.PlatinumOre,
-				ItemID.ToiletDynasty
+				ItemID.PlatinumOre*/
 			];
 			Ores = [
-				ItemID.CopperOre,
+				/*ItemID.CopperOre,
 				ItemID.TinOre,
 				ItemID.IronOre,
 				ItemID.LeadOre,
@@ -43,13 +42,12 @@ namespace AltLibrary.Common.Hooks {
 				ItemID.MythrilOre,
 				ItemID.OrichalcumOre,
 				ItemID.AdamantiteOre,
-				ItemID.TitaniumOre,
+				ItemID.TitaniumOre,*/
 			];
 
 			foreach (AltOre o in AltLibrary.Ores.Where(x => x.IncludeInExtractinator)) {
-				int oreItem = TileLoader.GetItemDropFromTypeAndStyle(o.ore);
-				if (!o.OreSlot.Hardmode) PrehardmodeOres.Add(oreItem);
-				Ores.Add(oreItem);
+				if (!o.OreSlot.Hardmode) PrehardmodeOres.Add(o.oreItem);
+				Ores.Add(o.oreItem);
 			}
 		}
 		internal static void Load() {
