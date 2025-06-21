@@ -28,7 +28,7 @@ namespace AltLibrary.Common.Hooks {
 			ILLabel label = il.DefineLabel();
 
 			c.EmitDelegate(() => WorldBiomeManager.WorldJungle is VanillaBiome);
-			c.Emit(OpCodes.Brfalse_S, label);
+			c.Emit(OpCodes.Brtrue_S, label);
 
 			c.EmitDelegate(() => HouseBuilder.Invalid);
 			c.Emit(OpCodes.Ret);
