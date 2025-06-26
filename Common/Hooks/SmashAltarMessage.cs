@@ -1,4 +1,5 @@
 using AltLibrary.Common.AltBiomes;
+using AltLibrary.Common.AltOres;
 using AltLibrary.Common.Systems;
 using AltLibrary.Core.Baking;
 using Microsoft.Xna.Framework;
@@ -25,7 +26,6 @@ namespace AltLibrary.Common.Hooks {
 		private static void On_WorldGen_SmashAltar(On_WorldGen.orig_SmashAltar orig, int i, int j) {
 			orig(i, j);
 			if (Main.netMode == NetmodeID.MultiplayerClient || !Main.hardMode || WorldGen.noTileActions || WorldGen.gen) return;
-			const string baseKey = "Mods.AltLibrary.BlessBase";
 			int substitutionTile = 0;
 			switch (WorldGen.altarCount % 3) {
 				case 1:
@@ -39,13 +39,23 @@ namespace AltLibrary.Common.Hooks {
 				break;
 			}
 			if (Main.netMode == NetmodeID.SinglePlayer) {
-				Main.NewText(Language.GetTextValue(baseKey, Lang._mapLegendCache[MapHelper.TileToLookup(substitutionTile, 0)].Value), 50, byte.MaxValue, 130);
+				DoBlessage(substitutionTile);
 			} else if (Main.netMode == NetmodeID.Server) {
 				ModPacket packet = AltLibrary.Instance.GetPacket();
 				packet.Write((byte)PacketType.SmashAltar);
 				packet.Write((int)substitutionTile);
 				packet.Send();
 			}
+		}
+		public static void DoBlessage(int tileType) {
+			const string baseKey = "Mods.AltLibrary.BlessBase";
+			string text = null;
+			if (AltLibrary.Ores.FirstOrDefault(o => o.ore == tileType) is AltOre ore) {
+				string lockey = ore.GetLocalizationKey("BlessMessage");
+				if (Language.Exists(lockey)) text = Language.GetTextValue(lockey);
+			}
+			text ??= Language.GetTextValue(baseKey, Lang._mapLegendCache[MapHelper.TileToLookup(tileType, 0)].Value);
+			Main.NewText(text, 50, byte.MaxValue, 130);
 		}
 
 		public static void Unload() { }

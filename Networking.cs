@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AltLibrary.Common.Hooks;
+using System;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -13,8 +14,7 @@ namespace AltLibrary {
 			switch (type) {
 				case PacketType.SmashAltar:
 				if (Main.netMode == NetmodeID.MultiplayerClient) {
-					const string baseKey = "Mods.AltLibrary.BlessBase";
-					Main.NewText(Language.GetTextValue(baseKey, Lang._mapLegendCache[MapHelper.TileToLookup(reader.ReadInt32(), 0)].Value), 50, byte.MaxValue, 130);
+					SmashAltarMessage.DoBlessage(reader.ReadInt32());
 				}
 				break;
 			}

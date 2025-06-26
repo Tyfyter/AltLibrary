@@ -449,6 +449,10 @@ namespace AltLibrary.Common.AltBiomes {
 					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.GolfGrass, block);
 					break;
 
+					case TileID.JungleGrass:
+					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.MushroomGrass, block);
+					break;
+
 					case TileID.GolfGrass:
 					BiomeMowedGrass = block;
 					break;

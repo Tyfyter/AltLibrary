@@ -236,9 +236,10 @@ namespace AltLibrary.Core {
 			return (newTile, fromBiome);
 		}
 		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
+			Tile tile = Main.tile[i, j];
+			if (!tile.HasTile) return;
 			(int newTile, AltBiome fromBiome) = GetTileConversionState(i, j, targetBiome);
 			if (fromBiome == targetBiome || (fromBiome is null && targetBiome is DeconvertAltBiome)) return;
-			Tile tile = Main.tile[i, j];
 			if (Main.tileFrameImportant[tile.TileType] && TileObjectData.GetTileData(tile) is TileObjectData tileObjectData) {
 				ConvertMultiTile(i, j, newTile, tileObjectData, fromBiome, targetBiome, silent);
 				return;
