@@ -245,7 +245,7 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:WorldHell", WorldHell?.FullName ?? "AltLibrary/UnderworldAltBiome");
 			tag.Add("AltLibrary:WorldJungle", WorldJungle?.FullName ?? "AltLibrary/JungleAltBiome");
 			tag.Add("AltLibrary:DrunkEvil", drunkEvilName);
-			tag.Add("AltLibrary:Ores", ores.Select(ore => new TagCompound {
+			tag.Add("AltLibrary:Ores", (ores??[]).Select(ore => new TagCompound {
 				["Slot"] = ore.OreSlot.FullName,
 				["Ore"] = ore.FullName
 			}).ToList());
