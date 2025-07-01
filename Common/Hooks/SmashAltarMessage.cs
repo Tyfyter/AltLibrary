@@ -52,7 +52,7 @@ namespace AltLibrary.Common.Hooks {
 			string text = null;
 			if (AltLibrary.Ores.FirstOrDefault(o => o.ore == tileType) is AltOre ore) {
 				string lockey = ore.GetLocalizationKey("BlessMessage");
-				if (Language.Exists(lockey)) text = Language.GetTextValue(lockey);
+				if (Language.Exists(lockey)) text = Language.GetTextValue(lockey, Lang._mapLegendCache[MapHelper.TileToLookup(tileType, 0)].Value);
 			}
 			text ??= Language.GetTextValue(baseKey, Lang._mapLegendCache[MapHelper.TileToLookup(tileType, 0)].Value);
 			Main.NewText(text, 50, byte.MaxValue, 130);
