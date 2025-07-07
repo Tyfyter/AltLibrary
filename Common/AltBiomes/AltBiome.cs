@@ -50,6 +50,17 @@ namespace AltLibrary.Common.AltBiomes {
 		/// The descriptor the dryad will use when saying how much of the world is this biome
 		/// </summary>
 		public virtual LocalizedText DryadTextDescriptor => this.GetLocalization("DryadTextDescriptor", PrettyPrintName);
+		/// <summary>
+		/// Used in NPC dialog
+		/// </summary>
+		public virtual LocalizedText WorldEvilStone {
+			get {
+				if (!TileConversions.TryGetValue(TileID.Stone, out int evilStone)) return Language.GetText("misingno");
+				int drop = TileLoader.GetItemDropFromTypeAndStyle(evilStone);
+				if (drop == 0) return Language.GetText("misingno");
+				return Lang.GetItemName(drop);
+			}
+		}
 
 		/// <summary>
 		/// Set this to something if for some reason you need RNG generation types or something

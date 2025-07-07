@@ -50,6 +50,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => corruptPass;
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCorrupt");
+		public override LocalizedText WorldEvilStone => Language.GetText("Misc.Ebonstone");
 		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Corrupt";
 		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCorruption";
@@ -108,6 +109,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => crimsonPass;
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCrimson");
+		public override LocalizedText WorldEvilStone => Language.GetText("Misc.Crimstone");
 		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Crimson";
 		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCrimson";

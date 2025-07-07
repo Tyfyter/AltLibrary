@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using MonoMod.Cil;
 using PegasusLib;
 using System;
 using System.Reflection;
@@ -30,6 +31,22 @@ internal class ALHooks {
 		On_Conditions.IsCorruptionAndNotExpert.CanShowItemDropInUI += (orig, self) => !Main.expertMode && WorldBiomeManager.GetWorldEvil(true, true) == corruption;
 		On_Conditions.IsCrimsonAndNotExpert.CanDrop += (orig, self, info) => !Main.expertMode && WorldBiomeManager.GetWorldEvil(true, true) == crimson;
 		On_Conditions.IsCrimsonAndNotExpert.CanShowItemDropInUI += (orig, self) => !Main.expertMode && WorldBiomeManager.GetWorldEvil(true, true) == crimson;
+		try {
+			IL_Lang.CreateDialogSubstitutionObject += IL_Lang_CreateDialogSubstitutionObject;
+		} catch { }
+	}
+
+	private static void IL_Lang_CreateDialogSubstitutionObject(ILContext il) {
+		ILCursor c = new(il);
+		c.GotoNext(MoveType.AfterLabel, i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)));
+		ILLabel label = c.DefineLabel();
+		c.EmitBr(label);
+		c.Next.Next.MatchBrtrue(out ILLabel crimLabel);
+		c.GotoLabel(crimLabel, MoveType.AfterLabel);
+		c.Prev.MatchBr(out ILLabel doneLabel);
+		c.GotoLabel(doneLabel, MoveType.AfterLabel);
+		c.MarkLabel(label);
+		c.EmitDelegate(() => WorldBiomeManager.GetWorldEvil(includeDrunk: true)?.WorldEvilStone.Value);
 	}
 
 	public static void Unload() {
