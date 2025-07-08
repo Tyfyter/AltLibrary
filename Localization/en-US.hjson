@@ -209,20 +209,7 @@ Mods: {
 		}
 
 		Common.DevTooltip: Great for impersonating mod devs!
-
-		ItemTooltip: {
-			FoxShirt: "{$Mods.AltLibrary.Common.DevTooltip}"
-			FoxMask: "{$Mods.AltLibrary.Common.DevTooltip}"
-			FoxPants: "{$Mods.AltLibrary.Common.DevTooltip}"
-			CaceEars: "{$Mods.AltLibrary.Common.DevTooltip}"
-		}
-
-		ItemName: {
-			FoxShirt: Fox's Sweater
-			FoxMask: Fox's Face Mask
-			FoxPants: Fox's Slacks
-			CaceEars: Cace's Cat Ears
-		}
+		Common.FoxTooltip: Great for impersonating Katastrophenmacheren!
 
 		BunReason: {
 			0: "{0} was devoured by bunnies."
@@ -237,22 +224,22 @@ Mods: {
 		Items: {
 			CaceEars: {
 				DisplayName: Cace Ears
-				Tooltip: ""
+				Tooltip: "{$DevTooltip}"
 			}
 
 			FoxMask: {
 				DisplayName: Fox Mask
-				Tooltip: ""
+				Tooltip: "{$FoxTooltip}"
 			}
 
 			FoxPants: {
 				DisplayName: Fox Pants
-				Tooltip: ""
+				Tooltip: "{$FoxTooltip}"
 			}
 
 			FoxShirt: {
 				DisplayName: Fox Shirt
-				Tooltip: ""
+				Tooltip: "{$FoxTooltip}"
 			}
 		}
 

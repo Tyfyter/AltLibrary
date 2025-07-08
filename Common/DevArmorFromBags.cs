@@ -17,8 +17,8 @@ namespace AltLibrary.Common {
 				switch (Main.rand.Next(3)) {
 					case 0:
 					self.QuickSpawnItem(source, ModContent.ItemType<FoxMask>());
-					self.QuickSpawnItem(source, ModContent.ItemType<FoxMask>());
-					self.QuickSpawnItem(source, ModContent.ItemType<FoxMask>());
+					self.QuickSpawnItem(source, ModContent.ItemType<FoxShirt>());
+					self.QuickSpawnItem(source, ModContent.ItemType<FoxPants>());
 					break;
 					case 1:
 					self.QuickSpawnItem(source, ModContent.ItemType<CaceEars>());
