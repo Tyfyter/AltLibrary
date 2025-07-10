@@ -248,7 +248,10 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:Ores", (ores??[]).Select(ore => new TagCompound {
 				["Slot"] = ore.OreSlot.FullName,
 				["Ore"] = ore.FullName
-			}).ToList());
+			}).Concat((unloadedOres ?? []).Select(unloadedOre => new TagCompound {
+				["Slot"] = unloadedOre.slot,
+				["Ore"] = unloadedOre.ore
+			})).ToList());
 			tag.Add("AltLibrary:HardmodeOreIndex", hmOreIndex);
 		}
 		public override void SaveWorldHeader(TagCompound tag) {
