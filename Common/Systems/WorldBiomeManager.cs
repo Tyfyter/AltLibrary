@@ -334,6 +334,7 @@ namespace AltLibrary.Common.Systems {
 			string oldDrunkEvilName = drunkEvilName;
 			drunkEvilName = reader.ReadString();
 			if (drunkEvilName != oldDrunkEvilName) DrunkEvil = null;
+			ores ??= new AltOre[OreSlotLoader.OreSlotCount];
 			for (int i = 0; i < ores.Length; i++) {
 				ores[i] = AltLibrary.Ores[reader.ReadInt32()];
 			}

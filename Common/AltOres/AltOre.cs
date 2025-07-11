@@ -60,8 +60,8 @@ namespace AltLibrary.Common.AltOres {
 		protected sealed override void Register() {
 			ModTypeLookup<AltOre>.Register(this);
 
-			AltLibrary.Ores.Add(this);
 			Type = AltLibrary.Ores.Count;
+			AltLibrary.Ores.Add(this);
 		}
 
 		public sealed override void SetupContent() {

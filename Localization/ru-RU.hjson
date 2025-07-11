@@ -208,20 +208,9 @@ Mods: {
 			// NotBase: In worlds without {0}
 		}
 
-		Common.DevTooltip: «Отлично подходит для подражания внешности разработчиков!»
-
-		ItemTooltip: {
-			FoxShirt: "{$Mods.AltLibrary.Common.DevTooltip}"
-			FoxMask: "{$Mods.AltLibrary.Common.DevTooltip}"
-			FoxPants: "{$Mods.AltLibrary.Common.DevTooltip}"
-			CaceEars: "{$Mods.AltLibrary.Common.DevTooltip}"
-		}
-
-		ItemName: {
-			FoxShirt: Свитер Fox
-			FoxMask: Маска для лица Fox
-			FoxPants: Брюки Fox
-			CaceEars: Cace's кошачьи уши
+		Common: {
+			DevTooltip: «Отлично подходит для подражания внешности разработчиков!»
+			// FoxTooltip: Great for impersonating Katastrophenmacheren!
 		}
 
 		BunReason: {
@@ -237,22 +226,22 @@ Mods: {
 		Items: {
 			CaceEars: {
 				// DisplayName: Cace Ears
-				// Tooltip: ""
+				// Tooltip: "{$DevTooltip}"
 			}
 
 			FoxMask: {
 				// DisplayName: Fox Mask
-				// Tooltip: ""
+				// Tooltip: "{$FoxTooltip}"
 			}
 
 			FoxPants: {
 				// DisplayName: Fox Pants
-				// Tooltip: ""
+				// Tooltip: "{$FoxTooltip}"
 			}
 
 			FoxShirt: {
 				// DisplayName: Fox Shirt
-				// Tooltip: ""
+				// Tooltip: "{$FoxTooltip}"
 			}
 		}
 

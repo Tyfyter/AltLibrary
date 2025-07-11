@@ -208,8 +208,11 @@ Mods: {
 			NotBase: In worlds without {0}
 		}
 
-		Common.DevTooltip: Great for impersonating mod devs!
-		Common.FoxTooltip: Great for impersonating Katastrophenmacheren!
+		Common: {
+			DevTooltip: Great for impersonating mod devs!
+			FormerDevTooltip: Great for former Alternatives Library devs!
+			FoxTooltip: Great for impersonating Katastrophenmacheren!
+		}
 
 		BunReason: {
 			0: "{0} was devoured by bunnies."
@@ -224,7 +227,7 @@ Mods: {
 		Items: {
 			CaceEars: {
 				DisplayName: Cace Ears
-				Tooltip: "{$DevTooltip}"
+				Tooltip: "{$FormerDevTooltip}"
 			}
 
 			FoxMask: {

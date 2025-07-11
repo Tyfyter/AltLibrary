@@ -229,7 +229,7 @@ namespace AltLibrary {
 		public static AltBiome GetAltBiome(int type) => Biomes.FirstOrDefault(x => x.Type == type) ?? VanillaBiomes.FirstOrDefault(x => x.Type == type);
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
 		public static IReadOnlyList<AltOre> GetAltOres() => Ores;
-		public static AltOre GetAltOre(int type) => Ores.FirstOrDefault(x => x.Type == type);
+		public static AltOre GetAltOre(int type) => Ores[type];
 		public static int AltAltOre<T>() where T : AltOre => ModContent.GetInstance<T>()?.Type ?? 0;
 
 		internal readonly struct CustomPreviews
