@@ -210,6 +210,7 @@ Mods: {
 
 		Common: {
 			DevTooltip: «Отлично подходит для подражания внешности разработчиков!»
+			// FormerDevTooltip: Great for former Alternatives Library devs!
 			// FoxTooltip: Great for impersonating Katastrophenmacheren!
 		}
 
@@ -226,7 +227,7 @@ Mods: {
 		Items: {
 			CaceEars: {
 				// DisplayName: Cace Ears
-				// Tooltip: "{$DevTooltip}"
+				// Tooltip: "{$FormerDevTooltip}"
 			}
 
 			FoxMask: {
