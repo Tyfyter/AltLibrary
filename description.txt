@@ -4,7 +4,7 @@ This mod is used by developers to reduce the amount of repeated code involved in
 
 Our GitHub: https://github.com/Tyfyter/AltLibrary
 
-Our Discord: https://discord.gg/NK7jERXsTN
+Report any issues you find here: https://discord.gg/dWrsraK4HZ
 
 Wiki: https://github.com/Tyfyter/AltLibrary/wiki
 

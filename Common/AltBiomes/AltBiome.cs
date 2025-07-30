@@ -30,8 +30,9 @@ namespace AltLibrary.Common.AltBiomes {
 			BiomeType.Hallow => 2,
 			_ => 0,
 		};
+		internal int BiomeConversionType { get; set; } = -1;
 		public virtual bool NPCsHate => BiomeType == BiomeType.Evil;
-		public int Type { get; internal set; }
+		public int Type { get; private protected set; }
 		public virtual string LocalizationCategory => "AltBiomes";
 
 		/// <summary>
@@ -445,9 +446,13 @@ namespace AltLibrary.Common.AltBiomes {
 
 		public virtual void AddBiomeOnScreenIcon(List<ALDrawingStruct<AltBiome>> list) {
 		}
-
+		public static TileLoader.ConvertTile CreateConversion(int toType) => (i, j, _, _) => {
+			WorldGen.ConvertTile(i, j, toType);
+			return false;
+		};
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);
+			if (BiomeConversionType != -1) TileLoader.RegisterConversion(parentBlock, BiomeConversionType, CreateConversion(block));
 			if (Main.tileMoss[parentBlock] && TileConversions.TryGetValue(TileID.Stone, out int stone) && TileConversions[parentBlock] == stone) {
 				TileConversions[parentBlock] = block;
 			} else {

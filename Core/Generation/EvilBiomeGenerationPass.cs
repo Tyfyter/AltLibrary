@@ -223,23 +223,16 @@ namespace AltLibrary.Core.Generation {
 			int minPriority = 0;
 			while (minPriority <= 5) {
 				PegasusLib.RangeRandom rand = new(WorldGen.genRand, 0, Main.maxTilesX);
-				void ProtectRange(int min, int max, int priority, int padding = 200) {
-					if (priority < minPriority) return;
+				void ProtectRange(int min, int max, int padding = 200) {
 					rand.Multiply(min, max, 0);
 					rand.Multiply(min - padding, max + padding, 0.5);
 				}
-				int beachPadding = minPriority < 2 ? 100 : 0;
-				ProtectRange(0, evilBiomeBeachAvoidance, 3, beachPadding);
-				ProtectRange(Main.maxTilesX - evilBiomeBeachAvoidance, Main.maxTilesX, 3, beachPadding);
-				if (!Main.remixWorld) ProtectRange(MapCenter - MapCenterGive, MapCenter + MapCenterGive, 5, 100);
-				ProtectRange(GenVars.UndergroundDesertLocation.X, GenVars.UndergroundDesertLocation.X + GenVars.UndergroundDesertLocation.Width, 4);
-				ProtectRange(GenVars.dungeonLocation - DungeonGive, GenVars.dungeonLocation + DungeonGive, 5, 100 - minPriority * 20);
-				ProtectRange(SnowBoundMinX, SnowBoundMaxX, 3);
-				foreach ((int min, int max, float edgeGivePercent) in EvilBiomeGenerationPassHandler.evilRanges) {
-					int padding = (int)((max - min) * edgeGivePercent * 0.5f);
-					ProtectRange(min + padding, max - padding, 4, padding);
+				foreach ((InvalidRangeHandler handler, int priority) in invalidRangeHandlers.Values) {
+					if (priority < minPriority) continue;
+					foreach ((int min, int max, int padding) in handler(this, minPriority)) {
+						ProtectRange(min, max, padding);
+					}
 				}
-				ProtectRange(JungleBoundMinX, JungleBoundMaxX, 5);
 
 				if (rand.AnyWeight) {
 					/*for (int i = 0; i < Main.maxTilesX; i++) {

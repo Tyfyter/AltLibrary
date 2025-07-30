@@ -30,7 +30,7 @@ namespace AltLibrary.Common.AltBiomes
 		readonly IShoppingBiome biome;
 		public sealed override IShoppingBiome Biome => biome;
 		public override bool Selectable => BiomeType != BiomeType.None;
-		protected internal VanillaBiome(string name, BiomeType biome, int type, Color nameColor, bool? fix = null, IShoppingBiome shoppingBiome = null) {
+		protected internal VanillaBiome(string name, BiomeType biome, int type, Color nameColor, bool? fix = null, IShoppingBiome shoppingBiome = null, int conversionID = -1) {
 			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
 			if (name == "CorruptBiome") SpecialValueForWorldUIDoNotTouchElseYouCanBreakStuff = -1;
@@ -47,6 +47,7 @@ namespace AltLibrary.Common.AltBiomes
 			FleshTableTile = TileID.Tables;
 			FleshChestTile = TileID.Containers;
 			this.biome = shoppingBiome;
+			BiomeConversionType = conversionID;
 		}
 	}
 	public class CorruptionAltBiome : VanillaBiome {
@@ -54,7 +55,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCorrupt");
 		public override LocalizedText WorldEvilStone => Language.GetText("Misc.Ebonstone");
-		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false, new CorruptionBiome()) { }
+		public CorruptionAltBiome() : base("CorruptBiome", BiomeType.Evil, -333, Color.MediumPurple, false, new CorruptionBiome(), BiomeConversionID.Corruption) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Corrupt";
 		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCorruption";
 		public override Color NameColor => Color.MediumPurple;
@@ -113,7 +114,7 @@ namespace AltLibrary.Common.AltBiomes
 		public override int ConversionType => 1;
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusCrimson");
 		public override LocalizedText WorldEvilStone => Language.GetText("Misc.Crimstone");
-		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true, new CrimsonBiome()) { }
+		public CrimsonAltBiome() : base("CrimsonBiome", BiomeType.Evil, -666, Color.IndianRed, true, new CrimsonBiome(), BiomeConversionID.Crimson) { }
 		public override string OuterTexture => "Terraria/Images/UI/WorldGen/Outer_Crimson";
 		public override string IconSmall => "Terraria/Images/UI/WorldCreation/IconEvilCrimson";
 		public override Color NameColor => Color.IndianRed;
@@ -165,7 +166,7 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	public class HallowAltBiome : VanillaBiome {
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusHallow");
-		public HallowAltBiome() : base("HallowBiome", BiomeType.Hallow, -3, Color.HotPink, shoppingBiome: new HallowBiome()) { }
+		public HallowAltBiome() : base("HallowBiome", BiomeType.Hallow, -3, Color.HotPink, shoppingBiome: new HallowBiome(), conversionID: BiomeConversionID.Hallow) { }
 		public override int ConversionType => 2;
 		public override void SetStaticDefaults() {
 			BiomeChestItem = ItemID.RainbowGun;
@@ -225,7 +226,7 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	public class MushroomAltBiome : VanillaBiome {
 		public override int ConversionType => 3;
-		public MushroomAltBiome() : base("Mushroom", BiomeType.None, -1, Color.Blue, shoppingBiome: new MushroomBiome()) { }
+		public MushroomAltBiome() : base("Mushroom", BiomeType.None, -1, Color.Blue, shoppingBiome: new MushroomBiome(), conversionID: BiomeConversionID.GlowingMushroom) { }
 		public override void SetStaticDefaults() {
 			AddTileConversion(TileID.MushroomGrass, TileID.JungleGrass);
 			AddTileConversion(-2, TileID.JungleThorns);
@@ -238,7 +239,7 @@ namespace AltLibrary.Common.AltBiomes
 	}
 	#region 1.4.4 solutions
 	public class DesertAltBiome : VanillaBiome {
-		public DesertAltBiome() : base("DesertBiome", BiomeType.None, -2, Color.SandyBrown, shoppingBiome: new DesertBiome()) { }
+		public DesertAltBiome() : base("DesertBiome", BiomeType.None, -2, Color.SandyBrown, shoppingBiome: new DesertBiome(), conversionID: BiomeConversionID.Sand) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
 			NoDeconversion = true;
@@ -275,7 +276,7 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class SnowAltBiome : VanillaBiome {
-		public SnowAltBiome() : base("SnowBiome", BiomeType.None, -2, Color.White, shoppingBiome: new SnowBiome()) { }
+		public SnowAltBiome() : base("SnowBiome", BiomeType.None, -2, Color.White, shoppingBiome: new SnowBiome(), conversionID: BiomeConversionID.Snow) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
 			NoDeconversion = true;
@@ -302,7 +303,7 @@ namespace AltLibrary.Common.AltBiomes
 		}
 	}
 	public class ForestAltBiome : VanillaBiome {
-		public ForestAltBiome() : base("ForestBiome", BiomeType.None, -2, Color.Brown, shoppingBiome: new ForestBiome()) { }
+		public ForestAltBiome() : base("ForestBiome", BiomeType.None, -2, Color.Brown, shoppingBiome: new ForestBiome(), conversionID: BiomeConversionID.Dirt) { }
 		public override int ConversionType => 0;
 		public override void SetStaticDefaults() {
 			NoDeconversion = true;
