@@ -79,85 +79,29 @@ namespace AltLibrary {
 			//BackgroundsAlternating.Init();//TODO: redo
 		}
 
-		public override object Call(params object[] args)
-		{
+		public override object Call(params object[] args) {
 			if (args is null)
 				throw new ArgumentNullException(nameof(args), "Arguments cannot be null!");
 			if (args.Length == 0)
 				throw new ArgumentException("Arguments cannot be empty!");
-			if (args[0] is string content)
-			{
-				switch (content.ToLower())
-				{
-					case "addcustomseedpreviews":
-						{
-							if (args.Length != 5)
-								throw new ArgumentException("Arguments cannot be less or more than 5 in length for AddCustomSeedPreviews");
-							if (args[1] is not string seed)
-								throw new ArgumentException("Second argument (seed) is not string!");
-							if (args[2] is not string small)
-								throw new ArgumentException("Third argument (small) is not string!");
-							if (args[3] is not string medium)
-								throw new ArgumentException("Fourth argument (medium) is not string!");
-							if (args[4] is not string large)
-								throw new ArgumentException("Fifth argument (large) is not string!");
-							PreviewWorldIcons.Add(new CustomPreviews(seed, small, medium, large));
-							Logger.Debug($"Registered custom preview! Seed: {seed} Path: {small} {medium} {large}");
-							return "Success";
-						}
-					case "conversiongetultimateparent":
-						if (args.Length != 2)
-							throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetUltimateParent");
-						if (args[1] is not int tile)
-							throw new ArgumentException("Second argument (tile) is not int!");
-						return ALConvertInheritanceData.GetUltimateParent(tile);
-					case "convert":
-						if (args.Length == 6)
-						{
-							if (args[1] is not Mod mod)
-								throw new ArgumentException("Second argument (mod) is not Mod!");
-							if (args[2] is not string name)
-								throw new ArgumentException("Third argument (name) is not string!");
-							if (args[3] is not int i)
-								throw new ArgumentException("Fourth argument (i) is not int!");
-							if (args[4] is not int j)
-								throw new ArgumentException("Fifth argument (j) is not int!");
-							if (args[5] is not int size)
-								throw new ArgumentException("Sixth argument (size) is not int!");
-							ALConvert.Convert(mod, name, i, j, size);
-						}
-						else if (args.Length == 5)
-						{
-							if (args[1] is not string fullname)
-								throw new ArgumentException("Second argument (fullname) is not string!");
-							if (args[2] is not int i)
-								throw new ArgumentException("Third argument (i) is not int!");
-							if (args[3] is not int j)
-								throw new ArgumentException("Fourth argument (j) is not int!");
-							if (args[4] is not int size)
-								throw new ArgumentException("Fifth argument (size) is not int!");
-							ALConvert.Convert(fullname, i, j, size);
-						}
-						else
-						{
-							throw new ArgumentException("Arguments cannot be less or more than 5 or 6 in length for Convert");
-						}
-						return "Success";
-					case "addinmimiclist": {
+			string content = args[0] as string;
+			if (args[0] is Calls call || Enum.TryParse(content, true, out call)) {
+				switch (call) {
+					case Calls.AddInMimicList: {
 						if (args.Length == 3) {
 							if (args[1] is ValueTuple<int, int> mimicType) {
 								if (args[2] is Func<bool> condition) {
-									if (!MimicSummon.Mimics.TryGetValue(mimicType.Item1, out List<(Func<bool> condition, int npcID)> keyMimics)) MimicSummon.Mimics.TryAdd(mimicType.Item1, keyMimics ??= []);
-									keyMimics.Add((condition, mimicType.Item2));
+									Call_AddInMimicList(mimicType, condition);
 									return "Success";
 								}
 								throw new ArgumentException("Third argument (condition) is not Func<bool>!");
 							}
 							throw new ArgumentException("Second argument (mimicType) is not ValueTuple<int, int>!");
 						}
-						throw new ArgumentException("Incorrect argument count");
+						throw new ArgumentException("Incorrect argument count (should be 2)");
 					}
-					case "adddungeonchest": {
+
+					case Calls.AddDungeonChest: {
 						if (args.Length == 4 || args.Length == 5) {
 							if (args[1] is not int chestTileType) {
 								if (args[1] is ushort uShortChestTileType) chestTileType = uShortChestTileType;
@@ -166,34 +110,85 @@ namespace AltLibrary {
 							if (args[2] is not int contain) throw new ArgumentException("Third argument (contain) is not int");
 							if (args[3] is not int style) throw new ArgumentException("Fourth argument (style) is not int");
 							Func<bool> condition = null;
-							if (args.Length == 5) {
-								condition = args[4] as Func<bool>;
-								if (condition is null) throw new ArgumentException("Fifth argument (condition) is not present and not Func<bool>");
+							if (args.Length == 5 && (args[4] is not Delegate del || !del.TryCastDelegate(out condition))) {
+								throw new ArgumentException("Fifth argument (condition) is present and not Func<bool>");
 							}
-							DungeonChests.extraDungeonChests.Add((chestTileType, contain, style, condition));
+							Call_AddDungeonChest(chestTileType, contain, style, condition);
 							return "Success";
 						}
 						throw new ArgumentException("Incorrect argument count");
 					}
-					case "addinvalidrangehandler": {
+
+					case Calls.AddInvalidRangeHandler: {
 						if (args.Length == 4) {
 							if (args[1] is not string key) throw new ArgumentException("First argument (key) is not string");
 							if (args[2] is not Delegate _handler || !_handler.TryCastDelegate(out EvilBiomeGenerationPass.InvalidRangeHandler handler)) throw new ArgumentException("Second argument (handler) is not InvalidRangeHandler");
 							if (args[3] is not int priority) throw new ArgumentException("Third argument (priority) is not string");
-							EvilBiomeGenerationPass.invalidRangeHandlers.Add(key, (handler, priority));
+							Call_AddInvalidRangeHandler(key, handler, priority);
 							return null;
 						}
 						throw new ArgumentException("Incorrect argument count");
 					}
+				}
+			}
+			if (content is not null) {
+				switch (content.ToLower()) {
+					case "addcustomseedpreviews": {
+						if (args.Length != 5)
+							throw new ArgumentException("Arguments cannot be less or more than 5 in length for AddCustomSeedPreviews");
+						if (args[1] is not string seed)
+							throw new ArgumentException("Second argument (seed) is not string!");
+						if (args[2] is not string small)
+							throw new ArgumentException("Third argument (small) is not string!");
+						if (args[3] is not string medium)
+							throw new ArgumentException("Fourth argument (medium) is not string!");
+						if (args[4] is not string large)
+							throw new ArgumentException("Fifth argument (large) is not string!");
+						PreviewWorldIcons.Add(new CustomPreviews(seed, small, medium, large));
+						Logger.Debug($"Registered custom preview! Seed: {seed} Path: {small} {medium} {large}");
+						return "Success";
+					}
+					case "conversiongetultimateparent":
+					if (args.Length != 2)
+						throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetUltimateParent");
+					if (args[1] is not int tile)
+						throw new ArgumentException("Second argument (tile) is not int!");
+					return ALConvertInheritanceData.GetUltimateParent(tile);
+					case "convert":
+					if (args.Length == 6) {
+						if (args[1] is not Mod mod)
+							throw new ArgumentException("Second argument (mod) is not Mod!");
+						if (args[2] is not string name)
+							throw new ArgumentException("Third argument (name) is not string!");
+						if (args[3] is not int i)
+							throw new ArgumentException("Fourth argument (i) is not int!");
+						if (args[4] is not int j)
+							throw new ArgumentException("Fifth argument (j) is not int!");
+						if (args[5] is not int size)
+							throw new ArgumentException("Sixth argument (size) is not int!");
+						ALConvert.Convert(mod, name, i, j, size);
+					} else if (args.Length == 5) {
+						if (args[1] is not string fullname)
+							throw new ArgumentException("Second argument (fullname) is not string!");
+						if (args[2] is not int i)
+							throw new ArgumentException("Third argument (i) is not int!");
+						if (args[3] is not int j)
+							throw new ArgumentException("Fourth argument (j) is not int!");
+						if (args[4] is not int size)
+							throw new ArgumentException("Fifth argument (size) is not int!");
+						ALConvert.Convert(fullname, i, j, size);
+					} else {
+						throw new ArgumentException("Arguments cannot be less or more than 5 or 6 in length for Convert");
+					}
+					return "Success";
 					default:
-						throw new ArgumentException("Invalid option!");
+					throw new ArgumentException("Invalid option!");
 				}
 			}
 			return null;
 		}
 
-		public override void Unload()
-		{
+		public override void Unload() {
 			//AnimatedModIcon.Unload();
 			ALTextureAssets.Unload();
 			ALConvert.Unload();
@@ -204,8 +199,7 @@ namespace AltLibrary {
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
 			PreviewWorldIcons = null;
-			if (!Main.dedServ)
-			{
+			if (!Main.dedServ) {
 				Instance = null;
 			}
 			Biomes = null;
@@ -232,29 +226,23 @@ namespace AltLibrary {
 		public static AltOre GetAltOre(int type) => Ores[type];
 		public static int AltAltOre<T>() where T : AltOre => ModContent.GetInstance<T>()?.Type ?? 0;
 
-		internal readonly struct CustomPreviews
-		{
+		internal readonly struct CustomPreviews {
 			internal readonly string seed;
 			internal readonly string pathSmall;
 			internal readonly string pathMedium;
 			internal readonly string pathLarge;
 
-			internal CustomPreviews(string seed, string pathSmall, string pathMedium, string pathLarge)
-			{
-				if (seed is null)
-				{
+			internal CustomPreviews(string seed, string pathSmall, string pathMedium, string pathLarge) {
+				if (seed is null) {
 					throw new ArgumentNullException(nameof(seed), "Cannot be null!");
 				}
-				if (pathSmall is null)
-				{
+				if (pathSmall is null) {
 					throw new ArgumentNullException(nameof(pathSmall), "Cannot be null!");
 				}
-				if (pathMedium is null)
-				{
+				if (pathMedium is null) {
 					throw new ArgumentNullException(nameof(pathMedium), "Cannot be null!");
 				}
-				if (pathLarge is null)
-				{
+				if (pathLarge is null) {
 					throw new ArgumentNullException(nameof(pathLarge), "Cannot be null!");
 				}
 

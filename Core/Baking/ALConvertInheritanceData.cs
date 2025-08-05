@@ -107,6 +107,10 @@ namespace AltLibrary.Core.Baking {
 				if (WallID.Sets.Hallow[type]) return hallow;
 				return null;
 			}
+			NoDeconversion.Add(WallID.Cave7Echo);
+			NoDeconversion.Add(WallID.Cave8Echo);
+			NoDeconversion.Add(WallID.Cave7Unsafe);
+			NoDeconversion.Add(WallID.Cave8Unsafe);
 			for (int x = 0; x < WallLoader.WallCount; x++) {
 				if (WallID.Sets.Conversion.Grass[x] && x != WallID.Grass) {
 					switch (x) {

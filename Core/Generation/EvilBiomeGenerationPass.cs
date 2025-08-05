@@ -221,7 +221,7 @@ namespace AltLibrary.Core.Generation {
 			int tries;
 			string newSystemFailReason = $"RNG could not reach non-zero total weight";
 			int minPriority = 0;
-			while (minPriority <= 5) {
+			while (invalidRangeHandlers.Values.Any(range => range.priority >= minPriority)) {
 				PegasusLib.RangeRandom rand = new(WorldGen.genRand, 0, Main.maxTilesX);
 				void ProtectRange(int min, int max, int padding = 200) {
 					rand.Multiply(min, max, 0);
