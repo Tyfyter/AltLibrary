@@ -20,7 +20,10 @@ namespace AltLibrary.Common.Hooks {
 		public override bool TileFrame(int i, int j, int type, ref bool resetFrame, ref bool noBreak) {
 			if (TileID.Sets.IsVine[type]) {
 				int typeForAnchor = VineTypeForAnchor[Main.tile[i, j - 1].TileType];
-				if (typeForAnchor != -1) Main.tile[i, j].TileType = (ushort)typeForAnchor;
+				if (typeForAnchor != -1 && typeForAnchor != type) {
+					Main.tile[i, j].TileType = (ushort)typeForAnchor;
+					WorldGen.TileFrame(i, j + 1);
+				}
 			}
 			return true;
 		}
