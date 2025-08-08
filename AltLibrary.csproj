@@ -14,7 +14,7 @@
       <HintPath>..\ModAssemblies\FargoSeeds_v0.5.3.dll</HintPath>
     </Reference>
     <Reference Include="PegasusLib">
-      <HintPath>..\ModAssemblies\PegasusLib_v1.0.7.2.dll</HintPath>
+      <HintPath>..\ModAssemblies\PegasusLib_v1.0.7.4.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
