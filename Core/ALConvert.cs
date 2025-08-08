@@ -4,7 +4,6 @@ using AltLibrary.Core.Baking;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -15,7 +14,7 @@ using Terraria.ObjectData;
 namespace AltLibrary.Core {
 	public static class ALConvert {
 		internal static void Load() {
-			Terraria.On_WorldGen.Convert += WorldGen_Convert;
+			On_WorldGen.Convert += WorldGen_Convert;
 			if (typeof(WorldGen).GetMethods().FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
 				MonoModHooks.Modify(method, IL_WorldGen_smCallBack_HardmodeGoodRemixTask);
 			} else {
@@ -24,7 +23,6 @@ namespace AltLibrary.Core {
 		}
 
 		internal static void Unload() { }
-
 		private static void WorldGen_Convert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size) {
 			AltBiome biome;
 			switch (conversionType) {
