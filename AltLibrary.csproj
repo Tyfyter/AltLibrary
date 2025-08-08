@@ -7,13 +7,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DotNetName Condition=" '$(OS)' == 'Unix' ">/usr/bin/dotnet</DotNetName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FargoSeeds">
-      <HintPath>..\ModAssemblies\FargoSeeds_v0.5.2.dll</HintPath>
+      <HintPath>..\ModAssemblies\FargoSeeds_v0.5.3.dll</HintPath>
     </Reference>
     <Reference Include="PegasusLib">
-      <HintPath>..\ModAssemblies\PegasusLib_v1.0.6.dll</HintPath>
+      <HintPath>..\ModAssemblies\PegasusLib_v1.0.7.2.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

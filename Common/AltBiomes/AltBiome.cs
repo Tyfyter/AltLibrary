@@ -134,7 +134,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// </summary>
 		public int? BiomeMud = null;
 		/// <summary>
-		/// For Jungle alts.
+		/// For Jungle and evil alts, since vanilla introduced evil jungle grass. 
 		/// </summary>
 		public int? BiomeJungleGrass = null;
 		/// <summary>
