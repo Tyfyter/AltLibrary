@@ -38,17 +38,27 @@ namespace AltLibrary.Core {
 			bool isOreGrowingTile = false;
 			bool isJungleSpreadingOre = false;
 			bool isGrass = false;
+			bool isEvilJungleGrass = false;
 			AltBiome biomeToSpread = null;
 			ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
 			AltBiome biome = parent.fromBiome;
 			if (biome is null or VanillaBiome) {
 				return;
 			}
-			if (biome.BiomeType == BiomeType.Evil || biome.BiomeType == BiomeType.Hallow) {
+			if (biome.BiomeType == BiomeType.Evil) {
 				if (type == biome.BiomeGrass) {
 					isGrass = true;
 					biomeToSpread = biome;
+				} else if (type == biome.BiomeJungleGrass) {
+					isEvilJungleGrass = true;
+					biomeToSpread = biome;
 				}
+			} else if (biome.BiomeType == BiomeType.Hallow) {
+				if (type == biome.BiomeGrass) {
+					isGrass = true;
+					biomeToSpread = biome;
+				} 
+					
 			} else if (biome.BiomeType == BiomeType.Jungle) {
 				if (type == biome.BiomeGrass || !biome.BiomeGrass.HasValue && type == biome.BiomeJungleGrass) {
 					isGrass = true;
@@ -65,11 +75,31 @@ namespace AltLibrary.Core {
 					SpreadGrass(i, j, TileID.Mud, type, false);
 				} else {
 					bool blockedBySunflowers = false;
-					if (biomeToSpread.BiomeType == BiomeType.Evil) blockedBySunflowers = true;
-					if (j < (Main.worldSurface + Main.rockLayer) / 2) {
-						SpreadGrass(i, j, TileID.Dirt, type, blockedBySunflowers);
+					if (biomeToSpread.BiomeType == BiomeType.Evil)
+					{
+						blockedBySunflowers = true;
+						if (biome.BiomeJungleGrass.HasValue)
+						{
+							SpreadGrass(i, j, TileID.Mud, biome.BiomeJungleGrass.Value, blockedBySunflowers); //corrupt dirt grass can spread to empty mud blocks, turning them into corrupt jungle grass
+						}
 					}
+					SpreadGrass(i, j, TileID.Dirt, type, blockedBySunflowers); //corrupt dirt grass can spread underground too
 					if (WorldGen.AllowedToSpreadInfections) SpreadGrass(i, j, TileID.Grass, type, blockedBySunflowers);
+				}
+			}
+
+			if (isEvilJungleGrass)
+			{
+				bool blockedBySunflowers = true; //just safety, might not matter since sunflowers can't go on mud
+				SpreadGrass(i, j, TileID.Mud, type, blockedBySunflowers); //corrupt jungle grass can spread to empty mud, turning it into corrupt jungle grass
+				if (biome.BiomeGrass.HasValue)
+				{
+					SpreadGrass(i, j, TileID.Dirt, biome.BiomeGrass.Value, blockedBySunflowers); //corrupt jungle grass can spread to empty dirt, turning it into corrupt dirt grass
+				}
+				if (biome.BiomeGrass.HasValue)
+				{
+					if (WorldGen.AllowedToSpreadInfections) SpreadGrass(i, j, TileID.Grass, biome.BiomeGrass.Value, blockedBySunflowers); //can infect dirt grass blocks, but not jungle grass! only infects jungle grass in hardmode, and slowly
+					//hardmode evil spreading already takes care of evil dirt/jungle grass being able to infect jungle grass in hardmode if set in the mod that uses AltLib
 				}
 			}
 
