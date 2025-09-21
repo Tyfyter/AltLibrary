@@ -15,7 +15,7 @@ namespace AltLibrary.Core {
 	public static class ALConvert {
 		internal static void Load() {
 			On_WorldGen.Convert_int_int_int_int_bool_bool += WorldGen_Convert;
-			if (typeof(WorldGen).GetMethods(BindingFlags.Public | BindingFlags.NonPublic).FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
+			if (typeof(WorldGen).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance ).FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
 				MonoModHooks.Modify(method, IL_WorldGen_smCallBack_HardmodeGoodRemixTask);
 			} else {
 				AltLibrary.Instance.Logger.Error("Could not find HardmodeGoodRemixTask in WorldGen");
@@ -60,9 +60,9 @@ namespace AltLibrary.Core {
 			for (int k = i - size; k <= i + size; k++) {
 				for (int l = j - size; l <= j + size; l++) {
 					if (WorldGen.InWorld(k, l, 1) && Math.Abs(k - i) + Math.Abs(l - j) < 6) {
-						ConvertTile(k, l, biome);
+						if (tiles) ConvertTile(k, l, biome);
 
-						ConvertWall(k, l, biome);
+						if (walls) ConvertWall(k, l, biome);
 						continue;
 					}
 				}
