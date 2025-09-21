@@ -446,10 +446,26 @@ namespace AltLibrary.Common.AltBiomes {
 
 		public virtual void AddBiomeOnScreenIcon(List<ALDrawingStruct<AltBiome>> list) {
 		}
-		public static TileLoader.ConvertTile CreateConversion(int toType) => (i, j, _, _) => {
-			WorldGen.ConvertTile(i, j, toType);
-			return false;
-		};
+		public static TileLoader.ConvertTile CreateConversion(int toType) {
+			switch (toType) {
+				case -2:
+				return (i, j, _, _) => {
+					Tile tile = Main.tile[i, j];
+					tile.HasTile = false;
+					WorldGen.SquareTileFrame(i, j);
+					return false;
+				};
+
+				case -1:
+				return (_, _, _, _) => true;
+
+				default:
+				return (i, j, _, _) => {
+					WorldGen.ConvertTile(i, j, toType);
+					return false;
+				};
+			}
+		}
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);
 			if (BiomeConversionType != -1) TileLoader.RegisterConversion(parentBlock, BiomeConversionType, CreateConversion(block));

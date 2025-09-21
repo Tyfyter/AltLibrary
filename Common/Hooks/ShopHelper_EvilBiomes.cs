@@ -39,8 +39,6 @@ namespace AltLibrary.Common.Hooks
 			)) {
 				c.EmitDelegate(getDangerBiomes);
 			}
-
-			AltLibrary.DumpIL(il);
 		}
 		public void Unload() {
 			_dangerousBiomes = null;

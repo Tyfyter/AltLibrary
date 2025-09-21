@@ -14,8 +14,8 @@ using Terraria.ObjectData;
 namespace AltLibrary.Core {
 	public static class ALConvert {
 		internal static void Load() {
-			On_WorldGen.Convert += WorldGen_Convert;
-			if (typeof(WorldGen).GetMethods().FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
+			On_WorldGen.Convert_int_int_int_int_bool_bool += WorldGen_Convert;
+			if (typeof(WorldGen).GetMethods(BindingFlags.Public | BindingFlags.NonPublic).FirstOrDefault(m => m.Name.Contains("HardmodeGoodRemixTask")) is MethodInfo method) {
 				MonoModHooks.Modify(method, IL_WorldGen_smCallBack_HardmodeGoodRemixTask);
 			} else {
 				AltLibrary.Instance.Logger.Error("Could not find HardmodeGoodRemixTask in WorldGen");
@@ -23,7 +23,7 @@ namespace AltLibrary.Core {
 		}
 
 		internal static void Unload() { }
-		private static void WorldGen_Convert(On_WorldGen.orig_Convert orig, int i, int j, int conversionType, int size) {
+		private static void WorldGen_Convert(On_WorldGen.orig_Convert_int_int_int_int_bool_bool orig, int i, int j, int conversionType, int size, bool tiles, bool walls) {
 			AltBiome biome;
 			switch (conversionType) {
 				case 1:
