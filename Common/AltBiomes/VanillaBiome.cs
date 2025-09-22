@@ -242,13 +242,19 @@ namespace AltLibrary.Common.AltBiomes
 					FishingCatch.Item(ItemID.LadyOfTheLake, (player, attempt) => Main.hardMode && !Main.rand.NextBool(3))
 				));
 				VeryRare.Add(FishingCatch.Item(ItemID.ChaosFish, (_, attempt) => attempt.heightLevel > 1));
-				Rare.Add(FishingCatch.Item(ItemID.Prismite));
-				Uncommon.Add(new SequentialCatches(
-					FishingCatch.Item(ItemID.MirageFish, (_, attempt) => attempt.questFish == ItemID.MirageFish && attempt.heightLevel > 1),
-					FishingCatch.Item(ItemID.Pixiefish, (_, attempt) => attempt.questFish == ItemID.Pixiefish && attempt.heightLevel < 2),
+				FishingCatch[] heightSpecificQuestFish = [
+					FishingCatch.Item(ItemID.MirageFish, (_, attempt) => attempt.uncommon && attempt.questFish == ItemID.MirageFish && attempt.heightLevel > 1),
+					FishingCatch.Item(ItemID.Pixiefish, (_, attempt) => attempt.uncommon && attempt.questFish == ItemID.Pixiefish && attempt.heightLevel < 2)
+				];
+				Rare.Add(new SequentialCatches([
+					..heightSpecificQuestFish,
+					FishingCatch.Item(ItemID.Prismite)
+				]));
+				Uncommon.Add(new SequentialCatches([
+					..heightSpecificQuestFish,
 					FishingCatch.QuestFish(ItemID.UnicornFish),
 					FishingCatch.Item(ItemID.PrincessFish)
-				));
+				]));
 			}
 		}
 	}
