@@ -6,11 +6,13 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
 
 namespace AltLibrary.Common.AltBiomes
 {
@@ -108,6 +110,22 @@ namespace AltLibrary.Common.AltBiomes
 			AddWallConversions(WallID.CorruptionUnsafe3, WallID.Sets.Conversion.NewWall3);
 			AddWallConversions(WallID.CorruptionUnsafe4, WallID.Sets.Conversion.NewWall4);
 		}
+		public class CorruptionFishingPool : FishingLootPool<CorruptionAltBiome> {
+			public override void SetStaticDefaults() {
+				AddCrates(ItemID.CorruptFishingCrate, ItemID.CorruptFishingCrateHard);
+				Legendary.Add(new SequentialCatches(
+					FishingCatch.Item(ItemID.ScalyTruffle, (player, attempt) => Main.hardMode && player.ZoneSnow && attempt.heightLevel == 3 && !Main.rand.NextBool(3)),
+					FishingCatch.Item(ItemID.Toxikarp, (player, attempt) => Main.hardMode && Main.rand.NextBool(2))
+				));
+				Rare.Add(FishingCatch.Item(ItemID.PurpleClubberfish));
+				Uncommon.Add(new SequentialCatches(
+					FishingCatch.QuestFish(ItemID.Cursedfish),
+					FishingCatch.QuestFish(ItemID.InfectedScabbardfish),
+					FishingCatch.QuestFish(ItemID.EaterofPlankton),
+					FishingCatch.Item(ItemID.Ebonkoi)
+				));
+			}
+		}
 	}
 	public class CrimsonAltBiome : VanillaBiome {
 		public override EvilBiomeGenerationPass GetEvilBiomeGenerationPass() => crimsonPass;
@@ -163,6 +181,21 @@ namespace AltLibrary.Common.AltBiomes
 			AddWallConversions(WallID.CrimsonUnsafe3, WallID.Sets.Conversion.NewWall3);
 			AddWallConversions(WallID.CrimsonUnsafe4, WallID.Sets.Conversion.NewWall4);
 		}
+		public class CrimsonFishingPool : FishingLootPool<CrimsonAltBiome> {
+			public override void SetStaticDefaults() {
+				AddCrates(ItemID.CrimsonFishingCrate, ItemID.CrimsonFishingCrateHard);
+				Legendary.Add(new SequentialCatches(
+					FishingCatch.Item(ItemID.ScalyTruffle, (player, attempt) => Main.hardMode && player.ZoneSnow && attempt.heightLevel == 3 && !Main.rand.NextBool(3)),
+					FishingCatch.Item(ItemID.Bladetongue, (player, attempt) => Main.hardMode && Main.rand.NextBool(2))
+				));
+				Uncommon.Add(new SequentialCatches(
+					FishingCatch.QuestFish(ItemID.BloodyManowar),
+					FishingCatch.QuestFish(ItemID.Ichorfish),
+					FishingCatch.Item(ItemID.Hemopiranha)
+				));
+				Common.Add(FishingCatch.Item(ItemID.CrimsonTigerfish));
+			}
+		}
 	}
 	public class HallowAltBiome : VanillaBiome {
 		public override LocalizedText DryadTextDescriptor => Language.GetText("Mods.AltLibrary.DryadSpecialText.WorldStatusHallow");
@@ -199,6 +232,24 @@ namespace AltLibrary.Common.AltBiomes
 				return TileID.Dirt;
 			}
 			return base.GetAltBlock(BaseBlock, k, l, GERunner);
+		}
+		public class HallowFishingPool : FishingLootPool<HallowAltBiome> {
+			public override void SetStaticDefaults() {
+				AddCrates(ItemID.CrimsonFishingCrate, ItemID.CrimsonFishingCrateHard);
+				Legendary.Add(new SequentialCatches(
+					FishingCatch.Item(ItemID.ScalyTruffle, (player, attempt) => Main.hardMode && player.ZoneSnow && attempt.heightLevel == 3 && !Main.rand.NextBool(3)),
+					FishingCatch.Item(ItemID.CrystalSerpent, (player, attempt) => Main.hardMode && Main.rand.NextBool(2)),
+					FishingCatch.Item(ItemID.LadyOfTheLake, (player, attempt) => Main.hardMode && !Main.rand.NextBool(3))
+				));
+				VeryRare.Add(FishingCatch.Item(ItemID.ChaosFish, (_, attempt) => attempt.heightLevel > 1));
+				Rare.Add(FishingCatch.Item(ItemID.Prismite));
+				Uncommon.Add(new SequentialCatches(
+					FishingCatch.Item(ItemID.MirageFish, (_, attempt) => attempt.questFish == ItemID.MirageFish && attempt.heightLevel > 1),
+					FishingCatch.Item(ItemID.Pixiefish, (_, attempt) => attempt.questFish == ItemID.Pixiefish && attempt.heightLevel < 2),
+					FishingCatch.QuestFish(ItemID.UnicornFish),
+					FishingCatch.Item(ItemID.PrincessFish)
+				));
+			}
 		}
 	}
 	public class JungleAltBiome : VanillaBiome {
