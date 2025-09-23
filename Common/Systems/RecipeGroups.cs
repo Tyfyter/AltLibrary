@@ -2,6 +2,7 @@
 using AltLibrary.Common.AltOres;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -10,6 +11,7 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Common.Systems {
 	//TODO: works fine, but it's ugly, make it better
+	[SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible"), SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression")]
 	public class RecipeGroups : ModSystem {
 		public static RecipeGroup EvilOres;
 		public static RecipeGroup EvilBars;

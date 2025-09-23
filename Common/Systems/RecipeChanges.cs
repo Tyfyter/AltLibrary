@@ -16,6 +16,12 @@ namespace AltLibrary.Common.Systems {
 			List<RecipeGroup> recipeGroups = fields.Select(f => f.GetValue(null) as RecipeGroup)
 				.Where(v => v is not null && RecipeGroups.AppropriateMaterials.ContainsKey(v.RegisteredId)).ToList();
 
+			ModItem critMonocle = null;
+
+			if (ModLoader.TryGetMod("CritRework", out Mod critRework)) {
+				critRework.TryFind("CritMonocle", out critMonocle);
+			}
+
 			for (int i = 0; i < Recipe.numRecipes; i++) {
 				Recipe recipe = Main.recipe[i];
 
@@ -154,6 +160,16 @@ namespace AltLibrary.Common.Systems {
 								  [ItemID.GoldWatch],
 								  "GoldWatches",
 								  ItemID.PlatinumWatch);
+
+				if (critMonocle is not null) {
+					ReplaceRecipe(ref recipe,
+						[critMonocle.Type],
+						[ItemID.DemoniteBar],
+						"EvilBars",
+						ItemID.CrimtaneBar
+					);
+				}
+
 				if (!recipe.Disabled && !ShimmerDecraft.Recipes.ContainsKey(recipe.createItem.type)) {
 					List<(int type, int count)> ingredients = recipe.requiredItem.Select(it => (it.type, it.stack)).ToList();
 					List<(int type, int count)> ingredientGroups = new();
