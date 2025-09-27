@@ -227,22 +227,22 @@ Mods: {
 		Items: {
 			CaceEars: {
 				DisplayName: Cace Ears
-				Tooltip: "{$FormerDevTooltip}"
+				Tooltip: "{$Common.FormerDevTooltip}"
 			}
 
 			FoxMask: {
 				DisplayName: Fox Mask
-				Tooltip: "{$FoxTooltip}"
+				Tooltip: "{$Common.FoxTooltip}"
 			}
 
 			FoxPants: {
 				DisplayName: Fox Pants
-				Tooltip: "{$FoxTooltip}"
+				Tooltip: "{$Common.FoxTooltip}"
 			}
 
 			FoxShirt: {
 				DisplayName: Fox Shirt
-				Tooltip: "{$FoxTooltip}"
+				Tooltip: "{$Common.FoxTooltip}"
 			}
 		}
 
