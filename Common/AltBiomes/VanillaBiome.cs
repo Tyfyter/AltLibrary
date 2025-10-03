@@ -312,7 +312,7 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.Sandstone, TileID.IceBlock, spread: false, oneWay: true, extraFunctions: false);
 			AddTileConversion(TileID.Sandstone, TileID.Sandstone, spread: false, oneWay: true, extraFunctions: false);
 
-			AddTileConversion(-2, TileID.JungleThorns);
+			AddTileConversion(-2, TileID.JungleThorns, spread: false, oneWay: true, extraFunctions: false);
 			
 			for (int i = 0; i < WallLoader.WallCount; i++) {
 				if ((WallID.Sets.Conversion.Stone[i] || WallID.Sets.Conversion.NewWall1[i] || WallID.Sets.Conversion.NewWall2[i] || WallID.Sets.Conversion.NewWall3[i] || WallID.Sets.Conversion.NewWall4[i] || WallID.Sets.Conversion.Ice[i] || WallID.Sets.Conversion.Sandstone[i])) {

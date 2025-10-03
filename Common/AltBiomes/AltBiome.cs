@@ -501,7 +501,7 @@ namespace AltLibrary.Common.AltBiomes {
 					break;
 				}
 			}
-			if (spread) {
+			if (spread && block >= 0) {
 				SpreadingTiles.Add(block);
 				TileSets.BiomeSightColors[block] = BiomeSightColor;
 			}
