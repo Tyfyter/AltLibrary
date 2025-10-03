@@ -1,5 +1,7 @@
-﻿using AltLibrary.Common.AltBiomes;
+﻿using AltLibrary.Common;
+using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core.Baking;
+using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using Terraria;
 using Terraria.ID;
@@ -327,6 +329,14 @@ namespace AltLibrary.Core {
 				WorldGen.SquareTileFrame(i, j);
 				if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, i, j);
 			}
+		}
+
+		public override bool? IsTileBiomeSightable(int i, int j, int type, ref Color sightColor) {
+			if (TileSets.BiomeSightColors[type] is Color color) {
+				sightColor = color;
+				return true;
+			}
+			return null;
 		}
 	}
 }

@@ -350,6 +350,11 @@ namespace AltLibrary.Common.AltBiomes {
 		/// If this is set to true, none of this biome's conversions will be reversed by purification powder or green solution
 		/// </summary>
 		public bool NoDeconversion = false;
+
+		/// <summary>
+		/// The color biome sight potions will highlight this biome's tiles in
+		/// </summary>
+		public virtual Color? BiomeSightColor => null;
 		public virtual Color AltUnderworldColor => Color.Black;
 		public virtual Asset<Texture2D>[] AltUnderworldBackgrounds => new Asset<Texture2D>[14];
 		public virtual AltMaterialContext MaterialContext => null;
@@ -498,6 +503,7 @@ namespace AltLibrary.Common.AltBiomes {
 			}
 			if (spread) {
 				SpreadingTiles.Add(block);
+				TileSets.BiomeSightColors[block] = BiomeSightColor;
 			}
 			if (NoDeconversion) ALConvertInheritanceData.tileParentageData.NoDeconversion.Add(block);
 		}
