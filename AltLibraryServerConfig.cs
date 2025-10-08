@@ -8,10 +8,6 @@ namespace AltLibrary {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 		public static AltLibraryServerConfig Config;
 
-		[ReloadRequired]
-		[DefaultValue(true)]
-		public bool SecretFeatures;
-
 		[Header("$Mods.AltLibrary.Config.Randomization")]
 
 		[DefaultValue(false)]

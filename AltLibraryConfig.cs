@@ -30,30 +30,11 @@ namespace AltLibrary {
 			}
 		}
 
-		[DefaultValue(true)]
-		public bool VanillaShowUpIfOnlyAltVarExist;
-
-		[DefaultValue(true)]
-		public bool SpecialSeedWorldPreview;
-
-		[OptionStrings(["None", "Hallow only", "Jungle only", "Both"])]
-		[DefaultValue("Hallow only")]
-		public string PreviewVisible;
-
-		[DefaultValue(true)]
-		public bool BiomeIconsVisible;
-
-		[DefaultValue(true)]
-		public bool OreIconsVisible;
-
 		[DefaultValue(false)]
 		public bool ZenithIconJank;
 
 		[DefaultValue(0), CustomModConfigItem(typeof(EvilBiomeCountRangeElement))]
 		public int DrunkMaxBiomes;
-
-		[JsonIgnore]
-		public bool OldWorldCreationUI => false;
 
 #pragma warning restore CS0649
 
