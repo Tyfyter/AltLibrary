@@ -7,12 +7,13 @@ Mods: {
 		AnalysisDone: Hey {0}, I've been running some data on {1}. Take a look!
 		BiomeOrOreModSecret: It's a secret to everybody
 
-		Analyser: {
-			Dialog: {
-				0: "1"
-				1: "2"
-				2: "3"
-			}
+		CLI: {
+			SelectOres: "Select ores? ({0}/{1}): "
+			ChooseEvil: Choose world evil:
+			ChooseHallow: Choose world hallow:
+			ChooseHell: Choose world hell:
+			ChooseJungle: Choose world jungle:
+			ChooseOre: Choose world {0}:
 		}
 
 		TownNPCMood: {
@@ -424,11 +425,13 @@ Mods: {
 			AdamantiteAltOre: {
 				DisplayName: Adamantite
 				Description: ""
+				BlessMessage: "[c/DD5598:Your world has been blessed with {0}!]"
 			}
 
 			CobaltAltOre: {
 				DisplayName: Cobalt
 				Description: ""
+				BlessMessage: "[c/1A69A1:Your world has been blessed with {0}!]"
 			}
 
 			CopperAltOre: {
@@ -454,16 +457,19 @@ Mods: {
 			MythrilAltOre: {
 				DisplayName: Mythril
 				Description: ""
+				BlessMessage: "[c/5D9358:Your world has been blessed with {0}!]"
 			}
 
 			OrichalcumAltOre: {
 				DisplayName: Orichalcum
 				Description: ""
+				BlessMessage: "[c/A3169E:Your world has been blessed with {0}!]"
 			}
 
 			PalladiumAltOre: {
 				DisplayName: Palladium
 				Description: ""
+				BlessMessage: "[c/EB572F:Your world has been blessed with {0}!]"
 			}
 
 			PlatinumAltOre: {
@@ -484,6 +490,7 @@ Mods: {
 			TitaniumAltOre: {
 				DisplayName: Titanium
 				Description: ""
+				BlessMessage: "[c/B9C2D7:Your world has been blessed with {0}!]"
 			}
 
 			TungstenAltOre: {
