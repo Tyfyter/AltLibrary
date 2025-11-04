@@ -1,6 +1,6 @@
 displayName = Alternatives Library
 author = Moonlight Glint (1.1 and onward), formerly FoxXD_ and RQXY // cace
-version = 2.1.2.2
+version = 2.1.2.4
 
 hideCode = false
 hideResources = true

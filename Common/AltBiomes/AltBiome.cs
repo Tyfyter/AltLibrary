@@ -1,9 +1,11 @@
 ﻿using AltLibrary.Common.Hooks;
+using AltLibrary.Core;
 using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PegasusLib;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,8 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
+using static AltLibrary.Core.Grasses;
+using static Terraria.GameContent.Bestiary.IL_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
@@ -361,6 +365,37 @@ namespace AltLibrary.Common.AltBiomes {
 		public sealed override void SetupContent() {
 			if (NPCsHate && Biome is not null) ShopHelper_EvilBiomes.DangerousBiomes.Add(Biome);
 			SetStaticDefaults();
+			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);
+			if (BiomeType == BiomeType.Jungle) {
+				if (BiomeGrass != null) {
+					AltLibrary.jungleGrass.Add((int)BiomeGrass);
+				} else {
+					if (BiomeJungleGrass != null) AltLibrary.jungleGrass.Add((int)BiomeJungleGrass);
+				}
+				if (BiomeMowedGrass != null) AltLibrary.jungleGrass.Add((int)BiomeGrass);
+				if (BiomeOre != null) AltLibrary.evilStoppingOres.Add((int)BiomeOre);
+				if (BiomeOreBrick != null) AltLibrary.evilStoppingOres.Add((int)BiomeOreBrick);
+			}
+			if (this is VanillaBiome) return;
+			if (!createdGrassType) {
+				GrassGrowthSettings settings = new(BiomeType is BiomeType.Evil or BiomeType.Hallow, BiomeType is BiomeType.Evil or BiomeType.Hallow);
+				switch ((BiomeGrass.HasValue, BiomeJungleGrass.HasValue)) {
+					case (true, true):
+					CreateGrassType(settings, (TileID.Dirt, BiomeGrass.Value), (TileID.Mud, BiomeJungleGrass.Value));
+					break;
+					case (true, false):
+					CreateGrassType(settings, (TileID.Dirt, BiomeGrass.Value));
+					break;
+					case (false, true):
+					CreateGrassType(settings, (TileID.Mud, BiomeJungleGrass.Value));
+					break;
+				}
+			}
+		}
+		bool createdGrassType = false;
+		public void CreateGrassType(GrassGrowthSettings settings, params (int dirtType, int grassType)[] types) {
+			if (!createdGrassType.TrySet(true)) return;
+			Grasses.Register(settings, types);
 		}
 		/// <summary>
 		/// Called before a tile is converted to a different biome
@@ -404,17 +439,6 @@ namespace AltLibrary.Common.AltBiomes {
 				return;
 			}
 			AltLibrary.Biomes.Add(this);
-			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);
-			if (BiomeType == BiomeType.Jungle) {
-				if (BiomeGrass != null) {
-					AltLibrary.jungleGrass.Add((int)BiomeGrass);
-				} else {
-					if (BiomeJungleGrass != null) AltLibrary.jungleGrass.Add((int)BiomeJungleGrass);
-				}
-				if (BiomeMowedGrass != null) AltLibrary.jungleGrass.Add((int)BiomeGrass);
-				if (BiomeOre != null) AltLibrary.evilStoppingOres.Add((int)BiomeOre);
-				if (BiomeOreBrick != null) AltLibrary.evilStoppingOres.Add((int)BiomeOreBrick);
-			}
 			if (BiomeType == BiomeType.Hell && AltUnderworldBackgrounds != null && AltUnderworldBackgrounds.Length != TextureAssets.Underworld.Length) {
 				throw new IndexOutOfRangeException(nameof(AltUnderworldBackgrounds) + " length isn't same as Underworld's! (" + TextureAssets.Underworld.Length + ")");
 			}
@@ -487,6 +511,7 @@ namespace AltLibrary.Common.AltBiomes {
 					break;
 
 					case TileID.JungleGrass:
+					BiomeJungleGrass = block;
 					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.MushroomGrass, block);
 					break;
 
