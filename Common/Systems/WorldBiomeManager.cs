@@ -245,7 +245,7 @@ namespace AltLibrary.Common.Systems {
 			tag.Add("AltLibrary:WorldHell", WorldHell?.FullName ?? "AltLibrary/UnderworldAltBiome");
 			tag.Add("AltLibrary:WorldJungle", WorldJungle?.FullName ?? "AltLibrary/JungleAltBiome");
 			tag.Add("AltLibrary:DrunkEvil", drunkEvilName);
-			tag.Add("AltLibrary:Ores", (ores??[]).Select(ore => new TagCompound {
+			tag.Add("AltLibrary:Ores", (ores ?? []).Select(ore => new TagCompound {
 				["Slot"] = ore.OreSlot.FullName,
 				["Ore"] = ore.FullName
 			}).Concat((unloadedOres ?? []).Select(unloadedOre => new TagCompound {
@@ -292,8 +292,6 @@ namespace AltLibrary.Common.Systems {
 						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Silver) ?? GetInstance<SilverAltOre>();
 					} else if (slot is GoldOreSlot) {
 						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Gold) ?? GetInstance<GoldAltOre>();
-					} else if (slot is GoldOreSlot) {
-						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Gold) ?? GetInstance<GoldAltOre>();
 					} else if (slot is CobaltOreSlot) {
 						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Cobalt) ?? GetInstance<CobaltAltOre>();
 					} else if (slot is MythrilOreSlot) {
@@ -312,7 +310,18 @@ namespace AltLibrary.Common.Systems {
 			drunkCobaltCycle = null;
 			drunkMythrilCycle = null;
 			drunkAdamantiteCycle = null;
+			UpdateSavedOreTiers();
 		}
+		internal static void UpdateSavedOreTiers() {
+			WorldGen.SavedOreTiers.Copper = GetAltOre<CopperOreSlot>().ore;
+			WorldGen.SavedOreTiers.Iron = GetAltOre<IronOreSlot>().ore;
+			WorldGen.SavedOreTiers.Silver = GetAltOre<SilverOreSlot>().ore;
+			WorldGen.SavedOreTiers.Gold = GetAltOre<GoldOreSlot>().ore;
+			WorldGen.SavedOreTiers.Cobalt = GetAltOre<CobaltOreSlot>().ore;
+			WorldGen.SavedOreTiers.Mythril = GetAltOre<MythrilOreSlot>().ore;
+			WorldGen.SavedOreTiers.Adamantite = GetAltOre<AdamantiteOreSlot>().ore;
+		}
+		public override void PostUpdateTime() => UpdateSavedOreTiers();
 
 		public override void NetSend(BinaryWriter writer) {
 			writer.Write(WorldEvilName);

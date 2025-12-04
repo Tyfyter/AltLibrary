@@ -58,7 +58,7 @@ namespace AltLibrary.Common.Hooks
 								newItem.velocity.X *= -1f;
 							}
 						}
-						NetMessage.SendData(145, -1, -1, null, newItem.whoAmI, 1f);
+						NetMessage.SendData(MessageID.SyncItemsWithShimmer, -1, -1, null, newItem.whoAmI, 1f);
 					}
 				}
 				self.stack -= decraftAmount * recipe.createCount;
