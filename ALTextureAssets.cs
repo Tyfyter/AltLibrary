@@ -1,15 +1,16 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.GameContent.Bestiary.BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
-namespace AltLibrary
-{
-	internal static class ALTextureAssets
-	{
+namespace AltLibrary {
+	internal static class ALTextureAssets {
 		internal static Asset<Texture2D>[] AnimatedModIcon = new Asset<Texture2D>[4];
 		internal static Asset<Texture2D> Button;
 		internal static Asset<Texture2D> Button2;
@@ -43,15 +44,12 @@ namespace AltLibrary
 		internal static Asset<Texture2D>[,] PreviewSpecialSizes;
 		internal static Asset<Texture2D>[] UIWorldSeedIcon;
 
-		internal static void Load()
-		{
-			if (Main.netMode == NetmodeID.Server)
-			{
+		internal static void Load() {
+			if (Main.netMode == NetmodeID.Server) {
 				return;
 			}
 
-			for (int i = 0; i < AnimatedModIcon.Length; i++)
-			{
+			for (int i = 0; i < AnimatedModIcon.Length; i++) {
 				AnimatedModIcon[i] = Asset<Texture2D>.Empty;//ModContent.Request<Texture2D>($"AltLibrary/Assets/Icons/AMIcon_{i}", AssetRequestMode.AsyncLoad);
 			}
 			Button = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Button", AssetRequestMode.AsyncLoad);
@@ -86,58 +84,31 @@ namespace AltLibrary
 			PreviewSpecialSizes[0, 0] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeSmall", AssetRequestMode.AsyncLoad);
 			PreviewSpecialSizes[0, 1] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeMedium", AssetRequestMode.AsyncLoad);
 			PreviewSpecialSizes[0, 2] = Main.Assets.Request<Texture2D>("Images/UI/WorldCreation/PreviewSizeLarge", AssetRequestMode.AsyncLoad);
-			for (int i = 0; i < 7; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
+			for (int i = 0; i < 7; i++) {
+				for (int j = 0; j < 3; j++) {
 					PreviewSpecialSizes[i + 1, j] = ModContent.Request<Texture2D>($"AltLibrary/Assets/WorldPreviews/Preview_{i}_{j}", AssetRequestMode.AsyncLoad);
 				}
 			}
 		}
 
-		internal static void PostContentLoad()
-		{
-			if (Main.netMode == NetmodeID.Server)
-			{
-				return;
+		internal static void PostContentLoad() {
+			if (Main.netMode == NetmodeID.Server) return;
+			int biomeCount = AltLibrary.Biomes.Count;
+			void Fill(ref Asset<Texture2D>[] array, string defaultTexture, Func<AltBiome, string> func) {
+				array = new Asset<Texture2D>[biomeCount];
+				Asset<Texture2D> @default = ModContent.Request<Texture2D>("AltLibrary/Assets/Menu/Empty", AssetRequestMode.AsyncLoad);
+				for (int i = 0; i < array.Length; i++) {
+					string texture = func(AltLibrary.Biomes[i]);
+					if (texture == defaultTexture || !ModContent.RequestIfExists(texture, out array[i])) array[i] = @default;
+				}
 			}
 
-			List<Asset<Texture2D>> biomeSmall = new();
-			biomeSmall.Clear();
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				string path = "AltLibrary/Assets/Menu/Empty";
-				if (biome.IconSmall != path && ModContent.RequestIfExists(biome.IconSmall, out Asset<Texture2D> asset))
-					path = biome.Mod.Name + "/" + asset.Name;
-				biomeSmall.Add(path != "AltLibrary/Assets/Menu/Empty" ? ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad) : null);
-			}
-			BiomeIconSmall = biomeSmall.ToArray();
-
-			List<Asset<Texture2D>> biomeOuter = new();
-			biomeOuter.Clear();
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				string path = "AltLibrary/Assets/Loading/Outer Empty";
-				if (biome.OuterTexture != path && ModContent.RequestIfExists(biome.OuterTexture, out Asset<Texture2D> asset))
-					path = biome.Mod.Name + "/" + asset.Name;
-				biomeOuter.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad));
-			}
-			BiomeOuter = biomeOuter.ToArray();
-
-			List<Asset<Texture2D>> biomeLower = new();
-			biomeLower.Clear();
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				string path = "AltLibrary/Assets/Loading/Outer Lower Empty";
-				if (biome.LowerTexture != path && ModContent.RequestIfExists(biome.LowerTexture, out Asset<Texture2D> asset))
-					path = biome.Mod.Name + "/" + asset.Name;
-				biomeLower.Add(ModContent.Request<Texture2D>(path, AssetRequestMode.AsyncLoad));
-			}
-			BiomeLower = biomeLower.ToArray();
+			Fill(ref BiomeIconSmall, "AltLibrary/Assets/Menu/Empty", biome => biome.IconSmall);
+			Fill(ref BiomeOuter, "AltLibrary/Assets/Loading/Outer Empty", biome => biome.OuterTexture);
+			Fill(ref BiomeLower, "AltLibrary/Assets/Loading/Outer Lower Empty", biome => biome.LowerTexture);
 		}
 
-		internal static void Unload()
-		{
+		internal static void Unload() {
 			AnimatedModIcon = null;
 			Button = null;
 			Button2 = null;
