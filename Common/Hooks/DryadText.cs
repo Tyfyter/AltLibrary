@@ -19,13 +19,11 @@ namespace AltLibrary.Common.Hooks {
 
 		private static void On_WorldGen_CountTiles(On_WorldGen.orig_CountTiles orig, int X) {
 			if (X == 0) {
-				Utils.Swap(ref WorldBiomeManager.biomeCountsWorking, ref WorldBiomeManager.biomeCountsFinished);
-				WorldBiomeManager.biomeCountsWorking.Clear();
-				WorldBiomeManager.biomePercents.Clear();
-				foreach (KeyValuePair<int, int> kvp in WorldBiomeManager.biomeCountsFinished) {
-					if (kvp.Value > 0) {
-						WorldBiomeManager.biomePercents.Add(kvp.Key, (byte)Math.Max(Math.Round((kvp.Value * 100.0) / WorldGen.totalSolid2), 1));
-					}
+				Utils.Swap(ref WorldBiomeManager.BiomeCountsWorking, ref WorldBiomeManager.BiomeCountsFinished);
+				Array.Clear(WorldBiomeManager.BiomeCountsWorking);
+				Array.Clear(WorldBiomeManager.BiomePercents);
+				foreach ((int i, int count) in WorldBiomeManager.BiomeCountsFinished.Iterate()) {
+					WorldBiomeManager.BiomePercents[i] = (byte)Math.Max(Math.Round(count * 100.0 / WorldGen.totalSolid2), 1);
 				}
 			}
 			orig(X);
@@ -37,18 +35,18 @@ namespace AltLibrary.Common.Hooks {
 			worldIsEntirelyPure = true;
 			List<(AltBiome biome, byte percent)> hallows = [];
 			List<(AltBiome biome, byte percent)> evils = [];
-			foreach (KeyValuePair<int, byte> _biome in WorldBiomeManager.biomePercents) {
-				AltBiome biome = AltLibrary.GetAltBiome(_biome.Key);
+			foreach ((int i, byte percent) in WorldBiomeManager.BiomePercents.Iterate()) {
+				AltBiome biome = AltLibrary.GetAltBiome(i);
 				if (biome is not null) {
 					switch (biome.BiomeType) {
 						case BiomeType.Evil:
-						evils.Add((biome, _biome.Value));
-						tEvil += _biome.Value;
+						evils.Add((biome, percent));
+						tEvil += percent;
 						worldIsEntirelyPure = false;
 						break;
 						case BiomeType.Hallow:
-						hallows.Add((biome, _biome.Value));
-						tGood += _biome.Value;
+						hallows.Add((biome, percent));
+						tGood += percent;
 						worldIsEntirelyPure = false;
 						break;
 					}
@@ -104,10 +102,9 @@ namespace AltLibrary.Common.Hooks {
 
 			c.EmitDelegate(() => {
 				for (int i = 0; i < WorldGen.tileCounts.Length; i++) {
-					if (WorldGen.tileCounts[i] > 0 && ALConvertInheritanceData.tileParentageData.TryGetParent(i, out (int baseTile, AltBiome fromBiome) parent) && parent.fromBiome is not null) {
-						if (parent.fromBiome is DeconvertAltBiome) continue;
-						WorldBiomeManager.biomeCountsWorking.TryGetValue(parent.fromBiome.Type, out int alreadyCounted);
-						WorldBiomeManager.biomeCountsWorking[parent.fromBiome.Type] = alreadyCounted + WorldGen.tileCounts[i];
+					if (WorldGen.tileCounts[i] > 0 && TileSets.GetOwnerBiome(i) is AltBiome fromBiome) {
+						if (fromBiome is DeconvertAltBiome) continue;
+						WorldBiomeManager.BiomeCountsWorking[fromBiome.Type] += WorldGen.tileCounts[i];
 						WorldGen.totalSolid2 += WorldGen.tileCounts[i];
 					}
 				}

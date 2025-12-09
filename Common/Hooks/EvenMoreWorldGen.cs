@@ -64,9 +64,6 @@ namespace AltLibrary.Common.Hooks {
 				AltLibrary.Instance.Logger.Error("Missing Message set in Underworld GenPass");
 			}
 
-			ALUtils.ReplaceIDs(il, TileID.Ash,
-				(orig) => (ushort)WorldBiomeManager.GetWorldHell(false).TileConversions[TileID.Stone],
-				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.TileConversions.ContainsKey(TileID.Stone));
 			ALUtils.ReplaceIDs(il, TileID.Hellstone,
 				(orig) => (ushort?)WorldBiomeManager.GetWorldHell(false).BiomeOre ?? orig,
 				(orig) => WorldBiomeManager.GetWorldHell(false) is AltBiome hell && hell.BiomeOre.HasValue);

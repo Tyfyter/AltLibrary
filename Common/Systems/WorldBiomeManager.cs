@@ -3,37 +3,33 @@ using AltLibrary.Common.AltOres;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using static Terraria.ModLoader.ModContent;
 using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AltLibrary.Common.Systems {
 	public class WorldBiomeManager : ModSystem {
 		public static AltBiome GetWorldEvil(bool includeVanilla = true, bool includeDrunk = false) {
 			if (Main.drunkWorld && includeDrunk) {
-				if (includeVanilla || !drunkEvilName.StartsWith("Terraria/")) {
+				if (includeVanilla || DrunkEvil is not VanillaBiome) {
 					return DrunkEvil;
 				}
 			}
-			if (includeVanilla || WorldEvilName != "") {
+			if (includeVanilla || WorldEvilBiome is not VanillaBiome) {
 				return WorldEvilBiome;
 			}
 			return null;
 		}
 		public static AltBiome GetDrunkEvil(bool includeVanilla = true) {
-			if (includeVanilla || !drunkEvilName.StartsWith("Terraria/")) {
+			if (includeVanilla || DrunkEvil is not VanillaBiome) {
 				return DrunkEvil;
 			}
 			return null;
 		}
 		public static AltBiome GetWorldHallow(bool includeVanilla = true) {
-			if (includeVanilla || WorldHallowName != "") {
+			if (includeVanilla || WorldHallowBiome is not VanillaBiome) {
 				return WorldHallowBiome;
 			}
 			return null;
@@ -64,11 +60,7 @@ namespace AltLibrary.Common.Systems {
 			get => worldEvilBiome;
 			set {
 				worldEvilBiome = value;
-				if (value.Type < 0) {
-					worldEvilName = "";
-				} else {
-					worldEvilName = value.FullName;
-				}
+				worldEvilName = value.FullName;
 			}
 		}
 		static string worldEvilName = "";
@@ -82,11 +74,7 @@ namespace AltLibrary.Common.Systems {
 			get => worldHallowBiome;
 			set {
 				worldHallowBiome = value;
-				if (value.Type < 0) {
-					worldHallowName = "";
-				} else {
-					worldHallowName = value.FullName;
-				}
+				worldHallowName = value.FullName;
 			}
 		}
 		public static string WorldHallowName {
@@ -113,11 +101,7 @@ namespace AltLibrary.Common.Systems {
 			get => worldHell;
 			set {
 				worldHell = value;
-				if (value.Type < 0) {
-					worldHellName = "";
-				} else {
-					worldHellName = value.FullName;
-				}
+				worldHellName = value.FullName;
 			}
 		}
 		public static string WorldHellName {
@@ -139,11 +123,7 @@ namespace AltLibrary.Common.Systems {
 			get => worldJungle;
 			set {
 				worldJungle = value;
-				if (value.Type < 0) {
-					worldJungleName = "";
-				} else {
-					worldJungleName = value.FullName;
-				}
+				worldJungleName = value.FullName;
 			}
 		}
 		public static string WorldJungleName {
@@ -197,9 +177,9 @@ namespace AltLibrary.Common.Systems {
 		public static ref AltOre GetAltOre(OreSlot slot) => ref ores[slot.Type];
 		internal static int hmOreIndex = 0;
 
-		public static bool IsCorruption => WorldEvilName == "" && !WorldGen.crimson;
-		public static bool IsCrimson => WorldEvilName == "" && WorldGen.crimson;
-		public static bool IsAnyModdedEvil => WorldEvilName != "" && !WorldGen.crimson;
+		public static bool IsCorruption => WorldEvilBiome is CorruptionAltBiome;
+		public static bool IsCrimson => WorldEvilBiome is CrimsonAltBiome;
+		public static bool IsAnyModdedEvil => WorldEvilBiome is not VanillaBiome;
 
 		//do not need to sync, world seed should be constant between players
 		internal static AltOre[] drunkCobaltCycle;
@@ -211,17 +191,27 @@ namespace AltLibrary.Common.Systems {
 			drunkAdamantiteCycle = null;
 		}
 
-		public static Dictionary<int, int> biomeCountsWorking = [];
-		public static Dictionary<int, int> biomeCountsFinished = [];
-		public static Dictionary<int, byte> biomePercents = [];
+		static int[] biomeCountsWorking = [];
+		static int[] biomeCountsFinished = [];
+		static byte[] biomePercents = [];
+
+		static ref T[] ValidateSet<T>(ref T[] set, int length) {
+			if (set.Length != length) Array.Resize(ref set, length);
+			return ref set;
+		}
+		public static ref int[] BiomeCountsWorking => ref ValidateSet(ref biomeCountsWorking, AltLibrary.Biomes.Count);
+		public static ref int[] BiomeCountsFinished => ref ValidateSet(ref biomeCountsFinished, AltLibrary.Biomes.Count);
+		public static ref byte[] BiomePercents => ref ValidateSet(ref biomePercents, AltLibrary.Biomes.Count);
 		public override void OnWorldLoad() {
-			biomePercents.Clear();
+			Array.Clear(biomePercents);
 		}
 
 		public override void OnWorldUnload() {
-			biomePercents.Clear();
+			Array.Clear(biomePercents);
 		}
-
+		public override void ClearWorld() {
+			ores = new AltOre[OreSlotLoader.OreSlotCount];
+		}
 		public override void Unload() {
 			worldEvilBiome = null;
 			worldEvilName = null;

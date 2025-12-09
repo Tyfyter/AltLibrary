@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
+using AltLibrary.Core.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -173,71 +174,27 @@ namespace AltLibrary
 		}
 
 		static Dictionary<string, AltLibraryConfig.WorldDataValues> worldDatas = [];
-		public static void GetWorldData(UIWorldListItem self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2) {
-			if (self.Data.TryGetHeaderData<WorldBiomeManager>(out TagCompound header)) {
-				tempDict = worldDatas;
-				path2 = self.Data.Path;
-				AltLibraryConfig.WorldDataValues worldData = default;
+		public static bool GetWorldData(UIWorldListItem self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2) {
+			bool shouldReplaceIcon = self.Data.TryGetHeaderData<WorldBiomeManager>(out TagCompound header);
+			tempDict = worldDatas;
+			path2 = self.Data.Path;
+			AltLibraryConfig.WorldDataValues worldData = default;
+			if (shouldReplaceIcon) {
 				header.TryGet("WorldEvil", out worldData.worldEvil);
 				header.TryGet("WorldHallow", out worldData.worldHallow);
 				header.TryGet("WorldHell", out worldData.worldHell);
 				header.TryGet("WorldJungle", out worldData.worldJungle);
 				header.TryGet("DrunkEvil", out worldData.drunkEvil);
-				worldData.Validate();
-				worldDatas[path2] = worldData;
 			} else {
-				WorldFileData _data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self);
-				path2 = Path.ChangeExtension(_data.Path, ".twld");
-				tempDict = AltLibraryConfig.Config.GetWorldData();
-				try {
-					if (!tempDict.ContainsKey(path2)) {
-						if (!FileUtilities.Exists(path2, _data.IsCloudSave)) {
-							return;
-						}
-						byte[] buf = FileUtilities.ReadAllBytes(path2, _data.IsCloudSave);
-						if (buf[0] != 31 || buf[1] != 139) {
-							return;
-						}
-						MemoryStream stream = new MemoryStream(buf);
-						TagCompound tag = TagIO.FromStream(stream);
-						bool containsMod = false;
-						if (tag.ContainsKey("modData")) {
-							foreach (TagCompound modDataTag in tag.GetList<TagCompound>("modData").Skip(2)) {
-								if (modDataTag.Get<string>("mod") == AltLibrary.Instance.Name) {
-									TagCompound dataTag = modDataTag.Get<TagCompound>("data");
-									AltLibraryConfig.WorldDataValues worldData;
-									worldData.worldEvil = dataTag.Get<string>("AltLibrary:WorldEvil");
-									worldData.worldHallow = dataTag.Get<string>("AltLibrary:WorldHallow");
-									worldData.worldHell = dataTag.Get<string>("AltLibrary:WorldHell");
-									worldData.worldJungle = dataTag.Get<string>("AltLibrary:WorldJungle");
-									worldData.drunkEvil = dataTag.Get<string>("AltLibrary:DrunkEvil");
-									tempDict[path2] = worldData;
-									containsMod = true;
-									break;
-								}
-							}
-							if (!containsMod) {
-								AltLibraryConfig.WorldDataValues worldData;
-								worldData.worldHallow = "";
-								worldData.worldEvil = "";
-								worldData.worldHell = "";
-								worldData.worldJungle = "";
-								worldData.drunkEvil = "";
-								tempDict[path2] = worldData;
-							}
-							AltLibraryConfig.Config.SetWorldData(tempDict);
-						}
-					}
-				} catch (Exception) {
-					AltLibraryConfig.WorldDataValues worldData;
-					worldData.worldHallow = "";
-					worldData.worldEvil = "";
-					worldData.worldHell = "";
-					worldData.worldJungle = "";
-					worldData.drunkEvil = "";
-					tempDict[path2] = worldData;
-				}
+				worldData.worldHallow = "";
+				worldData.worldEvil = "";
+				worldData.worldHell = "";
+				worldData.worldJungle = "";
+				worldData.drunkEvil = "";
 			}
+			worldData.Validate();
+			worldDatas[path2] = worldData;
+			return shouldReplaceIcon;
 		}
 
 		internal static void DrawBoxedCursorTooltip(SpriteBatch spriteBatch, string text) {

@@ -1,5 +1,6 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Core;
+using AltLibrary.Core.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil;
@@ -22,12 +23,10 @@ using Terraria.UI;
 namespace AltLibrary.Common.Hooks {
 	//TODO: completely redesign and rewrite this (other than the icons in the top right), maybe even go out of your way to chastise whoever wrote it
 	//but first find a better way
-	internal static class WorldIcons
-	{
+	internal static class WorldIcons {
 		internal static int WarnUpdate = 0;
 
-		public static void Init()
-		{
+		public static void Init() {
 			IL_UIWorldListItem.ctor += UIWorldListItem_ctor;
 			IL_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf1;
 			On_UIWorldListItem.DrawSelf += UIWorldListItem_DrawSelf;
@@ -35,51 +34,40 @@ namespace AltLibrary.Common.Hooks {
 			WarnUpdate = 0;
 		}
 
-		public static void Unload()
-		{
+		public static void Unload() {
 			WarnUpdate = 0;
 		}
-		private static Asset<Texture2D> UIWorldListItem_GetIcon(On_AWorldListItem.orig_GetIcon orig, AWorldListItem self)
-		{
+		private static Asset<Texture2D> UIWorldListItem_GetIcon(On_AWorldListItem.orig_GetIcon orig, AWorldListItem self) {
 			Asset<Texture2D> asset = orig(self);
-			if (asset.Height() == 58)
-			{
-				if (asset.Width() == 59)
-				{
+			if (asset.Height() == 58) {
+				if (asset.Width() == 59) {
 					return ALTextureAssets.UIWorldSeedIcon[1];
-				}
-				else if (asset.Width() == 60)
-				{
+				} else if (asset.Width() == 60) {
 					return ALTextureAssets.UIWorldSeedIcon[0];
 				}
 			}
 			return asset;
 		}
 
-		private static void UIWorldListItem_DrawSelf1(ILContext il)
-		{
+		private static void UIWorldListItem_DrawSelf1(ILContext il) {
 			ILCursor c = new(il);
-			if (!c.TryGotoNext(i => i.MatchCall<Color>("get_White")))
-			{
+			if (!c.TryGotoNext(i => i.MatchCall<Color>("get_White"))) {
 				AltLibrary.Instance.Logger.Error("s $ 1");
 				return;
 			}
 
 			c.Index++;
 			c.Emit(OpCodes.Ldarg, 0);
-			c.EmitDelegate<Func<Color, UIWorldListItem, Color>>((value, self) =>
-			{
+			c.EmitDelegate<Func<Color, UIWorldListItem, Color>>((value, self) => {
 				return ALUtils.IsWorldValid(self) ? value : Color.MediumPurple;
 			});
 		}
 
-		private static void UIWorldListItem_ctor(ILContext il)
-		{
+		private static void UIWorldListItem_ctor(ILContext il) {
 			ILCursor c = new(il);
 			FieldReference canBePlayed = null;
 			if (!c.TryGotoNext(i => i.MatchLdarg(3),
-				i => i.MatchStfld(out canBePlayed)))
-			{
+				i => i.MatchStfld(out canBePlayed))) {
 				AltLibrary.Instance.Logger.Error("t $ 1");
 				return;
 			}
@@ -88,25 +76,21 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldarg, 0);
 			c.Emit(OpCodes.Ldarg, 0);
 			c.Emit(OpCodes.Ldarg, 3);
-			c.EmitDelegate<Func<UIWorldListItem, bool, bool>>((self, canPlay) =>
-			{
+			c.EmitDelegate<Func<UIWorldListItem, bool, bool>>((self, canPlay) => {
 				return ALUtils.IsWorldValid(self) && canPlay;
 			});
 			c.Emit(OpCodes.Stfld, canBePlayed);
 
-			if (!c.TryGotoNext(i => i.MatchLdftn(out _)))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdftn(out _))) {
 				AltLibrary.Instance.Logger.Error("t $ 2");
 				return;
 			}
 			FieldReference fieldReference = null;
-			if (!c.TryGotoNext(i => i.MatchLdfld(out fieldReference)))
-			{
+			if (!c.TryGotoNext(i => i.MatchLdfld(out fieldReference))) {
 				AltLibrary.Instance.Logger.Error("t $ 3");
 				return;
 			}
-			if (!c.TryGotoNext(i => i.MatchCall(out _)))
-			{
+			if (!c.TryGotoNext(i => i.MatchCall(out _))) {
 				AltLibrary.Instance.Logger.Error("t $ 4");
 				return;
 			}
@@ -114,9 +98,8 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldarg_0);
 			c.Emit(OpCodes.Ldarg_0);
 			c.Emit(OpCodes.Ldfld, fieldReference);
-			c.EmitDelegate<Action<UIWorldListItem, UIImage>>((uiWorldListItem, _worldIcon) =>
-			{
-				WorldFileData data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(uiWorldListItem);
+			c.EmitDelegate<Action<UIWorldListItem, UIImage>>((uiWorldListItem, _worldIcon) => {
+				WorldFileData data = uiWorldListItem.Data;
 				ALUtils.GetWorldData(uiWorldListItem, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 
 				//TODO: zenith icon
@@ -139,65 +122,50 @@ namespace AltLibrary.Common.Hooks {
 		/// <param name="image"></param>
 		/// <param name="tempDict"></param>
 		/// <param name="path2"></param>
-		private static void LayeredIcons(WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2)
-		{
+		private static void LayeredIcons(WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2) {
 			Dictionary<string, Func<WorldFileData, bool>> assets = new();
 			bool bl2 = data.DrunkWorld && tempDict.ContainsKey(path2);
-			if (data.HasCrimson && bl2 && tempDict[path2].worldEvil == "" && ModContent.RequestIfExists("AltLibrary/Assets/WorldIcons/DrunkBase/Crimson", out Asset<Texture2D> newAsset2))
-			{
+			if (data.HasCrimson && bl2 && tempDict[path2].worldEvil == "" && ModContent.RequestIfExists("AltLibrary/Assets/WorldIcons/DrunkBase/Crimson", out Asset<Texture2D> newAsset2)) {
 				UIImage worldIcon = new(newAsset2);
 				worldIcon.Height.Set(0, 1);
 				worldIcon.Width.Set(0, 1);
 				image.Append(worldIcon);
 			}
-			if (data.HasCorruption && bl2 && tempDict[path2].worldEvil == "" && ModContent.RequestIfExists("AltLibrary/Assets/WorldIcons/DrunkBase/Corruption", out Asset<Texture2D> newAsset3))
-			{
+			if (data.HasCorruption && bl2 && tempDict[path2].worldEvil == "" && ModContent.RequestIfExists("AltLibrary/Assets/WorldIcons/DrunkBase/Corruption", out Asset<Texture2D> newAsset3)) {
 				UIImage worldIcon = new(newAsset3);
 				worldIcon.Height.Set(0, 1);
 				worldIcon.Width.Set(0, 1);
 				image.Append(worldIcon);
 			}
-			if (data.HasCorruption && bl2 && tempDict[path2].worldEvil != "" && ModContent.TryFind(tempDict[path2].worldEvil, out AltBiome altBiome) && ModContent.RequestIfExists(altBiome?.WorldIcon + "DrunkBase", out Asset<Texture2D> newAsset1))
-			{
+			if (data.HasCorruption && bl2 && tempDict[path2].worldEvil != "" && ModContent.TryFind(tempDict[path2].worldEvil, out AltBiome altBiome) && ModContent.RequestIfExists(altBiome?.WorldIcon + "DrunkBase", out Asset<Texture2D> newAsset1)) {
 				UIImage worldIcon = new(newAsset1);
 				worldIcon.Height.Set(0, 1);
 				worldIcon.Width.Set(0, 1);
 				image.Append(worldIcon);
 			}
 
-			assets.Add("Corrupt", (ourData) =>
-			{
+			assets.Add("Corrupt", (ourData) => {
 				return ourData.DrunkWorld && tempDict.ContainsKey(path2) && tempDict[path2].drunkEvil == "Terraria/Corruption";
 			});
-			assets.Add("Crimson", (ourData) =>
-			{
+			assets.Add("Crimson", (ourData) => {
 				return ourData.DrunkWorld && tempDict.ContainsKey(path2) && tempDict[path2].drunkEvil == "Terraria/Crimson";
 			});
-			foreach (AltBiome biome in AltLibrary.Biomes)
-			{
-				if (biome.BiomeType == BiomeType.Evil)
-				{
-					assets.Add(biome.FullName, (ourData) =>
-					{
+			foreach (AltBiome biome in AltLibrary.Biomes) {
+				if (biome.BiomeType == BiomeType.Evil) {
+					assets.Add(biome.FullName, (ourData) => {
 						return ourData.DrunkWorld && tempDict.ContainsKey(path2) && tempDict[path2].drunkEvil == biome.FullName;
 					});
 				}
 			}
-			assets.Add("Hallow", (ourData) =>
-			{
+			assets.Add("Hallow", (ourData) => {
 				return ourData.DrunkWorld && ourData.IsHardMode && tempDict.ContainsKey(path2) && tempDict[path2].worldHallow == "";
 			});
-			foreach (AltBiome biomes in AltLibrary.Biomes)
-			{
-				if (!biomes.FullName.StartsWith("Terraria/") && biomes.BiomeType != BiomeType.Evil)
-				{
+			foreach (AltBiome biomes in AltLibrary.Biomes) {
+				if (!biomes.FullName.StartsWith("Terraria/") && biomes.BiomeType != BiomeType.Evil) {
 					AltBiome biome = ModContent.Find<AltBiome>(biomes.FullName);
-					if (biome is not null && tempDict.ContainsKey(path2))
-					{
-						assets.Add(biome.FullName, new Func<WorldFileData, bool>((ourData) =>
-						{
-							string equals = biome.BiomeType switch
-							{
+					if (biome is not null && tempDict.ContainsKey(path2)) {
+						assets.Add(biome.FullName, new Func<WorldFileData, bool>((ourData) => {
+							string equals = biome.BiomeType switch {
 								BiomeType.Hallow => tempDict[path2].worldHallow,
 								BiomeType.Jungle => tempDict[path2].worldJungle,
 								BiomeType.Hell => tempDict[path2].worldHell,
@@ -213,15 +181,12 @@ namespace AltLibrary.Common.Hooks {
 			}
 
 			bool bl = data.DrunkWorld;
-			foreach (KeyValuePair<string, Func<WorldFileData, bool>> entry in assets)
-			{
+			foreach (KeyValuePair<string, Func<WorldFileData, bool>> entry in assets) {
 				string path = $"AltLibrary/Assets/WorldIcons/Drunk/{entry.Key.Replace("Terraria/", "")}";
-				if (entry.Key != "Corrupt" && entry.Key != "Crimson" && entry.Key != "Hallow")
-				{
+				if (entry.Key != "Corrupt" && entry.Key != "Crimson" && entry.Key != "Hallow") {
 					path = ModContent.Find<AltBiome>(entry.Key).WorldIcon + "Drunk";
 				}
-				if (bl && entry.Value.Invoke(data) && ModContent.RequestIfExists(path, out Asset<Texture2D> newAsset))
-				{
+				if (bl && entry.Value.Invoke(data) && ModContent.RequestIfExists(path, out Asset<Texture2D> newAsset)) {
 					UIImage worldIcon = new(newAsset);
 					worldIcon.Height.Set(0, 1);
 					worldIcon.Width.Set(0, 1);
@@ -230,11 +195,9 @@ namespace AltLibrary.Common.Hooks {
 			}
 		}
 		static FastFieldInfo<UIImageButton, Asset<Texture2D>> _texture = "_texture";
-		private static void UIWorldListItem_DrawSelf(On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch)
-		{
+		private static void UIWorldListItem_DrawSelf(On_UIWorldListItem.orig_DrawSelf orig, UIWorldListItem self, SpriteBatch spriteBatch) {
 			orig(self, spriteBatch);
-			if (++WarnUpdate >= 120)
-			{
+			if (++WarnUpdate >= 120) {
 				WarnUpdate = 0;
 			}
 			if ((WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) == null)
@@ -242,7 +205,7 @@ namespace AltLibrary.Common.Hooks {
 			ALUtils.GetWorldData(self, out Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, out string path2);
 			UIElement _worldIcon = ALReflection.UIWorldListItem__worldIcon.GetValue(self);
 
-			WorldFileData _data = (WorldFileData)typeof(UIWorldListItem).GetField("_data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self);
+			WorldFileData _data = self.Data;
 			CalculatedStyle innerDimensions = self.GetInnerDimensions();
 			CalculatedStyle dimensions = _worldIcon.GetDimensions();
 			float num7 = innerDimensions.X + innerDimensions.Width;
@@ -341,25 +304,20 @@ namespace AltLibrary.Common.Hooks {
 			}
 		}
 
-		private static void LayeredIcons(string forWhich, WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2)
-		{
+		private static void LayeredIcons(string forWhich, WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2) {
+			if (data.Name != "___Corr") ;
 			Dictionary<string, Func<WorldFileData, bool>> assets = new()
 			{
-				{ "Corrupt", new Func<WorldFileData, bool>((ourData) => ourData.HasCorruption && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil == "") },
+				{ "Corruption", new Func<WorldFileData, bool>((ourData) => ourData.HasCorruption && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil == "") },
 				{ "Crimson", new Func<WorldFileData, bool>((ourData) => ourData.HasCrimson && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil == "") },
 				{ "Hallow", new Func<WorldFileData, bool>((ourData) => ourData.IsHardMode && tempDict.ContainsKey(path2) && tempDict[path2].worldHallow == "") }
 			};
-			foreach (AltBiome biomes in AltLibrary.Biomes)
-			{
-				if (!biomes.FullName.StartsWith("Terraria/"))
-				{
+			foreach (AltBiome biomes in AltLibrary.Biomes) {
+				if (!biomes.FullName.StartsWith("Terraria/")) {
 					AltBiome biome = ModContent.Find<AltBiome>(biomes.FullName);
-					if (biome is not null && tempDict.ContainsKey(path2))
-					{
-						assets.Add(biome.FullName, new Func<WorldFileData, bool>((ourData) =>
-						{
-							string equals = biome.BiomeType switch
-							{
+					if (biome is not null && tempDict.ContainsKey(path2)) {
+						assets.Add(biome.FullName, new Func<WorldFileData, bool>((ourData) => {
+							string equals = biome.BiomeType switch {
 								BiomeType.Hallow => tempDict[path2].worldHallow,
 								BiomeType.Hell => tempDict[path2].worldHell,
 								BiomeType.Jungle => tempDict[path2].worldJungle,
@@ -375,23 +333,27 @@ namespace AltLibrary.Common.Hooks {
 				}
 			}
 			bool bl;
-			if (forWhich != "Normal")
-			{
+			if (forWhich != "Normal") {
 				bl = (bool)typeof(WorldFileData).GetField($"{(forWhich == "Drunk" ? "DrunkWorld" : forWhich)}").GetValue(data);
-			}
-			else
-			{
+			} else {
 				bl = !data.Anniversary && !data.DontStarve && !data.NotTheBees && !data.ForTheWorthy && !data.DrunkWorld && !data.RemixWorld && !data.ZenithWorld;
 			}
-			foreach (KeyValuePair<string, Func<WorldFileData, bool>> entry in assets)
-			{
-				string path = $"AltLibrary/Assets/WorldIcons/{forWhich}/{entry.Key}";
-				if (entry.Key != "Corrupt" && entry.Key != "Crimson" && entry.Key != "Hallow")
-				{
-					path = ModContent.Find<AltBiome>(entry.Key).WorldIcon + forWhich;
+			foreach (KeyValuePair<string, Func<WorldFileData, bool>> entry in assets) {
+				if (!entry.Value.Invoke(data)) continue;
+				string path;
+				switch (entry.Key) {
+					default:
+					string biomePath = ModContent.Find<AltBiome>(entry.Key).WorldIcon;
+					if (string.IsNullOrWhiteSpace(biomePath)) continue;
+					path = biomePath + forWhich;
+					break;
+					case "Corruption":
+					case "Crimson":
+					case "Hallow":
+					path = $"AltLibrary/Assets/WorldIcons/{entry.Key}/{forWhich}";
+					break;
 				}
-				if (bl && entry.Value.Invoke(data) && ModContent.RequestIfExists(path, out Asset<Texture2D> newAsset))
-				{
+				if (bl && ModContent.RequestIfExists(path, out Asset<Texture2D> newAsset)) {
 					UIImage worldIcon = new(newAsset);
 					worldIcon.Height.Set(0, 1);
 					worldIcon.Width.Set(0, 1);
@@ -400,39 +362,30 @@ namespace AltLibrary.Common.Hooks {
 			}
 		}
 
-		private static void ReplaceIcons(WorldFileData data, ref UIImage image)
-		{
+		private static void ReplaceIcons(WorldFileData data, ref UIImage image) {
 			Asset<Texture2D> asset = ALTextureAssets.WorldIconNormal;
-			if (data.DrunkWorld)
-			{
+			if (data.DrunkWorld) {
 				asset = ALTextureAssets.WorldIconDrunk;
-				if (data.HasCrimson)
-				{
+				if (data.HasCrimson) {
 					asset = ALTextureAssets.WorldIconDrunkCrimson;
 				}
-				if (data.HasCorruption)
-				{
+				if (data.HasCorruption) {
 					asset = ALTextureAssets.WorldIconDrunkCorrupt;
 				}
 			}
-			if (data.ForTheWorthy)
-			{
+			if (data.ForTheWorthy) {
 				asset = ALTextureAssets.WorldIconForTheWorthy;
 			}
-			if (data.NotTheBees)
-			{
+			if (data.NotTheBees) {
 				asset = ALTextureAssets.WorldIconNotTheBees;
 			}
-			if (data.Anniversary)
-			{
+			if (data.Anniversary) {
 				asset = ALTextureAssets.WorldIconAnniversary;
 			}
-			if (data.DontStarve)
-			{
+			if (data.DontStarve) {
 				asset = ALTextureAssets.WorldIconDontStarve;
 			}
-			if (data.RemixWorld)
-			{
+			if (data.RemixWorld) {
 				asset = ALTextureAssets.WorldIconRemix;
 			}
 			UIImage worldIcon = new(asset);

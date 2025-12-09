@@ -22,10 +22,12 @@ namespace AltLibrary.Common.Hooks {
 		}
 
 		public static void Unload() { }
+		[field: ThreadStatic]
 		public static bool GERunnerRunning { get; private set; }
 		/// <summary>
 		/// In Not the bees! worlds, hive and crispy honey blocks are replaced with Stone and Hardened Sand equivalents respectively
 		/// </summary>
+		[field: ThreadStatic]
 		public static bool ShouldConvertBeeTiles { get; private set; }
 		private static void WorldGen_GERunner1(On_WorldGen.orig_GERunner orig, int i, int j, double speedX, double speedY, bool good) {
 			if (Main.drunkWorld && WorldBiomeGeneration.WofKilledTimes > 1) {
@@ -78,11 +80,9 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldloc, 7);
 			c.Emit(OpCodes.Ldloc, 5);
 			c.EmitDelegate<Func<int, Tile, int>>((wallType, tile) => {
-				for (int i = 0; i < AltLibrary.Biomes.Count; i++) {
-					AltBiome biome = AltLibrary.Biomes[i];
-					if (biome.BiomeType <= BiomeType.Hallow && biome.HardmodeWalls.Count > 0 && biome.TileConversions.ContainsValue(tile.TileType)) {
-						wallType = WorldGen.genRand.Next(biome.HardmodeWalls);
-					}
+				int owningBiome = TileSets.OwnedByBiomeID[tile.TileType];
+				if (owningBiome >= 0 && AltLibrary.Biomes[owningBiome] is AltBiome biome && biome.BiomeType <= BiomeType.Hallow && biome.HardmodeWalls.Count > 0) {
+					wallType = WorldGen.genRand.Next(biome.HardmodeWalls);
 				}
 				return wallType;
 			});
@@ -112,36 +112,9 @@ namespace AltLibrary.Common.Hooks {
 							continue;
 						}
 						Tile tile = Main.tile[x, y];
-						int tileConversion = biome.GetAltBlock(tile.TileType, x, y, true);
-						if (tileConversion == -1) {
-							if (ALConvertInheritanceData.tileParentageData.TryGetParent(tile.TileType, out (int baseTile, AltBiome fromBiome) parent)) {
-								tileConversion = biome.GetAltBlock(parent.baseTile, x, y, true);
-							}
-							if (tileConversion == -1 && ShouldConvertBeeTiles) {
-								switch (tile.TileType) {
-									case TileID.Hive:
-									tileConversion = biome.GetAltBlock(TileID.Stone, x, y, true);
-									break;
-
-									case TileID.CrispyHoneyBlock:
-									tileConversion = biome.GetAltBlock(TileID.HardenedSand, x, y, true);
-									break;
-								}
-							}
-						}
-						if (tileConversion != -1) {
-							if (tileConversion == -2) {
-								tile.HasTile = false;
-								WorldGen.SquareTileFrame(x, y);
-							} else {
-								tile.TileType = (ushort)tileConversion;
-								WorldGen.SquareTileFrame(x, y);
-							}
-						}
-						int wallConversion = biome.GetAltWall(tile.WallType, x, y, true);
-						if (wallConversion != -1) {
-							tile.WallType = (ushort)wallConversion;
-						}
+						int owningBiome = TileSets.OwnedByBiomeID[tile.TileType];
+						if (owningBiome == biome.Type) continue;
+						WorldGen.Convert(x, y, biome.BiomeConversionType, 0, true);
 					}
 				}
 				position += speed;

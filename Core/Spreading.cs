@@ -12,30 +12,6 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Core {
 	internal class Spreading : GlobalTile {
-		public override void Load() {
-			IL_WorldGen.hardUpdateWorld += IL_WorldGen_hardUpdateWorld;
-		}
-
-		private void IL_WorldGen_hardUpdateWorld(ILContext il) {
-			ILCursor c = new(il);
-			c.GotoNext(MoveType.After, i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.AllowedToSpreadInfections)));
-			c.EmitLdarg0();
-			c.EmitLdarg1();
-			c.EmitDelegate((bool allowedToSpreadInfections, int i, int j) => {
-				if (!allowedToSpreadInfections) return false;
-				ushort type = Main.tile[i, j].TileType;
-				ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
-				AltBiome biome = parent.fromBiome;
-				if (biome is null or VanillaBiome) {
-					return true;
-				}
-				if (biome.SpreadingTiles.Contains(type)) {
-					SpreadInfection(i, j, biome);
-				}
-				return false;
-			});
-		}
-
 		public override void RandomUpdate(int i, int j, int type) {
 			if (Main.tile[i, j].IsActuated) {
 				return;
@@ -43,8 +19,7 @@ namespace AltLibrary.Core {
 			bool isOreGrowingTile = false;
 			bool isJungleSpreadingOre = false;
 			AltBiome biomeToSpread = null;
-			ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
-			AltBiome biome = parent.fromBiome;
+			AltBiome biome = AltLibrary.GetAltBiome(TileSets.OwnedByBiomeID[type]);
 			if (biome is null or VanillaBiome) {
 				return;
 			}
@@ -141,75 +116,8 @@ namespace AltLibrary.Core {
 				}
 			}
 		}
-		private static bool NearbyEvilSlowingOres(int i, int j) {
-			float count = 0f;
-			int worldEdgeDistance = 5;
-			if (i <= worldEdgeDistance + 5 || i >= Main.maxTilesX - worldEdgeDistance - 5) {
-				return false;
-			}
-			if (j <= worldEdgeDistance + 5 || j >= Main.maxTilesY - worldEdgeDistance - 5) {
-				return false;
-			}
-			for (int k = i - worldEdgeDistance; k <= i + worldEdgeDistance; k++) {
-				for (int l = j - worldEdgeDistance; l <= j + worldEdgeDistance; l++) {
-					if (!Main.tile[k, l].IsActuated && AltLibrary.evilStoppingOres.Contains(Main.tile[k, l].TileType)) {
-						count += 1f;
-						if (count >= 4f) {
-							return true;
-						}
-					}
-				}
-			}
-			if (count > 0f && WorldGen.genRand.Next(5) < count) {
-				return true;
-			}
-			return false;
-		}
-		/// <summary>
-		/// Runs the biome spreading function at the given coordinates for the given AltBiome
-		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="j"></param>
-		/// <param name="biome"></param>
-		public static void SpreadInfection(int i, int j, AltBiome biome) {
-			if (Main.hardMode && WorldGen.AllowedToSpreadInfections && !(NPC.downedPlantBoss && !WorldGen.genRand.NextBool(2))) {
-				bool flag = true;
-				while (flag) {
-					flag = false;
-					int xdif = WorldGen.genRand.Next(-3, 4);
-					int ydif = WorldGen.genRand.Next(-3, 4);
-					int targetX = i + xdif;
-					int targetY = j + ydif;
-
-					if (WorldGen.InWorld(targetX, targetY, 10)) {
-						Tile target = Main.tile[targetX, targetY];
-						bool canSpread = target.HasUnactuatedTile && Main.tileSolid[target.TileType];
-						ushort oldTileType = target.TileType;
-						int newTileType = -1;
-
-						if (biome.BiomeType == BiomeType.Evil) {
-							if (WorldGen.nearbyChlorophyte(targetX, targetY)) {
-								WorldGen.ChlorophyteDefense(targetX, targetY);
-								continue;
-							}
-							if (WorldGen.CountNearBlocksTypes(targetX, targetY, 2, 1, TileID.Sunflower) > 0) continue;
-							if (NearbyEvilSlowingOres(targetX, targetY)) continue;
-						}
-						if (canSpread) {
-							newTileType = biome.GetAltBlock(oldTileType, targetX, targetY);
-
-
-							if (newTileType != -1 && newTileType != oldTileType) {
-								if (WorldGen.genRand.NextBool(2)) flag = true;
-								target.TileType = (ushort)newTileType;
-								WorldGen.SquareTileFrame(targetX, targetY);
-								if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, targetX, targetY);
-							}
-						}
-					}
-				}
-			}
-		}
+		/// <inheritdoc cref="WorldGen.SpreadInfectionToNearbyTile"/>
+		public static void SpreadInfection(int i, int j, AltBiome biome) => WorldGen.SpreadInfectionToNearbyTile(i, j, biome.BiomeConversionType);
 		public static void SpreadGrass(int i, int j, GrassType grassType, int remainingSteps = 0, TileColorCache color = default) {
 			int left = i - 1; // defining the bounds of the 3x3 space which will be checked for dirt
 			int right = i + 1;
