@@ -586,7 +586,6 @@ namespace AltLibrary.Common.AltBiomes {
 				TileLoader.RegisterConversion(block.Type, BiomeConversionID.Chlorophyte, purify);
 			}
 			if (block.Type == parentBlock.Type) return;
-			if (TileSets.OwnedByBiomeID[block.Type] == -1) TileSets.OwnedByBiomeID[block.Type] = Type;
 		}
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);
