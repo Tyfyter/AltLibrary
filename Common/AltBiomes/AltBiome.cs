@@ -10,6 +10,7 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Generation;
@@ -17,9 +18,9 @@ using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 using Terraria.WorldBuilding;
 using static AltLibrary.Core.Grasses;
-using static Terraria.GameContent.Bestiary.IL_BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions;
 
 namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
@@ -494,6 +495,98 @@ namespace AltLibrary.Common.AltBiomes {
 					return false;
 				};
 			}
+		}
+		public record MultitileData(int Type, params int[] Styles) {
+			public MultitileData(int type, Range firstStyles, params Range[] styles) : this(type, styles.Concat([firstStyles]).SelectMany(r => {
+				int[] values = new int[(r.End.Value - r.Start.Value) + 1];
+				for (int i = 0; i < values.Length; i++) values[i] = i + r.Start.Value;
+				return values;
+			}).ToArray()) { }
+		}
+		static TileObjectData potsData;
+		static TileObjectData PotsData => potsData ??= new(TileObjectData.Style2x2) {
+			Width = 2,
+			Height = 2,
+			StyleWrapLimit = 3,
+			StyleHorizontal = true
+		};
+		static int GetTileStyle(TileObjectData tileObjectData, Tile getTile) {
+			if (!getTile.HasTile || tileObjectData is null)
+				return -1;
+
+			// Adapted from GetTileData
+			int num = getTile.TileFrameX / tileObjectData.CoordinateFullWidth;
+			int num2 = getTile.TileFrameY / tileObjectData.CoordinateFullHeight;
+			int num3 = tileObjectData.StyleWrapLimit;
+			if (num3 == 0)
+				num3 = 1;
+
+			int styleLineSkip = tileObjectData.StyleLineSkip;
+			int num4 = (!tileObjectData.StyleHorizontal) ? (num / styleLineSkip * num3 + num2) : (num2 / styleLineSkip * num3 + num);
+			int num5 = num4 / tileObjectData.StyleMultiplier;
+
+			return num5;
+		}
+		static TileObjectData GetTileData(Tile tile) => tile.TileType == TileID.Pots ? PotsData : TileObjectData.GetTileData(tile);
+		static TileObjectData GetTileData(int type, int style) => type == TileID.Pots ? PotsData : TileObjectData.GetTileData(type, style);
+		public static TileLoader.ConvertTile CreateMultitileConversion(MultitileData from, MultitileData to) {
+			return (i, j, _, _) => {
+				Tile startTile = Main.tile[i, j];
+				TileObjectData fromData = GetTileData(startTile);
+				int style = GetTileStyle(fromData, startTile);
+				if (startTile.TileType != from.Type || (from.Styles.Length > 0 && !from.Styles.Contains(style)))
+					return true;
+				TileUtils.GetMultiTileTopLeft(i, j, fromData, out int left, out int top);
+
+				TileObjectData toData = GetTileData(to.Type, 0);
+				int targetStyle = to.Styles.Length <= 0 ? WorldGen.genRand.Next(toData.RandomStyleRange) : WorldGen.genRand.Next(to.Styles);
+				int wrapLimit = toData.StyleWrapLimit;
+				if (wrapLimit == 0)
+					wrapLimit = 1;
+
+				int frameX = targetStyle % wrapLimit;
+				int frameY = targetStyle / wrapLimit;
+
+				if (!toData.StyleHorizontal) (frameY, frameX) = (frameX, frameY);
+
+				frameX *= toData.CoordinateFullWidth;
+				frameY *= toData.CoordinateFullHeight;
+				for (int x = 0; x < fromData.Width; x++) {
+					for (int y = 0; y < fromData.Height; y++) {
+						Tile tile = Main.tile[left + x, top + y];
+						tile.TileType = (ushort)to.Type;
+						tile.TileFrameX = (short)(frameX + x * 18);
+						tile.TileFrameY = (short)(frameY + y * 18);
+					}
+				}
+				if (Main.netMode != NetmodeID.SinglePlayer)
+					NetMessage.SendTileSquare(-1, left, top, fromData.Width, fromData.Height);
+				return false;
+			};
+		}
+		public void AddMultiTileConversion(MultitileData block, MultitileData parentBlock, bool oneWay = false) => AddMultiTileConversion(block, parentBlock, out _, oneWay);
+		public void AddMultiTileConversion(MultitileData block, MultitileData parentBlock, out TileLoader.ConvertTile purify, bool oneWay = false) {
+			purify = null;
+			if (block.Type == -2) {
+				TileLoader.RegisterConversion(parentBlock.Type, BiomeConversionType, (i, j, _, _) => {
+					Tile tile = Main.tile[i, j];
+					tile.HasTile = false;
+					WorldGen.SquareTileFrame(i, j);
+					return false;
+				});
+				return;
+			}
+			oneWay |= NoDeconversion;
+
+			TileLoader.RegisterConversion(parentBlock.Type, BiomeConversionType, CreateMultitileConversion(parentBlock, block));
+			if (!oneWay) {
+				purify = CreateMultitileConversion(block, parentBlock);
+				TileLoader.RegisterConversion(block.Type, BiomeConversionID.Purity, purify);
+				TileLoader.RegisterConversion(block.Type, BiomeConversionID.PurificationPowder, purify);
+				TileLoader.RegisterConversion(block.Type, BiomeConversionID.Chlorophyte, purify);
+			}
+			if (block.Type == parentBlock.Type) return;
+			if (TileSets.OwnedByBiomeID[block.Type] == -1) TileSets.OwnedByBiomeID[block.Type] = Type;
 		}
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
 			if (!oneWay) AddChildTile(block, parentBlock);

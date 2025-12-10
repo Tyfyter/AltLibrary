@@ -81,6 +81,8 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.CorruptSandstone, TileID.Sandstone);
 			AddTileConversion(TileID.CorruptThorns, TileID.JungleThorns);
 
+			AddMultiTileConversion(new(TileID.Pots, 48..56), new(TileID.Pots, 0..11));
+
 			BiomeFlesh = TileID.LesionBlock;
 			BiomeFleshWall = WallID.LesionBlock;
 
@@ -154,6 +156,8 @@ namespace AltLibrary.Common.AltBiomes
 			AddTileConversion(TileID.CrimsonHardenedSand, TileID.HardenedSand);
 			AddTileConversion(TileID.CrimsonSandstone, TileID.Sandstone);
 			AddTileConversion(TileID.CrimsonThorns, TileID.JungleThorns);
+
+			AddMultiTileConversion(new(TileID.Pots, 66..74), new(TileID.Pots, 0..11));
 
 			BiomeFlesh = TileID.FleshBlock;
 			BiomeFleshWall = WallID.Flesh;
