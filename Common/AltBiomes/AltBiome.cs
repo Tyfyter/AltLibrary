@@ -18,7 +18,6 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.WorldBuilding;
 using static AltLibrary.Core.Grasses;
-using static Terraria.Utilities.NPCUtils;
 
 namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
