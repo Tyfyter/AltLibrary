@@ -220,6 +220,10 @@ namespace AltLibrary.Common.Systems {
 
 		public override void OnWorldUnload() {
 			biomePercents.Clear();
+			Array.Clear(ores);
+		}
+		public override void ClearWorld() {
+			ores ??= new AltOre[OreSlotLoader.OreSlotCount];
 		}
 
 		public override void Unload() {
@@ -298,9 +302,8 @@ namespace AltLibrary.Common.Systems {
 						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Mythril) ?? GetInstance<MythrilAltOre>();
 					} else if (slot is AdamantiteOreSlot) {
 						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Adamantite) ?? GetInstance<AdamantiteAltOre>();
-					} else {
-						ores[i] = OreSlotLoader.GetOres(slot).FirstOrDefault();
 					}
+					ores[i] ??= slot.FallbackOre;
 				}
 			}
 			hmOreIndex = tag.GetInt("AltLibrary:HardmodeOreIndex");
@@ -313,6 +316,27 @@ namespace AltLibrary.Common.Systems {
 			UpdateSavedOreTiers();
 		}
 		internal static void UpdateSavedOreTiers() {
+			for (int i = 0; i < ores.Length; i++) {
+				if (ores[i] is null) {
+					OreSlot slot = OreSlotLoader.GetOreSlot(i);
+					if (slot is CopperOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Copper) ?? GetInstance<CopperAltOre>();
+					} else if (slot is IronOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Iron) ?? GetInstance<IronAltOre>();
+					} else if (slot is SilverOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Silver) ?? GetInstance<SilverAltOre>();
+					} else if (slot is GoldOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Gold) ?? GetInstance<GoldAltOre>();
+					} else if (slot is CobaltOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Cobalt) ?? GetInstance<CobaltAltOre>();
+					} else if (slot is MythrilOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Mythril) ?? GetInstance<MythrilAltOre>();
+					} else if (slot is AdamantiteOreSlot) {
+						ores[i] = AltLibrary.Ores.FirstOrDefault(ore => ore.ore == WorldGen.SavedOreTiers.Adamantite) ?? GetInstance<AdamantiteAltOre>();
+					}
+					ores[i] ??= slot.FallbackOre;
+				}
+			}
 			WorldGen.SavedOreTiers.Copper = GetAltOre<CopperOreSlot>().ore;
 			WorldGen.SavedOreTiers.Iron = GetAltOre<IronOreSlot>().ore;
 			WorldGen.SavedOreTiers.Silver = GetAltOre<SilverOreSlot>().ore;
