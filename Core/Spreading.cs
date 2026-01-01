@@ -13,27 +13,18 @@ using Terraria.ModLoader;
 namespace AltLibrary.Core {
 	internal class Spreading : GlobalTile {
 		public override void Load() {
-			IL_WorldGen.hardUpdateWorld += IL_WorldGen_hardUpdateWorld;
+			On_WorldGen.hardUpdateWorld += On_WorldGen_hardUpdateWorld;
 		}
 
-		private void IL_WorldGen_hardUpdateWorld(ILContext il) {
-			ILCursor c = new(il);
-			c.GotoNext(MoveType.After, i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.AllowedToSpreadInfections)));
-			c.EmitLdarg0();
-			c.EmitLdarg1();
-			c.EmitDelegate((bool allowedToSpreadInfections, int i, int j) => {
-				if (!allowedToSpreadInfections) return false;
-				ushort type = Main.tile[i, j].TileType;
-				ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
-				AltBiome biome = parent.fromBiome;
-				if (biome is null or VanillaBiome) {
-					return true;
-				}
-				if (biome.SpreadingTiles.Contains(type)) {
-					SpreadInfection(i, j, biome);
-				}
-				return false;
-			});
+		private void On_WorldGen_hardUpdateWorld(On_WorldGen.orig_hardUpdateWorld orig, int i, int j) {
+			orig(i, j);
+			ushort type = Main.tile[i, j].TileType;
+			ALConvertInheritanceData.tileParentageData.TryGetParent(type, out (int baseTile, AltBiome fromBiome) parent);
+			AltBiome biome = parent.fromBiome;
+			if (biome is null or VanillaBiome) return;
+			if (biome.SpreadingTiles.Contains(type)) {
+				SpreadInfection(i, j, biome);
+			}
 		}
 
 		public override void RandomUpdate(int i, int j, int type) {
