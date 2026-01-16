@@ -29,7 +29,11 @@ namespace AltLibrary.Common.AltBiomes {
 		public BiomeType BiomeType { get; set; }
 		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public virtual int ConversionType => BiomeConversionType;
-		public int BiomeConversionType { get; internal set; } = -1;
+		public int BiomeConversionType { get; protected set; } = -1;
+		/// <summary>
+		/// Override this to return true and set <see cref="BiomeConversionType"/> if you want to define your biome's conversion ID manually
+		/// </summary>
+		public virtual bool ManuallyDefinedConversionType => false;
 		public virtual bool NPCsHate => BiomeType == BiomeType.Evil;
 		public int Type { get; private protected set; }
 		public virtual string LocalizationCategory => "AltBiomes";
@@ -421,7 +425,7 @@ namespace AltLibrary.Common.AltBiomes {
 			if (BiomeType == BiomeType.Hell && AltUnderworldBackgrounds != null && AltUnderworldBackgrounds.Length != TextureAssets.Underworld.Length) {
 				throw new IndexOutOfRangeException(nameof(AltUnderworldBackgrounds) + " length isn't same as Underworld's! (" + TextureAssets.Underworld.Length + ")");
 			}
-			if (this is not VanillaBiome) BiomeConversionType = BiomeConversionLoader.Register(new AltBiomeConversion(this));
+			if (this is not VanillaBiome && !ManuallyDefinedConversionType) BiomeConversionType = BiomeConversionLoader.Register(new AltBiomeConversion(this));
 		}
 
 		/// <summary>
