@@ -102,19 +102,19 @@ namespace AltLibrary.Common.Hooks {
 			while (c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(TileID.DemonAltar))) {
 				if (c.Previous.Previous.MatchLdsfld<Lang>(nameof(Lang.gen))) continue;
 				c.EmitDelegate<Func<int, int>>((value) => {
-					if (WorldBiomeManager.WorldEvilBiome?.AltarTile is int type) return type;
+					if (WorldBiomeManager.WorldEvil?.AltarTile is int type) return type;
 					return value;
 				});
 				if (c.Next.MatchLdloc(out _) && c.Next.Next.MatchCall<WorldGen>(nameof(WorldGen.Place3x2))) {
 					c.Index++;
 					c.EmitDelegate<Func<int, int>>((value) => {
-						if (WorldBiomeManager.WorldEvilBiome?.AltarTile is not null) return 0;
+						if (WorldBiomeManager.WorldEvil?.AltarTile is not null) return 0;
 						return value;
 					});
 				}
 			}
 			return;
-			ILLabel startNormalAltar = c.DefineLabel();
+			/*ILLabel startNormalAltar = c.DefineLabel();
 			if (!c.TryGotoNext(i => i.MatchLdsfld<WorldGen>(nameof(WorldGen.crimson)))) {
 				AltLibrary.Instance.Logger.Error("ILGenPassAltars could not find use of WorldGen.crimson");
 				return;
@@ -159,7 +159,7 @@ namespace AltLibrary.Common.Hooks {
 				AltLibrary.Instance.Logger.Error("e $ 3");
 				return;
 			}
-			placedAltar.Target = origPlacedAltar.Target;
+			placedAltar.Target = origPlacedAltar.Target;*/
 		}
 
 		//TODO: make alt ores so I can test this
@@ -312,7 +312,7 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldloc, x);
 			c.Emit(OpCodes.Ldloc, y);
 			c.EmitDelegate<Action<int, int>>((x, y) => {
-				ALConvert.ConvertTile(x, y, GetRemixBiome(x));
+				ALConvert.Convert(GetRemixBiome(x), x, y, 0);
 			});
 			c.Emit(OpCodes.Br, skipLabel);
 			c.GotoLabel(skipLabel, MoveType.After);
@@ -402,7 +402,7 @@ namespace AltLibrary.Common.Hooks {
 		}
 		public static void DrunkRemixGrassConvert(int i, int j, int conversionType, int size = 4) {
 			if (size != 1 || (conversionType != 1 && conversionType != 4)) {
-				WorldGen.Convert(i, j, conversionType, size);
+				WorldGen.Convert(i, j, conversionType, size, true);
 				return;
 			}
 			AltBiome evil = conversionType == 4 ? WorldBiomeManager.GetDrunkEvil(true) : WorldBiomeManager.GetWorldEvil(true);
@@ -410,7 +410,7 @@ namespace AltLibrary.Common.Hooks {
 		}
 		public static void SoberRemixGrassConvert(int i, int j, int conversionType, int size = 4) {
 			if (size != 1 || (conversionType != 1 && conversionType != 4)) {
-				WorldGen.Convert(i, j, conversionType, size);
+				WorldGen.Convert(i, j, conversionType, size, true);
 				return;
 			}
 			AltBiome evil = WorldBiomeManager.GetWorldEvil(true);

@@ -1,16 +1,14 @@
-﻿using AltLibrary.Common.AltBiomes;
+﻿#pragma warning disable CS0649
+using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using PegasusLib;
 using PegasusLib.Reflection;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;

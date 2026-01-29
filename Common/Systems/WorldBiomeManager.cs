@@ -17,8 +17,8 @@ namespace AltLibrary.Common.Systems {
 					return DrunkEvil;
 				}
 			}
-			if (includeVanilla || WorldEvilBiome is not VanillaBiome) {
-				return WorldEvilBiome;
+			if (includeVanilla || WorldEvil is not VanillaBiome) {
+				return WorldEvil;
 			}
 			return null;
 		}
@@ -29,120 +29,81 @@ namespace AltLibrary.Common.Systems {
 			return null;
 		}
 		public static AltBiome GetWorldHallow(bool includeVanilla = true) {
-			if (includeVanilla || WorldHallowBiome is not VanillaBiome) {
-				return WorldHallowBiome;
+			if (includeVanilla || WorldHallow is not VanillaBiome) {
+				return WorldHallow;
 			}
 			return null;
 		}
 		public static AltBiome GetWorldHell(bool includeVanilla = true) {
-			if (!includeVanilla && worldHell is VanillaBiome) return null;
-			return worldHell;
+			if (!includeVanilla && WorldHell is VanillaBiome) return null;
+			return WorldHell;
 		}
 		public static AltBiome GetWorldJungle(bool includeVanilla = true) {
-			if (!includeVanilla && worldJungle is VanillaBiome) return null;
-			return worldJungle;
+			if (!includeVanilla && WorldJungle is VanillaBiome) return null;
+			return WorldJungle;
 		}
 		public static string WorldEvilName {
-			get => worldEvilName;
+			get => WorldEvil.FullName;
 			internal set {
-				worldEvilName = value;
 				if (value == "") {
-					WorldEvilBiome = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
-				} else if (TryFind(worldEvilName, out AltBiome altEvil)) {
-					WorldEvilBiome = altEvil;
+					WorldEvil = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+				} else if (TryFind(value, out AltBiome altEvil)) {
+					WorldEvil = altEvil;
 				} else {
-					WorldEvilBiome = new UnloadedAltBiome(value, BiomeType.Evil);
+					WorldEvil = new UnloadedAltBiome(value, BiomeType.Evil);
 				}
 			}
 		}
-		static AltBiome worldEvilBiome;
+		[Obsolete("Use WorldEvil instead")]
 		public static AltBiome WorldEvilBiome {
-			get => worldEvilBiome;
-			set {
-				worldEvilBiome = value;
-				worldEvilName = value.FullName;
-			}
+			get => WorldEvil;
+			set => WorldEvil = value;
 		}
-		static string worldEvilName = "";
-		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
-		public static string WorldEvil {
-			get => worldEvilName;
-			internal set => WorldEvilName = value;
-		}
-		static AltBiome worldHallowBiome;
+		public static AltBiome WorldEvil { get; set; }
+		[Obsolete("Use WorldHallow instead")]
 		public static AltBiome WorldHallowBiome {
-			get => worldHallowBiome;
-			set {
-				worldHallowBiome = value;
-				worldHallowName = value.FullName;
-			}
+			get => WorldHallow;
+			set => WorldHallow = value;
 		}
 		public static string WorldHallowName {
-			get => worldHallowName;
+			get => WorldHallow.FullName;
 			internal set {
-				worldHallowName = value;
 				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
-					worldHallowBiome = GetInstance<HallowAltBiome>();
-					worldHallowName = worldHallowBiome.FullName;
-				} else if (TryFind(worldHallowName, out AltBiome altHallow)) {
-					worldHallowBiome = altHallow;
+					WorldHallow = GetInstance<HallowAltBiome>();
+				} else if (TryFind(value, out AltBiome altHallow)) {
+					WorldHallow = altHallow;
 				} else {
-					worldHallowBiome = new UnloadedAltBiome(value, BiomeType.Hallow);
+					WorldHallow = new UnloadedAltBiome(value, BiomeType.Hallow);
 				}
 			}
 		}
-		static string worldHallowName = "";
-		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
-		public static string WorldHallow {
-			get => worldHallowName;
-			internal set => WorldHallowName = value;
-		}
-		static AltBiome worldHell;
-		public static AltBiome WorldHell {
-			get => worldHell;
-			set {
-				worldHell = value;
-				worldHellName = value.FullName;
-			}
-		}
+		public static AltBiome WorldHallow { get; set; }
+		public static AltBiome WorldHell { get; set; }
 		public static string WorldHellName {
-			get => worldHellName;
+			get => WorldHell.FullName;
 			internal set {
-				worldHellName = value;
 				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
-					worldHell = GetInstance<UnderworldAltBiome>();
-					worldHellName = worldHell.FullName;
-				} else if (TryFind(worldHellName, out AltBiome altHell)) {
-					worldHell = altHell;
+					WorldHell = GetInstance<UnderworldAltBiome>();
+				} else if (TryFind(value, out AltBiome altHell)) {
+					WorldHell = altHell;
 				} else {
-					worldHell = new UnloadedAltBiome(value, BiomeType.Hell);
+					WorldHell = new UnloadedAltBiome(value, BiomeType.Hell);
 				}
 			}
 		}
-		static string worldHellName = "";
-		static AltBiome worldJungle;
-		public static AltBiome WorldJungle {
-			get => worldJungle;
-			set {
-				worldJungle = value;
-				worldJungleName = value.FullName;
-			}
-		}
+		public static AltBiome WorldJungle { get; set; }
 		public static string WorldJungleName {
-			get => worldJungleName;
+			get => WorldJungle.FullName;
 			internal set {
-				worldJungleName = value;
 				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
-					worldJungle = GetInstance<JungleAltBiome>();
-					worldJungleName = worldJungle.FullName;
-				} else if (TryFind(worldJungleName, out AltBiome altJungle)) {
-					worldJungle = altJungle;
+					WorldJungle = GetInstance<JungleAltBiome>();
+				} else if (TryFind(value, out AltBiome altJungle)) {
+					WorldJungle = altJungle;
 				} else {
-					worldJungle = new UnloadedAltBiome(value, BiomeType.Jungle);
+					WorldJungle = new UnloadedAltBiome(value, BiomeType.Jungle);
 				}
 			}
 		}
-		static string worldJungleName = "";
 		internal static string drunkEvilName = "";
 		private static AltBiome drunkEvil;
 		public static AltBiome DrunkEvil {
@@ -180,9 +141,9 @@ namespace AltLibrary.Common.Systems {
 		public static ref AltOre GetAltOre(OreSlot slot) => ref ores[slot.Type];
 		internal static int hmOreIndex = 0;
 
-		public static bool IsCorruption => WorldEvilBiome is CorruptionAltBiome;
-		public static bool IsCrimson => WorldEvilBiome is CrimsonAltBiome;
-		public static bool IsAnyModdedEvil => WorldEvilBiome is not VanillaBiome;
+		public static bool IsCorruption => WorldEvil is CorruptionAltBiome;
+		public static bool IsCrimson => WorldEvil is CrimsonAltBiome;
+		public static bool IsAnyModdedEvil => WorldEvil is not VanillaBiome;
 
 		//do not need to sync, world seed should be constant between players
 		internal static AltOre[] drunkCobaltCycle;
@@ -217,14 +178,10 @@ namespace AltLibrary.Common.Systems {
 			ores ??= new AltOre[OreSlotLoader.OreSlotCount];
 		}
 		public override void Unload() {
-			worldEvilBiome = null;
-			worldEvilName = null;
-			worldHallowBiome = null;
-			worldHallowName = null;
-			worldHell = null;
-			worldHellName = null;
-			worldJungle = null;
-			worldJungleName = null;
+			WorldEvil = null;
+			WorldHallow = null;
+			WorldHell = null;
+			WorldJungle = null;
 			drunkEvilName = null;
 			drunkEvil = null;
 			hmOreIndex = 0;

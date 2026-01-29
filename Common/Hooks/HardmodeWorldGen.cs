@@ -114,7 +114,7 @@ namespace AltLibrary.Common.Hooks {
 						Tile tile = Main.tile[x, y];
 						int owningBiome = TileSets.OwnedByBiomeID[tile.TileType];
 						if (owningBiome == biome.Type) continue;
-						WorldGen.Convert(x, y, biome.BiomeConversionType, 0, true);
+						WorldGen.Convert(x, y, biome.ConversionType, 0, true);
 					}
 				}
 				position += speed;

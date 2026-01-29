@@ -30,6 +30,8 @@ namespace AltLibrary.Common.AltBiomes {
 		readonly IShoppingBiome biome;
 		public sealed override IShoppingBiome Biome => biome;
 		public override bool Selectable => BiomeType != BiomeType.None;
+		public override int ConversionType => base.ConversionType;
+		protected override bool ManuallyDefinedConversionType => true;
 		protected internal VanillaBiome(string name, BiomeType biome, Color nameColor, bool? fix = null, IShoppingBiome shoppingBiome = null, int conversionID = -1) {
 			ALReflection.ModType_Mod.SetValue(this, AltLibrary.Instance);
 			this.name = name;
@@ -40,7 +42,9 @@ namespace AltLibrary.Common.AltBiomes {
 			FleshTableTile = TileID.Tables;
 			FleshChestTile = TileID.Containers;
 			this.biome = shoppingBiome;
+#pragma warning disable CS0618 // Type or member is obsolete
 			BiomeConversionType = conversionID;
+#pragma warning restore CS0618 // Type or member is obsolete
 		}
 	}
 	public class CorruptionAltBiome : VanillaBiome {

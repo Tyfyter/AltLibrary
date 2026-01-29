@@ -305,23 +305,21 @@ namespace AltLibrary.Common.Hooks {
 		}
 
 		private static void LayeredIcons(string forWhich, WorldFileData data, ref UIImage image, Dictionary<string, AltLibraryConfig.WorldDataValues> tempDict, string path2) {
-			if (data.Name != "___Corr") ;
 			Dictionary<string, Func<WorldFileData, bool>> assets = new()
 			{
-				{ "Corruption", new Func<WorldFileData, bool>((ourData) => ourData.HasCorruption && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil == "") },
-				{ "Crimson", new Func<WorldFileData, bool>((ourData) => ourData.HasCrimson && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil == "") },
-				{ "Hallow", new Func<WorldFileData, bool>((ourData) => ourData.IsHardMode && tempDict.ContainsKey(path2) && tempDict[path2].worldHallow == "") }
+				{ "Corruption", new Func<WorldFileData, bool>((ourData) => ourData.HasCorruption && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil is "" or "") },
+				{ "Crimson", new Func<WorldFileData, bool>((ourData) => ourData.HasCrimson && tempDict.ContainsKey(path2) && tempDict[path2].worldEvil is "" or "") },
+				{ "Hallow", new Func<WorldFileData, bool>((ourData) => ourData.IsHardMode && tempDict.ContainsKey(path2) && tempDict[path2].worldHallow is "" or "") }
 			};
-			foreach (AltBiome biomes in AltLibrary.Biomes) {
-				if (!biomes.FullName.StartsWith("Terraria/")) {
-					AltBiome biome = ModContent.Find<AltBiome>(biomes.FullName);
-					if (biome is not null && tempDict.ContainsKey(path2)) {
+			foreach (AltBiome biome in AltLibrary.Biomes) {
+				if (!biome.FullName.StartsWith("Terraria/")) {
+					if (biome is not null && tempDict.TryGetValue(path2, out AltLibraryConfig.WorldDataValues value)) {
 						assets.Add(biome.FullName, new Func<WorldFileData, bool>((ourData) => {
 							string equals = biome.BiomeType switch {
-								BiomeType.Hallow => tempDict[path2].worldHallow,
-								BiomeType.Hell => tempDict[path2].worldHell,
-								BiomeType.Jungle => tempDict[path2].worldJungle,
-								BiomeType.Evil => tempDict[path2].worldEvil,
+								BiomeType.Hallow => value.worldHallow,
+								BiomeType.Hell => value.worldHell,
+								BiomeType.Jungle => value.worldJungle,
+								BiomeType.Evil => value.worldEvil,
 								_ => "",
 							};
 							bool bl = equals == biome.FullName;

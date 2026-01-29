@@ -1,4 +1,5 @@
-﻿using PegasusLib;
+﻿#pragma warning disable CS0649
+using PegasusLib;
 using PegasusLib.Reflection;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

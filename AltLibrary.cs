@@ -30,6 +30,7 @@ namespace AltLibrary {
 
 		internal static List<GlobalBiome> GlobalBiomes = [];
 
+		[Obsolete]
 		internal static List<ALBiomeTileCountModifier> ALBiomeTileCountModifiers = [];
 
 		internal static List<CustomPreviews> PreviewWorldIcons = [];
@@ -209,7 +210,9 @@ namespace AltLibrary {
 			ILHooks.Unload();
 			ALHooks.Unload();
 			AltLibraryServerConfig.Config = null;
+#pragma warning disable CS0612 // Type or member is obsolete
 			ALBiomeTileCountModifiers = null;
+#pragma warning restore CS0612 // Type or member is obsolete
 			ReflectionDictionary.Unload();
 		}
 
@@ -280,8 +283,9 @@ namespace AltLibrary {
 			get {
 #if DEBUG
 				return "Mod was last built in DEBUG configuration";
-#endif
+#else
 				return null;
+#endif
 			}
 		}
 	}

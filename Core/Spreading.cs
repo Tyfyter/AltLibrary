@@ -117,7 +117,7 @@ namespace AltLibrary.Core {
 			}
 		}
 		/// <inheritdoc cref="WorldGen.SpreadInfectionToNearbyTile"/>
-		public static void SpreadInfection(int i, int j, AltBiome biome) => WorldGen.SpreadInfectionToNearbyTile(i, j, biome.BiomeConversionType);
+		public static void SpreadInfection(int i, int j, AltBiome biome) => WorldGen.SpreadInfectionToNearbyTile(i, j, biome.ConversionType);
 		public static void SpreadGrass(int i, int j, GrassType grassType, int remainingSteps = 0, TileColorCache color = default) {
 			int left = i - 1; // defining the bounds of the 3x3 space which will be checked for dirt
 			int right = i + 1;

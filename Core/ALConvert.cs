@@ -149,13 +149,13 @@ namespace AltLibrary.Core {
 			if (biome is null)
 				throw new ArgumentNullException(nameof(biome), "Can't be null!");
 
-			WorldGen.Convert(i, j, biome.BiomeConversionType, size, true);
+			WorldGen.Convert(i, j, biome.ConversionType, size, true);
 			return;
 		}
 		public delegate void ConversionOverrideHack(int baseTile, ref int newTile);
 		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public static (int newTile, AltBiome fromBiome) GetTileConversionState(int i, int j, AltBiome targetBiome) => default;
-		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public static void ConvertTile(int i, int j, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
 			if (!tile.HasTile) return;
@@ -165,7 +165,7 @@ namespace AltLibrary.Core {
 				ConvertMultiTile(i, j, newTile, tileObjectData, fromBiome, targetBiome, silent);
 				return;
 			}
-			WorldGen.Convert(i, j, targetBiome.BiomeConversionType, 0, true, false);
+			WorldGen.Convert(i, j, targetBiome.ConversionType, 0, true, false);
 		}
 		public static void ConvertMultiTile(int i, int j, int newTile, TileObjectData objectData, AltBiome fromBiome, AltBiome targetBiome, bool silent = false) {
 			Tile tile = Main.tile[i, j];
@@ -183,7 +183,7 @@ namespace AltLibrary.Core {
 		}
 		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public static (int newWall, AltBiome fromBiome) GetWallConversionState(int i, int j, AltBiome targetBiome) => default;
-		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public static void ConvertWall(int i, int j, AltBiome targetBiome, bool silent = false) {
 			WorldGen.Convert(i, j, targetBiome.BiomeConversionType, 0, false, true);
 		}

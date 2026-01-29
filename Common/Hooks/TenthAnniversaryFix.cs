@@ -118,7 +118,7 @@ namespace AltLibrary.Common.Hooks {
 			c.Emit(OpCodes.Ldloc, 4);
 			c.Emit(OpCodes.Ldloc, 5);
 			c.EmitDelegate<Action<int, int>>((i, j) => {
-				if (WorldBiomeManager.WorldHallowName != "" && WorldBiomeManager.WorldHallowBiome.BiomeGrass is int biomeGrass) {
+				if (WorldBiomeManager.WorldHallow is not HallowAltBiome && WorldBiomeManager.WorldHallow.BiomeGrass is int biomeGrass) {
 					int size = 1;
 					for (int l = i - size; l <= i + size; l++) {
 						for (int k = j - size; k <= j + size; k++) {

@@ -9,5 +9,6 @@ using Terraria.ModLoader;
 namespace AltLibrary.Core {
 	[Autoload(false)]
 	class AltBiomeConversion(AltBiome biome) : ModBiomeConversion {
+		public override string Name => biome.Name + "_Conversion";
 	}
 }

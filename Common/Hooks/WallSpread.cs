@@ -43,7 +43,7 @@ namespace AltLibrary.Common.Hooks {
 			}
 			if (!foundTile) return;
 
-			Convert(x, y, parentBiome.BiomeConversionType, 0, false, true);
+			Convert(x, y, parentBiome.ConversionType, 0, false, true);
 		}
 		static void On_WorldGen_SpreadDesertWalls(On_WorldGen.orig_SpreadDesertWalls orig, int wallDist, int i, int j) {
 			Tile self = Main.tile[i, j];
@@ -68,7 +68,7 @@ namespace AltLibrary.Common.Hooks {
 			}
 			if (!foundTile) return;
 
-			Convert(x, y, parentBiome.BiomeConversionType, 0, false, true);
+			Convert(x, y, parentBiome.ConversionType, 0, false, true);
 		}
 	}
 }
