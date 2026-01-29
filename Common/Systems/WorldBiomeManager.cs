@@ -64,7 +64,7 @@ namespace AltLibrary.Common.Systems {
 			}
 		}
 		static string worldEvilName = "";
-		[Obsolete("Should never have been designed this way to begin with", false)]
+		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
 		public static string WorldEvil {
 			get => worldEvilName;
 			internal set => WorldEvilName = value;
@@ -81,8 +81,9 @@ namespace AltLibrary.Common.Systems {
 			get => worldHallowName;
 			internal set {
 				worldHallowName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldHallowBiome = GetInstance<HallowAltBiome>();
+					worldHallowName = worldHallowBiome.FullName;
 				} else if (TryFind(worldHallowName, out AltBiome altHallow)) {
 					worldHallowBiome = altHallow;
 				} else {
@@ -91,7 +92,7 @@ namespace AltLibrary.Common.Systems {
 			}
 		}
 		static string worldHallowName = "";
-		[Obsolete("Should never have been designed this way to begin with", false)]
+		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
 		public static string WorldHallow {
 			get => worldHallowName;
 			internal set => WorldHallowName = value;
@@ -108,8 +109,9 @@ namespace AltLibrary.Common.Systems {
 			get => worldHellName;
 			internal set {
 				worldHellName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldHell = GetInstance<UnderworldAltBiome>();
+					worldHellName = worldHell.FullName;
 				} else if (TryFind(worldHellName, out AltBiome altHell)) {
 					worldHell = altHell;
 				} else {
@@ -130,8 +132,9 @@ namespace AltLibrary.Common.Systems {
 			get => worldJungleName;
 			internal set {
 				worldJungleName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldJungle = GetInstance<JungleAltBiome>();
+					worldJungleName = worldJungle.FullName;
 				} else if (TryFind(worldJungleName, out AltBiome altJungle)) {
 					worldJungle = altJungle;
 				} else {
@@ -258,6 +261,7 @@ namespace AltLibrary.Common.Systems {
 			WorldHellName = tag.GetString("AltLibrary:WorldHell");
 			WorldJungleName = tag.GetString("AltLibrary:WorldJungle");
 			drunkEvilName = tag.GetString("AltLibrary:DrunkEvil");
+			RewriterSystem.ValidateBiomeSelections();
 			ores = new AltOre[OreSlotLoader.OreSlotCount];
 			unloadedOres = [];
 			if (tag.TryGet("AltLibrary:Ores", out List<TagCompound> selectedOres)) {

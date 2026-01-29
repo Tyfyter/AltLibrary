@@ -18,11 +18,11 @@ namespace AltLibrary.Common.Hooks
 		}
 
 		private static bool On_Item_CanShimmer(On_Item.orig_CanShimmer orig, Item self) {
-			if (Recipes.ContainsKey(self.type)) return true;
+			if (ItemID.Sets.ShimmerTransformToItem[self.type] == -1 && Recipes.ContainsKey(self.type)) return true;
 			return orig(self);
 		}
 		private static void On_Item_GetShimmered(On_Item.orig_GetShimmered orig, Item self) {
-			if (Recipes.TryGetValue(self.type, out (int createCount, List<(Func<int> type, int count)> ingredients, Recipe recipe) recipe)) {
+			if (ItemID.Sets.ShimmerTransformToItem[self.type] == -1 && Recipes.TryGetValue(self.type, out (int createCount, List<(Func<int> type, int count)> ingredients, Recipe recipe) recipe)) {
 				int decraftAmount = self.stack / recipe.createCount;
 				bool spread = recipe.ingredients.Count > 1;
 				int num = 0;
