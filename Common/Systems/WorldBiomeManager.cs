@@ -3,15 +3,11 @@ using AltLibrary.Common.AltOres;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using static Terraria.ModLoader.ModContent;
 using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AltLibrary.Common.Systems {
 	public class WorldBiomeManager : ModSystem {
@@ -64,15 +60,11 @@ namespace AltLibrary.Common.Systems {
 			get => worldEvilBiome;
 			set {
 				worldEvilBiome = value;
-				if (value.Type < 0) {
-					worldEvilName = "";
-				} else {
-					worldEvilName = value.FullName;
-				}
+				worldEvilName = value.FullName;
 			}
 		}
 		static string worldEvilName = "";
-		[Obsolete("Should never have been designed this way to begin with", false)]
+		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
 		public static string WorldEvil {
 			get => worldEvilName;
 			internal set => WorldEvilName = value;
@@ -82,19 +74,16 @@ namespace AltLibrary.Common.Systems {
 			get => worldHallowBiome;
 			set {
 				worldHallowBiome = value;
-				if (value.Type < 0) {
-					worldHallowName = "";
-				} else {
-					worldHallowName = value.FullName;
-				}
+				worldHallowName = value.FullName;
 			}
 		}
 		public static string WorldHallowName {
 			get => worldHallowName;
 			internal set {
 				worldHallowName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldHallowBiome = GetInstance<HallowAltBiome>();
+					worldHallowName = worldHallowBiome.FullName;
 				} else if (TryFind(worldHallowName, out AltBiome altHallow)) {
 					worldHallowBiome = altHallow;
 				} else {
@@ -103,7 +92,7 @@ namespace AltLibrary.Common.Systems {
 			}
 		}
 		static string worldHallowName = "";
-		[Obsolete("Should never have been designed this way to begin with", false)]
+		[Obsolete("Should never have been designed this way to begin with, will be replaced with one of type AltBiome in 2.2", true)]
 		public static string WorldHallow {
 			get => worldHallowName;
 			internal set => WorldHallowName = value;
@@ -113,19 +102,16 @@ namespace AltLibrary.Common.Systems {
 			get => worldHell;
 			set {
 				worldHell = value;
-				if (value.Type < 0) {
-					worldHellName = "";
-				} else {
-					worldHellName = value.FullName;
-				}
+				worldHellName = value.FullName;
 			}
 		}
 		public static string WorldHellName {
 			get => worldHellName;
 			internal set {
 				worldHellName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldHell = GetInstance<UnderworldAltBiome>();
+					worldHellName = worldHell.FullName;
 				} else if (TryFind(worldHellName, out AltBiome altHell)) {
 					worldHell = altHell;
 				} else {
@@ -139,19 +125,16 @@ namespace AltLibrary.Common.Systems {
 			get => worldJungle;
 			set {
 				worldJungle = value;
-				if (value.Type < 0) {
-					worldJungleName = "";
-				} else {
-					worldJungleName = value.FullName;
-				}
+				worldJungleName = value.FullName;
 			}
 		}
 		public static string WorldJungleName {
 			get => worldJungleName;
 			internal set {
 				worldJungleName = value;
-				if (value == "") {
+				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
 					worldJungle = GetInstance<JungleAltBiome>();
+					worldJungleName = worldJungle.FullName;
 				} else if (TryFind(worldJungleName, out AltBiome altJungle)) {
 					worldJungle = altJungle;
 				} else {
@@ -271,6 +254,7 @@ namespace AltLibrary.Common.Systems {
 			WorldHellName = tag.GetString("AltLibrary:WorldHell");
 			WorldJungleName = tag.GetString("AltLibrary:WorldJungle");
 			drunkEvilName = tag.GetString("AltLibrary:DrunkEvil");
+			RewriterSystem.ValidateBiomeSelections();
 			ores = new AltOre[OreSlotLoader.OreSlotCount];
 			unloadedOres = [];
 			if (tag.TryGet("AltLibrary:Ores", out List<TagCompound> selectedOres)) {
