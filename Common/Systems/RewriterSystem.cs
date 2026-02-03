@@ -7,17 +7,17 @@ using static Terraria.ModLoader.ModContent;
 namespace AltLibrary.Common.Systems {
 	internal class RewriterSystem : ModSystem {
 		public override void OnWorldLoad() {
-			WorldBiomeManager.WorldEvilName ??= "";
-			WorldBiomeManager.WorldHallowName ??= "";
-			WorldBiomeManager.WorldHellName ??= "";
-			WorldBiomeManager.WorldJungleName ??= "";
+			WorldBiomeManager.WorldEvil ??= WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+			WorldBiomeManager.WorldHallow ??= GetInstance<HallowAltBiome>();
+			WorldBiomeManager.WorldHell ??= GetInstance<UnderworldAltBiome>();
+			WorldBiomeManager.WorldJungle ??= GetInstance<JungleAltBiome>();
 			WorldBiomeManager.drunkEvilName ??= "";
 			WorldBiomeManager.DrunkEvil = null;
 		}
 		public static void ValidateBiomeSelections() {
 			HashSet<AltBiome> biomes = [];
-			biomes.Add(WorldBiomeManager.WorldEvilBiome);
-			biomes.Add(WorldBiomeManager.WorldHallowBiome);
+			biomes.Add(WorldBiomeManager.WorldEvil);
+			biomes.Add(WorldBiomeManager.WorldHallow);
 			biomes.Add(WorldBiomeManager.WorldHell);
 			biomes.Add(WorldBiomeManager.WorldJungle);
 			HashSet<BiomeType> hasBiomes = [];
@@ -26,10 +26,10 @@ namespace AltLibrary.Common.Systems {
 				hasBiomes.Add(biome.BiomeType);
 				switch (biome.BiomeType) {
 					case BiomeType.Evil:
-					WorldBiomeManager.WorldEvilBiome = biome;
+					WorldBiomeManager.WorldEvil = biome;
 					break;
 					case BiomeType.Hallow:
-					WorldBiomeManager.WorldHallowBiome = biome;
+					WorldBiomeManager.WorldHallow = biome;
 					break;
 					case BiomeType.Hell:
 					WorldBiomeManager.WorldHell = biome;
@@ -39,12 +39,12 @@ namespace AltLibrary.Common.Systems {
 					break;
 				}
 			}
-			if (hasBiomes.Add(BiomeType.Evil)) WorldBiomeManager.WorldEvilBiome = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
-			if (hasBiomes.Add(BiomeType.Hallow)) WorldBiomeManager.WorldHallowBiome = GetInstance<HallowAltBiome>();
-			if (hasBiomes.Add(BiomeType.Hell)) WorldBiomeManager.WorldHell = GetInstance<UnderworldAltBiome>();
-			if (hasBiomes.Add(BiomeType.Jungle)) WorldBiomeManager.WorldJungle = GetInstance<JungleAltBiome>();
+			if (!hasBiomes.Contains(BiomeType.Evil)) WorldBiomeManager.WorldEvil = WorldGen.crimson ? GetInstance<CrimsonAltBiome>() : GetInstance<CorruptionAltBiome>();
+			if (!hasBiomes.Contains(BiomeType.Hallow)) WorldBiomeManager.WorldHallow = GetInstance<HallowAltBiome>();
+			if (!hasBiomes.Contains(BiomeType.Hell)) WorldBiomeManager.WorldHell = GetInstance<UnderworldAltBiome>();
+			if (!hasBiomes.Contains(BiomeType.Jungle)) WorldBiomeManager.WorldJungle = GetInstance<JungleAltBiome>();
 
-			if (WorldBiomeManager.WorldEvilName != "" && WorldGen.crimson) {
+			if (WorldBiomeManager.WorldEvil is not VanillaBiome && WorldGen.crimson) {
 				WorldGen.crimson = false;
 			}
 		}

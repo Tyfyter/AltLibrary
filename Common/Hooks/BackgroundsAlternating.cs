@@ -18,10 +18,10 @@ using Terraria.Utilities;
 
 namespace AltLibrary.Common
 {
-	[Obsolete("Not yet reimplemented, old implementation caused impressive instability")]
+	[Obsolete("Not yet reimplemented, old implementation caused impressive instability, if you need this, contact me and tell me what you need it for so I can design a working system", true)]
 	public interface IAlternatingSurfaceBackground
 	{
-		void AddIn(string fullName, Func<Player, UnifiedRandom, bool> whenTrue, Func<int> getBg, Action<Player, UnifiedRandom> randomizeBg, Action onEncounter) => BackgroundsAlternating._cacheIndexes.Add(fullName, (whenTrue, getBg, randomizeBg, onEncounter));
+		void AddIn(string fullName, Func<Player, UnifiedRandom, bool> whenTrue, Func<int> getBg, Action<Player, UnifiedRandom> randomizeBg, Action onEncounter) { }// => BackgroundsAlternating._cacheIndexes.Add(fullName, (whenTrue, getBg, randomizeBg, onEncounter));
 
 		abstract Asset<Texture2D> GetFarTexture(int i);
 		abstract Asset<Texture2D> GetCloseTexture(int i);
@@ -31,6 +31,7 @@ namespace AltLibrary.Common
 
 	namespace Hooks
 	{
+		/*
 		public static class BackgroundsAlternating
 		{
 			public static int rand = -1;
@@ -381,5 +382,6 @@ namespace AltLibrary.Common
 				}
 			}
 		}
+		*/
 	}
 }

@@ -70,14 +70,14 @@ namespace AltLibrary.Common {
 			c.EmitDelegate<Action>(() => {
 				Utils.LogAndChatAndConsoleInfoMessage("World alts: Evil - {0} {1}, Tropic - {2} {3}, Underworld - {4} {5}, Good - {6} {7}".FormatWith(
 				[
-					WorldBiomeManager.WorldEvilBiome.Type < 0 ? (WorldBiomeManager.IsCrimson ? -666 : -333) : WorldBiomeManager.WorldEvilBiome.Type,
-					!WorldBiomeManager.IsAnyModdedEvil ? "NONE" : WorldBiomeManager.WorldEvilBiome.DisplayName,
+					WorldBiomeManager.WorldEvil.Type,
+					!WorldBiomeManager.IsAnyModdedEvil ? "NONE" : WorldBiomeManager.WorldEvil.DisplayName,
 					WorldBiomeManager.WorldJungle?.Type,
 					WorldBiomeManager.WorldJungle?.FullName,
 					WorldBiomeManager.WorldHell?.Type,
 					WorldBiomeManager.WorldHell?.FullName,
-					WorldBiomeManager.WorldHallowName == "" ? -1 : WorldBiomeManager.WorldHallowBiome.Type,
-					WorldBiomeManager.WorldHallowName == "" ? "NONE" : WorldBiomeManager.WorldHallowBiome.DisplayName,
+					WorldBiomeManager.WorldHallow.Type,
+					WorldBiomeManager.WorldHallow.DisplayName,
 				]));
 			});
 		}

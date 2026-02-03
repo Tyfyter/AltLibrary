@@ -30,6 +30,7 @@ namespace AltLibrary {
 
 		internal static List<GlobalBiome> GlobalBiomes = [];
 
+		[Obsolete]
 		internal static List<ALBiomeTileCountModifier> ALBiomeTileCountModifiers = [];
 
 		internal static List<CustomPreviews> PreviewWorldIcons = [];
@@ -45,7 +46,7 @@ namespace AltLibrary {
 		internal static bool HallowBunnyUnlocked;
 		internal static int ModIconVariation;
 		static AltLibrary() {
-			AllBiomes = new MultiList<AltBiome>() { VanillaBiomes, Biomes };
+			AllBiomes = new MultiList<AltBiome>() { Biomes };
 		}
 		public AltLibrary() {
 			ALReflection.Init();
@@ -66,7 +67,6 @@ namespace AltLibrary {
 			ALHooks.OnInitialize();
 			ALTextureAssets.PostContentLoad();
 			MimicSummon.SetupContent();
-			ALConvertInheritanceData.FillData();
 			ModSupport.ModSupport.HookAll();
 			AltOreInsideBodies.Setup();
 			ExtractinatorOres.Setup();
@@ -149,11 +149,7 @@ namespace AltLibrary {
 						return "Success";
 					}
 					case "conversiongetultimateparent":
-					if (args.Length != 2)
-						throw new ArgumentException("Arguments cannot be less or more than 0 in length for GetUltimateParent");
-					if (args[1] is not int tile)
-						throw new ArgumentException("Second argument (tile) is not int!");
-					return ALConvertInheritanceData.GetUltimateParent(tile);
+					throw new NotSupportedException("AltLibrary no longer replaces the vanilla conversion system");
 					case "convert":
 					if (args.Length == 6) {
 						if (args[1] is not Mod mod)
@@ -214,18 +210,20 @@ namespace AltLibrary {
 			ILHooks.Unload();
 			ALHooks.Unload();
 			AltLibraryServerConfig.Config = null;
+#pragma warning disable CS0612 // Type or member is obsolete
 			ALBiomeTileCountModifiers = null;
+#pragma warning restore CS0612 // Type or member is obsolete
 			ReflectionDictionary.Unload();
 		}
 
 
 		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
-		public static AltBiome GetAltBiome(int type) => Biomes.FirstOrDefault(x => x.Type == type) ?? VanillaBiomes.FirstOrDefault(x => x.Type == type);
+		public static AltBiome GetAltBiome(int type) => Biomes.GetIfInRange(type);
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
 		public static IReadOnlyList<AltOre> GetAltOres() => Ores;
-		public static AltOre GetAltOre(int type) => Ores[type];
+		public static AltOre GetAltOre(int type) => Ores.GetIfInRange(type);
 		public static int AltAltOre<T>() where T : AltOre => ModContent.GetInstance<T>()?.Type ?? 0;
-
+		
 		internal readonly struct CustomPreviews {
 			internal readonly string seed;
 			internal readonly string pathSmall;
@@ -285,8 +283,9 @@ namespace AltLibrary {
 			get {
 #if DEBUG
 				return "Mod was last built in DEBUG configuration";
-#endif
+#else
 				return null;
+#endif
 			}
 		}
 	}

@@ -73,12 +73,12 @@ namespace AltLibrary.Common {
 			for (int i = 0; i < selectedBiomes.Length; i++) {
 				if (selectedBiomes[i] is RandomOptionBiome) selectedBiomes[i] = Main.rand.Next(selectableBiomes[i].biomes);
 			}
-			WorldBiomeManager.WorldEvilBiome = selectedBiomes[(int)BiomeType.Evil];
-			bool isCrimson = WorldBiomeManager.WorldEvilBiome is CrimsonAltBiome;
-			WorldGen.WorldGenParam_Evil = isCrimson ? 1 : 0;
+			WorldBiomeManager.WorldEvil = selectedBiomes[(int)BiomeType.Evil];
+			bool isCrimson = WorldBiomeManager.WorldEvil is CrimsonAltBiome;
+			WorldGen.WorldGenParam_Evil = isCrimson.ToInt();
 			WorldGen.crimson = isCrimson;
 
-			WorldBiomeManager.WorldHallowBiome = selectedBiomes[(int)BiomeType.Hallow];
+			WorldBiomeManager.WorldHallow = selectedBiomes[(int)BiomeType.Hallow];
 			//TODO: fix name-based system
 			WorldBiomeManager.WorldHell = selectedBiomes[(int)BiomeType.Hell];
 			WorldBiomeManager.WorldJungle = selectedBiomes[(int)BiomeType.Jungle];

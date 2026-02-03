@@ -35,7 +35,7 @@ namespace AltLibrary {
 					return;
 				}
 				if (HallowedOreList.ContainsKey(type)) {
-					AltBiome biome = WorldBiomeManager.WorldHallowBiome;
+					AltBiome biome = WorldBiomeManager.WorldHallow;
 					if (biome.BiomeOre != null)
 						type = (ushort)biome.BiomeOre.Value;
 				}

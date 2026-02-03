@@ -51,23 +51,23 @@ namespace AltLibrary.Common.Hooks {
 		private static void NPC_AttemptToConvertNPCToEvil(ILContext il) {
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptBunny,
-				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodBunny ?? orig),
-				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodBunny.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvil.BloodBunny ?? orig),
+				(orig) => WorldBiomeManager.WorldEvil is not VanillaBiome && WorldBiomeManager.WorldEvil.BloodBunny.HasValue);
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptGoldfish,
-				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodGoldfish ?? orig),
-				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodGoldfish.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvil.BloodGoldfish ?? orig),
+				(orig) => WorldBiomeManager.WorldEvil is not VanillaBiome && WorldBiomeManager.WorldEvil.BloodGoldfish.HasValue);
 			ALUtils.ReplaceIDs(il,
 				NPCID.CorruptPenguin,
-				(orig) => (short)(WorldBiomeManager.WorldEvilBiome.BloodPenguin ?? orig),
-				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BloodPenguin.HasValue);
+				(orig) => (short)(WorldBiomeManager.WorldEvil.BloodPenguin ?? orig),
+				(orig) => WorldBiomeManager.WorldEvil is not VanillaBiome && WorldBiomeManager.WorldEvil.BloodPenguin.HasValue);
 		}
 
 		private static void NPC_CreateBrickBoxForWallOfFlesh(ILContext il) {
 			ALUtils.ReplaceIDs(il,
 				TileID.DemoniteBrick,
-				(orig) => (ushort)(WorldBiomeManager.WorldEvilBiome.BiomeOreBrick ?? orig),
-				(orig) => WorldBiomeManager.WorldEvilName != "" && WorldBiomeManager.WorldEvilBiome.BiomeOreBrick.HasValue);
+				(orig) => (ushort)(WorldBiomeManager.WorldEvil.BiomeOreBrick ?? orig),
+				(orig) => WorldBiomeManager.WorldEvil is not VanillaBiome && WorldBiomeManager.WorldEvil.BiomeOreBrick.HasValue);
 		}
 
 		//TODO: fix when declarative chest loot

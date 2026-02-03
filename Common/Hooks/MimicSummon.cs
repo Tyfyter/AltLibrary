@@ -54,7 +54,6 @@ namespace AltLibrary.Common.Hooks {
 
 			ushort chestTile = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileType;
 			int chestFrame = Main.tile[Main.chest[chestIndex].x, Main.chest[chestIndex].y].TileFrameX / 36;
-			if (!TileID.Sets.BasicChest[chestTile] || (chestTile != 21 || chestFrame < 5 || chestFrame > 6)) ;
 			int selectedKey = -1;
 			for (int i = 0; i < 40; i++) {
 				Item item = Main.chest[chestIndex].item[i];

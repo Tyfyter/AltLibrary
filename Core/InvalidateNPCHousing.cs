@@ -22,12 +22,11 @@ namespace AltLibrary.Core {
 				if (group == TileScanGroup.TotalGoodEvil) {
 					int moddedEvil = 0;
 					int moddedGood = 0;
+					if (!NPCTypeIgnoresSpecificBiome.TryGetValue(npcTypeScoringRoom, out HashSet<AltBiome> ignoreBiomes)) ignoreBiomes = [];
 					for (int i = 0; i < AltLibrary.Biomes.Count; i++) {
 						AltBiome biome = AltLibrary.Biomes[i];
-						if (NPCTypeIgnoresSpecificBiome.TryGetValue(npcTypeScoringRoom, out HashSet<AltBiome> biomes)) {
-							if (biomes.Contains(biome)) continue;
-						}
-						List<int> tileTypes = AltLibrary.Biomes[i].SpreadingTiles;
+						if (ignoreBiomes.Contains(biome)) continue;
+						IReadOnlyList<int> tileTypes = biome.SpreadingTiles;
 						switch (biome.BiomeType) {
 							case BiomeType.Evil:
 							if (NPCTypeIgnoresAllEvil.Contains(npcTypeScoringRoom)) break;

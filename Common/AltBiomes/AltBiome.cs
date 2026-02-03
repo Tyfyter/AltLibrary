@@ -1,19 +1,16 @@
 ﻿using AltLibrary.Common.Hooks;
 using AltLibrary.Core;
-using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
-using Microsoft.CodeAnalysis.FlowAnalysis;
+using AltLibrary.Core.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PegasusLib;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent;
-using Terraria.GameContent.Generation;
 using Terraria.GameContent.Personalities;
 using Terraria.ID;
 using Terraria.Localization;
@@ -24,18 +21,21 @@ using static AltLibrary.Core.Grasses;
 
 namespace AltLibrary.Common.AltBiomes {
 	public abstract class AltBiome : ModType, ILocalizedModType {
-		internal int SpecialValueForWorldUIDoNotTouchElseYouCanBreakStuff { get; set; }
-		internal bool? IsForCrimsonOrCorruptWorldUIFix { get; set; }
+		internal string FullNameOverride = null;
+		public new string FullName => FullNameOverride ?? base.FullName;
 		/// <summary>
 		/// Tells the Library what biome this is an alternative to
 		/// </summary>
 		public BiomeType BiomeType { get; set; }
-		public virtual int ConversionType => BiomeType switch {
-			BiomeType.Evil => 1,
-			BiomeType.Hallow => 2,
-			_ => 0,
-		};
-		internal int BiomeConversionType { get; set; } = -1;
+#pragma warning disable CS0618 // Type or member is obsolete
+		public virtual int ConversionType => BiomeConversionType;
+#pragma warning restore CS0618 // Type or member is obsolete
+		[Obsolete("Use ConversionType instead")]
+		public int BiomeConversionType { get; protected set; } = -1;
+		/// <summary>
+		/// Override this to return true and <see cref="BiomeConversion"/> to return your conversion ID if you want to define your biome's conversion ID manually, such as if you 
+		/// </summary>
+		protected virtual bool ManuallyDefinedConversionType => false;
 		public virtual bool NPCsHate => BiomeType == BiomeType.Evil;
 		public int Type { get; private protected set; }
 		public virtual string LocalizationCategory => "AltBiomes";
@@ -59,14 +59,8 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <summary>
 		/// Used in NPC dialog
 		/// </summary>
-		public virtual LocalizedText WorldEvilStone {
-			get {
-				if (!TileConversions.TryGetValue(TileID.Stone, out int evilStone)) return Language.GetText("misingno");
-				int drop = TileLoader.GetItemDropFromTypeAndStyle(evilStone);
-				if (drop == 0) return Language.GetText("misingno");
-				return Lang.GetItemName(drop);
-			}
-		}
+		public virtual LocalizedText WorldEvilStone => _worldEvilStone;
+		LocalizedText _worldEvilStone = Language.GetText("misingno");
 
 		/// <summary>
 		/// Set this to something if for some reason you need RNG generation types or something
@@ -131,9 +125,6 @@ namespace AltLibrary.Common.AltBiomes {
 		/// </summary>
 		public int? BiomeMowedGrass = null;
 
-		public Dictionary<int, int> TileConversions = new();
-		public Dictionary<int, int> WallConversions = new();
-		public Dictionary<int, int> GERunnerWallConversions = new();
 		/// <summary>
 		/// For Jungle alts. The tile which will replace vanilla Mud.
 		/// </summary>
@@ -167,7 +158,8 @@ namespace AltLibrary.Common.AltBiomes {
 		/// For Evil and Hallow alts. The list of tiles that can spread this biome. 
 		/// This should generally include the biomeGrass, biomeStone, etc blocks, but they can be omitted if you for some reason do not wish for those blocks to spread the biome.
 		/// </summary>
-		public virtual List<int> SpreadingTiles { get; } = [];
+		public virtual List<int> SpreadingTiles => spreadingTiles;
+		List<int> spreadingTiles = [];
 
 		/// <summary>
 		/// For Evil alts, this is the TileID of this biome's equivalent to Demon Altars.
@@ -252,7 +244,7 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <summary>
 		/// The path to the texture that will serve as one of the layers of the tree on the world selection screen.
 		/// </summary>
-		public virtual string WorldIcon => "AltLibrary/Assets/WorldIcons/NullBiome/NullBiome";
+		public virtual string WorldIcon => BiomeType > BiomeType.Hallow ? null : "AltLibrary/Assets/WorldIcons/NullBiome/NullBiome";
 		/// <summary>
 		/// For Evil biomes. The texture that appears around the loading bar on world creation.
 		/// </summary>
@@ -411,20 +403,12 @@ namespace AltLibrary.Common.AltBiomes {
 		/// <returns></returns>
 		public virtual bool ConvertWallAway(int i, int j) => true;
 
-		/// <summary>
-		/// You have no reason to overwrite this unless you need to make some conversions conditional or random
-		/// For Clentaminator purposes. Gets the alt block/wall of the base block/wall. Override this function and call base if you want to add new functionality.
-		/// Returns -1 if it's an invalid conversion
-		/// </summary>
-		public virtual int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) {
-			return TileConversions.TryGetValue(BaseBlock, out int val) ? val : (GERunner && GERunnerConversion.TryGetValue(BaseBlock, out val) ? val : -1);
-		}
-		/// <inheritdoc cref="GetAltBlock(int, int, int, bool)"/>
-		public virtual int GetAltWall(int BaseWall, int posX, int posY, bool GERunner = false) {
-			return WallConversions.TryGetValue(BaseWall, out int val) ? val : (GERunner && GERunnerWallConversions.TryGetValue(BaseWall, out val) ? val : -1);
-		}
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
+		public virtual int GetAltBlock(int BaseBlock, int posX, int posY, bool GERunner = false) => default;
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
+		public virtual int GetAltWall(int BaseWall, int posX, int posY, bool GERunner = false) => default;
 		public bool HasAllTileConversions(params int[] tiles) {
-			for (int i = 0; i < tiles.Length; i++) if (!TileConversions.ContainsKey(tiles[i])) return false;
+			for (int i = 0; i < tiles.Length; i++) if (!TileLoaderReflection.HasConversion(tiles[i], ConversionType)) return false;
 			return true;
 		}
 		protected sealed override void Register() {
@@ -437,13 +421,17 @@ namespace AltLibrary.Common.AltBiomes {
 			if (BiomeType is BiomeType.Evil or BiomeType.Hallow) _ = DryadTextDescriptor.Value;
 			if (this is VanillaBiome) {
 				AltLibrary.VanillaBiomes.Add(this);
-				return;
 			}
+			Type = AltLibrary.Biomes.Count;
 			AltLibrary.Biomes.Add(this);
 			if (BiomeType == BiomeType.Hell && AltUnderworldBackgrounds != null && AltUnderworldBackgrounds.Length != TextureAssets.Underworld.Length) {
 				throw new IndexOutOfRangeException(nameof(AltUnderworldBackgrounds) + " length isn't same as Underworld's! (" + TextureAssets.Underworld.Length + ")");
 			}
-			Type = AltLibrary.Biomes.Count;
+			if (this is not VanillaBiome && !ManuallyDefinedConversionType) {
+#pragma warning disable CS0618 // Type or member is obsolete
+				BiomeConversionType = BiomeConversionLoader.Register(new AltBiomeConversion(this));
+#pragma warning restore CS0618 // Type or member is obsolete
+			}
 		}
 
 		/// <summary>
@@ -568,7 +556,7 @@ namespace AltLibrary.Common.AltBiomes {
 		public void AddMultiTileConversion(MultitileData block, MultitileData parentBlock, out TileLoader.ConvertTile purify, bool oneWay = false) {
 			purify = null;
 			if (block.Type == -2) {
-				TileLoader.RegisterConversion(parentBlock.Type, BiomeConversionType, (i, j, _, _) => {
+				TileLoader.RegisterConversion(parentBlock.Type, ConversionType, (i, j, _, _) => {
 					Tile tile = Main.tile[i, j];
 					tile.HasTile = false;
 					WorldGen.SquareTileFrame(i, j);
@@ -578,7 +566,7 @@ namespace AltLibrary.Common.AltBiomes {
 			}
 			oneWay |= NoDeconversion;
 
-			TileLoader.RegisterConversion(parentBlock.Type, BiomeConversionType, CreateMultitileConversion(parentBlock, block));
+			TileLoader.RegisterConversion(parentBlock.Type, ConversionType, CreateMultitileConversion(parentBlock, block));
 			if (!oneWay) {
 				purify = CreateMultitileConversion(block, parentBlock);
 				TileLoader.RegisterConversion(block.Type, BiomeConversionID.Purity, purify);
@@ -586,25 +574,25 @@ namespace AltLibrary.Common.AltBiomes {
 				TileLoader.RegisterConversion(block.Type, BiomeConversionID.Chlorophyte, purify);
 			}
 			if (block.Type == parentBlock.Type) return;
+			if (TileSets.OwnedByBiomeID[block.Type] == -1) TileSets.OwnedByBiomeID[block.Type] = Type;
 		}
 		public void AddTileConversion(int block, int parentBlock, bool spread = true, bool oneWay = false, bool extraFunctions = true) {
-			if (!oneWay) AddChildTile(block, parentBlock);
-			if (BiomeConversionType != -1) TileLoader.RegisterConversion(parentBlock, BiomeConversionType, CreateConversion(block));
-			if (Main.tileMoss[parentBlock] && TileConversions.TryGetValue(TileID.Stone, out int stone) && TileConversions[parentBlock] == stone) {
-				TileConversions[parentBlock] = block;
-			} else {
-				TileConversions.Add(parentBlock, block);
+			oneWay |= NoDeconversion;
+			CreateConversion(parentBlock);
+			if (parentBlock == TileID.Stone) {
+				int drop = TileLoader.GetItemDropFromTypeAndStyle(block);
+				if (drop == 0) _worldEvilStone = Lang.GetItemName(drop);
 			}
 			if (extraFunctions) {
 				switch (parentBlock) {
 					case TileID.Grass:
 					BiomeGrass = block;
-					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.GolfGrass, block);
+					if (BiomeType == BiomeType.Evil) CreateConversion(TileID.GolfGrass);
 					break;
 
 					case TileID.JungleGrass:
 					BiomeJungleGrass = block;
-					if (BiomeType == BiomeType.Evil) TileConversions.TryAdd(TileID.MushroomGrass, block);
+					if (BiomeType == BiomeType.Evil) CreateConversion(TileID.MushroomGrass);
 					break;
 
 					case TileID.GolfGrass:
@@ -613,66 +601,91 @@ namespace AltLibrary.Common.AltBiomes {
 
 					case TileID.Stone:
 					for (int i = 0; i < Main.tileMoss.Length; i++) {
-						if (Main.tileMoss[i]) TileConversions.TryAdd(i, block);
+						if (Main.tileMoss[i]) CreateConversion(i);
 					}
+					if (block < 0) break;
+					TileLoader.RegisterConversion(TileID.Hive, ConversionType, (i, j, _, _) => {
+						if (!HardmodeWorldGen.GERunnerRunning || !HardmodeWorldGen.ShouldConvertBeeTiles) return true;
+						WorldGen.ConvertTile(i, j, block);
+						return false;
+					});
+					break;
+
+					case TileID.HardenedSand:
+					for (int i = 0; i < Main.tileMoss.Length; i++) {
+						if (Main.tileMoss[i]) CreateConversion(i);
+					}
+					if (block < 0) break;
+					TileLoader.RegisterConversion(TileID.CrispyHoneyBlock, ConversionType, (i, j, _, _) => {
+						if (!HardmodeWorldGen.GERunnerRunning || !HardmodeWorldGen.ShouldConvertBeeTiles) return true;
+						WorldGen.ConvertTile(i, j, block);
+						return false;
+					});
 					break;
 				}
 			}
-			if (spread && block >= 0) {
-				SpreadingTiles.Add(block);
+			if (block < 0) return;
+			if (spread) {
+				spreadingTiles.Add(block);
 				TileSets.BiomeSightColors[block] = BiomeSightColor;
 			}
-			if (NoDeconversion) ALConvertInheritanceData.tileParentageData.NoDeconversion.Add(block);
-		}
-		public void AddWallConversions<T>(params int[] orig) where T : ModWall {
-			ushort type = ContentInstance<T>.Instance.Type;
-			AddWallConversions(type, orig);
-		}
-		public void AddWallConversions(int with, params int[] orig) {
-			foreach (int original in orig) {
-				WallConversions.TryAdd(original, with);
-				ALConvertInheritanceData.wallParentageData.AddParent(with, (original, this));
-				if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
-			}
-		}
-		public void AddWallConversions<T>(params bool[] set) where T : ModWall {
-			ushort type = ContentInstance<T>.Instance.Type;
-			AddWallConversions(type, set);
-		}
-		public void AddWallConversions(int with, params bool[] set) {
-			for (int i = 0; i < set.Length; i++) {
-				if (set[i]) {
-					WallConversions.TryAdd(i, with);
-					ALConvertInheritanceData.wallParentageData.AddParent(with, (i, this));
-					if (NoDeconversion) ALConvertInheritanceData.wallParentageData.NoDeconversion.Add(with);
+			if (TileSets.OwnedByBiomeID[block] == -1) TileSets.OwnedByBiomeID[block] = Type;
+			void CreateConversion(int fromType) {
+				switch (block) {
+					case -2:
+					TileLoader.RegisterConversion(fromType, ConversionType, (i, j, _, _) => {
+						Tile tile = Main.tile[i, j];
+						tile.HasTile = false;
+						WorldGen.SquareTileFrame(i, j);
+						return false;
+					});
+					break;
+
+					default:
+					TileLoader.RegisterSimpleConversion(fromType, ConversionType, block, !oneWay);
+					break;
 				}
 			}
 		}
-		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
+		public void AddWallConversions<T>(params int[] orig) where T : ModWall {
+			AddWallConversions(ModContent.WallType<T>(), orig);
+		}
+		public void AddWallConversions(int with, params int[] orig) {
+			foreach (int original in orig) WallLoader.RegisterSimpleConversion(original, ConversionType, with, !NoDeconversion);
+			if (WallSets.OwnedByBiomeID[with] == -1) WallSets.OwnedByBiomeID[with] = Type;
+		}
+		public void AddWallConversions<T>(params bool[] set) where T : ModWall {
+			AddWallConversions(ModContent.WallType<T>(), set);
+		}
+		public void AddWallConversions(int with, params bool[] set) {
+			for (int i = 0; i < set.Length; i++) {
+				if (set[i]) WallLoader.RegisterSimpleConversion(i, ConversionType, with, !NoDeconversion);
+			}
+			if (WallSets.OwnedByBiomeID[with] == -1) WallSets.OwnedByBiomeID[with] = Type;
+		}
+		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting, this method will be removed in an upcoming version", true)]
 		public void AddWallReplacement(int orig, int with) {
-			WallConversions.TryAdd(orig, with);
-			ALConvertInheritanceData.wallParentageData.AddParent(with, (orig, this));
+			WallLoader.RegisterSimpleConversion(orig, ConversionType, with, !NoDeconversion);
+			if (WallSets.OwnedByBiomeID[with] == -1) WallSets.OwnedByBiomeID[with] = Type;
 		}
-		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting")]
+		[Obsolete("This method's parameters are ordered differently than similar methods, this method has only been kept for the sake of simplifying porting, this method will be removed in an upcoming version", true)]
 		public void AddWallReplacement<T>(params int[] orig) where T : ModWall {
-			ushort type = ContentInstance<T>.Instance.Type;
-			foreach (ushort original in orig) {
-				AddWallReplacement(original, type);
+			int with = ModContent.WallType<T>();
+			foreach (int original in orig) {
+				WallLoader.RegisterSimpleConversion(original, ConversionType, with, !NoDeconversion);
 			}
+			if (WallSets.OwnedByBiomeID[with] == -1) WallSets.OwnedByBiomeID[with] = Type;
 		}
 
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
 		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.tileParentageData.AddParent(Block, (ParentBlock, this));
-			if (BreakIfConversionFail != null) {
-				ALConvertInheritanceData.tileParentageData.BreakIfConversionFail.Add(Block, BreakIfConversionFail.Value);
-			}
+			TileLoader.RegisterConversionFallback(Block, ParentBlock, ConversionType);
+			if (TileSets.OwnedByBiomeID[Block] == -1) TileSets.OwnedByBiomeID[Block] = Type;
 		}
-
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
 		public void AddChildWall(int Wall, int ParentWall, BitsByte? BreakIfConversionFail = null) {
-			ALConvertInheritanceData.tileParentageData.AddParent(Wall, (ParentWall, this));
-			if (BreakIfConversionFail != null) {
-				ALConvertInheritanceData.wallParentageData.BreakIfConversionFail.Add(Wall, BreakIfConversionFail.Value);
-			}
+			WallLoader.RegisterConversionFallback(Wall, ParentWall, ConversionType);
+			if (WallSets.OwnedByBiomeID[Wall] == -1) WallSets.OwnedByBiomeID[Wall] = Type;
 		}
 		public virtual bool PreConvertMultitileAway(int i, int j, int width, int height, ref int newTile, AltBiome targetBiome) {
 			return true;
@@ -699,5 +712,8 @@ namespace AltLibrary.Common.AltBiomes {
 		}
 		internal Condition ActiveShopCondition = null;
 		internal Condition InactiveShopCondition = null;
+	}
+	public class AltBiomeConversion(AltBiome biome) : ModBiomeConversion {
+		public override string Name => biome.Name + "_Conversion";
 	}
 }
