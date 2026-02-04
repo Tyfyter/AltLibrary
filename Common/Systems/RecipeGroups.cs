@@ -404,11 +404,10 @@ namespace AltLibrary.Common.Systems {
 			);
 			RecipeGroup.RegisterGroup("IronOres", IronOres);
 
-			IronBars = new RecipeGroup(
-				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.IronBars")}",
-				OreSlotLoader.GetOres<IronOreSlot>().Select(o => o.bar).ToArray()
-			);
-			RecipeGroup.RegisterGroup("IronBars", IronBars);
+			IronBars = RecipeGroup.recipeGroups[RecipeGroupID.IronBar];
+			foreach (AltOre ore in OreSlotLoader.GetOres<IronOreSlot>()) {
+				IronBars.ValidItems.Add(ore.bar);
+			}
 
 			SilverBars = new RecipeGroup(
 				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.SilverBars")}",
