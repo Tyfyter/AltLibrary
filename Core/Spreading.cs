@@ -222,7 +222,7 @@ namespace AltLibrary.Core {
 		public static void SpreadGrassByTile(int i, int j) {
 			Tile tile = Main.tile[i, j];
 			if (tile.IsActuated || GrassTypeIDs[tile.TileType] == -1) return;
-			Spreading.SpreadGrass(i, j, Grasses.GrassTypes[GrassTypeIDs[tile.TileType]]);
+			Spreading.SpreadGrass(i, j, Grasses.GrassTypes[GrassTypeIDs[tile.TileType]], color: tile.BlockColorAndCoating());
 		}
 	}
 }
