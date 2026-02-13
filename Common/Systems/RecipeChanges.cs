@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static AltLibrary.Common.Systems.RecipeChanges;
 
 namespace AltLibrary.Common.Systems {
 	internal class RecipeChanges : ModSystem {
@@ -210,11 +211,13 @@ namespace AltLibrary.Common.Systems {
 				}
 			}
 		}
-		public record RecipePattern(IngredientSet Ingredients, int Result) {
+		public record RecipePattern(IngredientSet Ingredients, int Result, ConditionSet<int> Tiles, ConditionSet<string> Conditions) {
 			public static RecipePattern FromRecipe(Recipe recipe) {
 				return new RecipePattern(
 					[..recipe.requiredItem.Select(item => (findGroup.TryGetValue(item.type, out RecipeGroup group) ? -group.IconicItemId : item.type, item.stack))],
-					recipe.createItem.type
+					recipe.createItem.type,
+					[..recipe.requiredTile],
+					[..recipe.Conditions.Select(c => c.Description.ToString())]
 				);
 			}
 			public IEnumerable<int> GetGroups() {
@@ -228,6 +231,14 @@ namespace AltLibrary.Common.Systems {
 			public override int GetHashCode() {
 				int hash = 0;
 				foreach ((int type, int stack) item in this) hash ^= item.GetHashCode();
+				return hash;
+			}
+		}
+		public class ConditionSet<T>() : HashSet<T>() {
+			public override bool Equals(object obj) => obj is ConditionSet<T> other && SetEquals(other);
+			public override int GetHashCode() {
+				int hash = 0;
+				foreach (T condition in this) hash ^= condition.GetHashCode();
 				return hash;
 			}
 		}
