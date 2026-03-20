@@ -57,6 +57,11 @@ namespace AltLibrary.Common.AltBiomes {
 		/// </summary>
 		public virtual LocalizedText DryadTextDescriptor => this.GetLocalization("DryadTextDescriptor", PrettyPrintName);
 		/// <summary>
+		/// The quote the dryad will use when the world has a large amount of this biome
+		/// <para/> return null to use the vanilla quote
+		/// </summary>
+		public virtual LocalizedText DryadWorldDescription => null;
+		/// <summary>
 		/// Used in NPC dialog
 		/// </summary>
 		public virtual LocalizedText WorldEvilStone => _worldEvilStone;

@@ -23,7 +23,8 @@ namespace AltLibrary.Common.Hooks {
 				Array.Clear(WorldBiomeManager.BiomeCountsWorking);
 				Array.Clear(WorldBiomeManager.BiomePercents);
 				foreach ((int i, int count) in WorldBiomeManager.BiomeCountsFinished.Iterate()) {
-					WorldBiomeManager.BiomePercents[i] = (byte)Math.Max(Math.Round(count * 100.0 / WorldGen.totalSolid2), 1);
+					WorldBiomeManager.BiomePercents[i] = (byte)Math.Round(count * 100.0 / WorldGen.totalSolid2);
+					if (WorldBiomeManager.BiomePercents[i] <= 0 && count > 0) WorldBiomeManager.BiomePercents[i] = 1;
 				}
 			}
 			orig(X);
@@ -35,6 +36,10 @@ namespace AltLibrary.Common.Hooks {
 			worldIsEntirelyPure = true;
 			List<(AltBiome biome, byte percent)> hallows = [];
 			List<(AltBiome biome, byte percent)> evils = [];
+			byte highestEvilP = 0;
+			AltBiome highestEvil = null;
+			byte highestGoodP = 0;
+			AltBiome highestGood = null;
 			foreach ((int i, byte percent) in WorldBiomeManager.BiomePercents.Iterate()) {
 				AltBiome biome = AltLibrary.GetAltBiome(i);
 				if (biome is not null) {
@@ -42,11 +47,13 @@ namespace AltLibrary.Common.Hooks {
 						case BiomeType.Evil:
 						evils.Add((biome, percent));
 						tEvil += percent;
+						if (Maximize(ref highestEvilP, percent)) highestEvil = biome;
 						worldIsEntirelyPure = false;
 						break;
 						case BiomeType.Hallow:
 						hallows.Add((biome, percent));
 						tGood += percent;
+						if (Maximize(ref highestGoodP, percent)) highestGood = biome;
 						worldIsEntirelyPure = false;
 						break;
 					}
@@ -75,9 +82,9 @@ namespace AltLibrary.Common.Hooks {
 			if (tGood * 1.2 >= tEvil && tGood * 0.8 <= tEvil) {
 				builder.Append(Language.GetTextValue("DryadSpecialText.WorldDescriptionBalanced"));
 			} else if (tGood > tEvil) {
-				builder.Append(Language.GetTextValue("DryadSpecialText.WorldDescriptionFairyTale"));
+				builder.Append(highestGood.DryadWorldDescription?.Value ?? Language.GetTextValue("DryadSpecialText.WorldDescriptionFairyTale"));
 			} else if (tEvil > tGood + 20) {
-				builder.Append(Language.GetTextValue("DryadSpecialText.WorldDescriptionGrim"));
+				builder.Append(highestEvil.DryadWorldDescription?.Value ?? Language.GetTextValue("DryadSpecialText.WorldDescriptionGrim"));
 			} else if (tEvil <= 5) {
 				builder.Append(Language.GetTextValue("DryadSpecialText.WorldDescriptionClose"));
 			} else {

@@ -1,3 +1,4 @@
+global using static PegasusLib.GlobalUtils;
 using AltLibrary.Common;
 using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.AltOres;
