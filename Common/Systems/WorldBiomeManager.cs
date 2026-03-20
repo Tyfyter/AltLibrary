@@ -68,7 +68,7 @@ namespace AltLibrary.Common.Systems {
 		public static string WorldHallowName {
 			get => WorldHallow.FullName;
 			internal set {
-				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
+				if (value == "") {
 					WorldHallow = GetInstance<HallowAltBiome>();
 				} else if (TryFind(value, out AltBiome altHallow)) {
 					WorldHallow = altHallow;
@@ -82,7 +82,7 @@ namespace AltLibrary.Common.Systems {
 		public static string WorldHellName {
 			get => WorldHell.FullName;
 			internal set {
-				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
+				if (value == "") {
 					WorldHell = GetInstance<UnderworldAltBiome>();
 				} else if (TryFind(value, out AltBiome altHell)) {
 					WorldHell = altHell;
@@ -95,7 +95,7 @@ namespace AltLibrary.Common.Systems {
 		public static string WorldJungleName {
 			get => WorldJungle.FullName;
 			internal set {
-				if (value == "" || value.StartsWith(nameof(AltLibrary))) {
+				if (value == "") {
 					WorldJungle = GetInstance<JungleAltBiome>();
 				} else if (TryFind(value, out AltBiome altJungle)) {
 					WorldJungle = altJungle;

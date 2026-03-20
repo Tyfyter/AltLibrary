@@ -1,15 +1,14 @@
 ﻿using AltLibrary.Common.AltBiomes;
 using AltLibrary.Common.Conditions;
-using PegasusLib;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
+using VanillaConditions = Terraria.GameContent.ItemDropRules.Conditions;
 
 namespace AltLibrary.Common {
 	internal class BossDrops : GlobalNPC {
@@ -59,7 +58,7 @@ namespace AltLibrary.Common {
 							}
 						}
 					}
-					LeadingConditionRule expertCondition = new LeadingConditionRule(new Terraria.GameContent.ItemDropRules.Conditions.NotExpert());
+					LeadingConditionRule expertCondition = new LeadingConditionRule(new VanillaConditions.NotExpert());
 
 					foreach (AltBiome biome in EvilList) {
 						LeadingConditionRule biomeDropRule = new LeadingConditionRule(new EvilAltDropCondition(biome));
@@ -74,10 +73,11 @@ namespace AltLibrary.Common {
 				case NPCID.WallofFlesh: {
 					npcLoot.ReplaceDrops((CommonDrop commonRule) => {
 						if (commonRule.itemId != ItemID.Pwnhammer) return commonRule;
-						FirstMatchingRule rules = new([
-							..HallowList.Select(biome => ItemDropRule.ByCondition(new HallowAltDropCondition(biome), biome.HammerType)),
-							ItemDropRule.Common(ItemID.Pwnhammer)
-						]);
+						DropByAltBiome rules = new(BiomeType.Hallow,
+							biome => biome.HammerType,
+							type => ItemDropRule.Common(type, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum),
+							ItemID.Pwnhammer
+						);
 						rules.ChainedRules.AddRange(commonRule.ChainedRules);
 						return rules.CopyConditions(commonRule);
 					});
@@ -89,11 +89,11 @@ namespace AltLibrary.Common {
 				case NPCID.Retinazer: {
 					npcLoot.ReplaceDrops((CommonDrop commonRule) => {
 						if (commonRule.itemId != ItemID.HallowedBar) return commonRule;
-						FirstMatchingRule rules = new([
-							..HallowList.Where(biome => biome.MechDropItemType.HasValue)
-								.Select(biome => ItemDropRule.ByCondition(new HallowAltDropCondition(biome), biome.MechDropItemType.Value, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum)),
-							ItemDropRule.Common(ItemID.HallowedBar, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum)
-						]);
+						DropByAltBiome rules = new(BiomeType.Hallow,
+							biome => biome.MechDropItemType,
+							type => ItemDropRule.Common(type, 1, commonRule.amountDroppedMinimum, commonRule.amountDroppedMaximum),
+							ItemID.HallowedBar
+						);
 						rules.ChainedRules.AddRange(commonRule.ChainedRules);
 						return rules.CopyConditions(commonRule);
 					});
@@ -105,7 +105,6 @@ namespace AltLibrary.Common {
 	public class FirstMatchingRule(IEnumerable<IItemDropRule> rules) : IItemDropRule, INestedItemDropRule {
 		public IItemDropRule[] rules = [..rules];
 		public List<IItemDropRuleChainAttempt> ChainedRules { get; private set; } = [];
-
 		public bool CanDrop(DropAttemptInfo info) => true;
 		public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
 			ItemDropAttemptResult result = default(ItemDropAttemptResult);
@@ -125,7 +124,7 @@ namespace AltLibrary.Common {
 			result.State = ItemDropAttemptResultState.DoesntFillConditions;
 			return result;
 		}
-		public void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo) {
+		public virtual void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo) {
 			List<DropRateInfo> buffer = [];
 			for (int i = 0; i < rules.Length; i++) {
 				buffer.Clear();
@@ -136,6 +135,88 @@ namespace AltLibrary.Common {
 			}
 
 			Chains.ReportDroprates(ChainedRules, 1, drops, ratesInfo);
+		}
+	}
+	public abstract class DropByAltBiome<T> : IItemDropRule, INestedItemDropRule {
+		public List<IItemDropRule> rules;
+		public List<IItemDropRuleChainAttempt> ChainedRules { get; private set; } = [];
+		public bool CanDrop(DropAttemptInfo info) => true;
+		protected abstract bool TrySelect(AltBiome biome, out T itemType);
+		public DropByAltBiome(BiomeType biomeType, Func<T, IItemDropRule> ruleCreator, T defaultItem, bool includeDrunk = true) {
+			IItemDropRuleCondition CreateBiomeCondition(AltBiome biome) => biomeType switch {
+				BiomeType.Evil => new EvilAltDropCondition(biome, includeDrunk),
+				BiomeType.Hallow => new HallowAltDropCondition(biome),
+				BiomeType.Hell => new HellAltDropCondition(biome),
+				BiomeType.Jungle => new JungleAltDropCondition(biome),
+				_ => new VanillaConditions.NeverTrue()
+			};
+			IReadOnlyList<AltBiome> biomes = AltLibrary.GetAltBiomes(biomeType);
+			rules = [];
+			for (int i = 0; i < biomes.Count; i++) {
+				if (TrySelect(biomes[i], out T itemType)) {
+					rules.Add(new LeadingConditionRule(CreateBiomeCondition(biomes[i])).WithOnSuccess(ruleCreator(itemType)));
+				}
+			}
+			rules.Add(ruleCreator(defaultItem));
+		}
+		public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info) {
+			ItemDropAttemptResult result = default(ItemDropAttemptResult);
+			result.State = ItemDropAttemptResultState.DidNotRunCode;
+			return result;
+		}
+		public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info, ItemDropRuleResolveAction resolveAction) {
+			ItemDropAttemptResult result = default;
+			for (int i = 0; i < rules.Count; i++) {
+				IItemDropRule rule = rules[i];
+				result = resolveAction(rule, info);
+				if (result.State != ItemDropAttemptResultState.DoesntFillConditions) {
+					return result;
+				}
+			}
+
+			result.State = ItemDropAttemptResultState.DoesntFillConditions;
+			return result;
+		}
+		public void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo) {
+			List<IItemDropRuleCondition> conditions = [];
+			for (int i = 0; i < rules.Count; i++) {
+				DropRateInfoChainFeed currentRates = ratesInfo.With(ratesInfo.parentDroprateChance);
+				if (rules[i] is LeadingConditionRule conditionRule) {
+					conditions.Add(conditionRule.condition);
+				} else {
+					currentRates.conditions = ratesInfo.conditions?.ToList() ?? [];
+					currentRates.conditions.Add(new NoConditionsMet(conditions));
+				}
+				rules[i].ReportDroprates(drops, currentRates);
+			}
+
+			Chains.ReportDroprates(ChainedRules, 1, drops, ratesInfo);
+		}
+		struct NoConditionsMet(List<IItemDropRuleCondition> conditions) : IItemDropRuleCondition {
+			readonly bool IItemDropRuleCondition.CanDrop(DropAttemptInfo info) {
+				for (int i = 0; i < conditions.Count; i++) {
+					if (conditions[i].CanDrop(info)) return false;
+				}
+				return true;
+			}
+
+			readonly bool IItemDropRuleCondition.CanShowItemDropInUI() {
+				for (int i = 0; i < conditions.Count; i++) {
+					if (conditions[i].CanShowItemDropInUI()) return false;
+				}
+				return true;
+			}
+			readonly string IProvideItemConditionDescription.GetConditionDescription() => "";
+		}
+	}
+	public class DropByAltBiome(BiomeType biomeType, Func<AltBiome, int?> itemFinder, Func<int, IItemDropRule> ruleCreator, int defaultItem) : DropByAltBiome<int>(biomeType, ruleCreator, defaultItem) {
+		protected override bool TrySelect(AltBiome biome, out int itemType) {
+			if (itemFinder(biome) is int type) {
+				itemType = type;
+				return true;
+			}
+			itemType = ItemID.None;
+			return false;
 		}
 	}
 	static class DropRuleExtensions {
@@ -152,7 +233,7 @@ namespace AltLibrary.Common {
 			return rule;
 		}
 		public static IItemDropRule CopyConditions(this IItemDropRule rule, CommonDrop conditionSource) {
-			if (conditionSource is ItemDropWithConditionRule conditionRule) new LeadingConditionRule(conditionRule.condition).WithOnSuccess(rule);
+			if (conditionSource is ItemDropWithConditionRule conditionRule) return new LeadingConditionRule(conditionRule.condition).WithOnSuccess(rule);
 			return rule;
 		}
 		public static void ReplaceDrops<T>(this NPCLoot npcLoot, Func<T, IItemDropRule> replacer) where T : class, IItemDropRule {

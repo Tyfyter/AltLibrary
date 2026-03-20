@@ -56,7 +56,7 @@ namespace AltLibrary.Common.Hooks {
 					}
 				}
 				GERunnerRunning = true;
-				AltBiome biome = good ? WorldBiomeManager.GetWorldHallow(false) : WorldBiomeManager.GetWorldEvil(false, true);
+				AltBiome biome = good ? WorldBiomeManager.GetWorldHallow(true) : WorldBiomeManager.GetWorldEvil(true, true);
 				if (biome is null) {
 					orig(i, j, speedX, speedY, good);
 				} else {

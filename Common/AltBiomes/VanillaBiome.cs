@@ -67,15 +67,6 @@ namespace AltLibrary.Common.AltBiomes {
 			BiomeChestTile = TileID.Containers;
 			BiomeChestTileStyle = 24;
 
-			AddTileConversion(TileID.Ebonstone, TileID.Stone);
-			AddTileConversion(TileID.CorruptJungleGrass, TileID.JungleGrass);
-			AddTileConversion(TileID.CorruptGrass, TileID.Grass);
-			AddTileConversion(TileID.CorruptIce, TileID.IceBlock);
-			AddTileConversion(TileID.Ebonsand, TileID.Sand);
-			AddTileConversion(TileID.CorruptHardenedSand, TileID.HardenedSand);
-			AddTileConversion(TileID.CorruptSandstone, TileID.Sandstone);
-			AddTileConversion(TileID.CorruptThorns, TileID.JungleThorns);
-
 			AddMultiTileConversion(new(TileID.Pots, 48..56), new(TileID.Pots, 0..11));
 
 			BiomeFlesh = TileID.LesionBlock;
@@ -96,16 +87,6 @@ namespace AltLibrary.Common.AltBiomes {
 			MaterialContext.SetVileComponent(ItemID.CursedFlame);
 			MaterialContext.SetVileInnard(ItemID.RottenChunk);
 			MaterialContext.SetTrueCombinationSword(ItemID.TrueNightsEdge);
-
-			AddWallConversions(WallID.CorruptGrassUnsafe, WallID.Sets.Conversion.Grass);
-			AddWallConversions(WallID.EbonstoneUnsafe, WallID.Sets.Conversion.Stone);
-			AddWallConversions(WallID.CorruptHardenedSand, WallID.Sets.Conversion.HardenedSand);
-			AddWallConversions(WallID.CorruptSandstone, WallID.Sets.Conversion.Sandstone);
-
-			AddWallConversions(WallID.CorruptionUnsafe1, WallID.Sets.Conversion.NewWall1);
-			AddWallConversions(WallID.CorruptionUnsafe2, WallID.Sets.Conversion.NewWall2);
-			AddWallConversions(WallID.CorruptionUnsafe3, WallID.Sets.Conversion.NewWall3);
-			AddWallConversions(WallID.CorruptionUnsafe4, WallID.Sets.Conversion.NewWall4);
 		}
 		public class CorruptionFishingPool : FishingLootPool<CorruptionAltBiome> {
 			public override void SetStaticDefaults() {
@@ -141,15 +122,6 @@ namespace AltLibrary.Common.AltBiomes {
 			BiomeChestTile = TileID.Containers;
 			BiomeChestTileStyle = 25;
 
-			AddTileConversion(TileID.Crimstone, TileID.Stone);
-			AddTileConversion(TileID.CrimsonJungleGrass, TileID.JungleGrass);
-			AddTileConversion(TileID.CrimsonGrass, TileID.Grass);
-			AddTileConversion(TileID.FleshIce, TileID.IceBlock);
-			AddTileConversion(TileID.Crimsand, TileID.Sand);
-			AddTileConversion(TileID.CrimsonHardenedSand, TileID.HardenedSand);
-			AddTileConversion(TileID.CrimsonSandstone, TileID.Sandstone);
-			AddTileConversion(TileID.CrimsonThorns, TileID.JungleThorns);
-
 			AddMultiTileConversion(new(TileID.Pots, 66..74), new(TileID.Pots, 0..11));
 
 			BiomeFlesh = TileID.FleshBlock;
@@ -167,16 +139,6 @@ namespace AltLibrary.Common.AltBiomes {
 			MaterialContext.SetEvilSword(ItemID.BloodButcherer);
 			MaterialContext.SetVileComponent(ItemID.Ichor);
 			MaterialContext.SetVileInnard(ItemID.Vertebrae);
-
-			AddWallConversions(WallID.CrimsonGrassUnsafe, WallID.Sets.Conversion.Grass);
-			AddWallConversions(WallID.CrimstoneUnsafe, WallID.Sets.Conversion.Stone);
-			AddWallConversions(WallID.CrimsonHardenedSand, WallID.Sets.Conversion.HardenedSand);
-			AddWallConversions(WallID.CrimsonSandstone, WallID.Sets.Conversion.Sandstone);
-
-			AddWallConversions(WallID.CrimsonUnsafe1, WallID.Sets.Conversion.NewWall1);
-			AddWallConversions(WallID.CrimsonUnsafe2, WallID.Sets.Conversion.NewWall2);
-			AddWallConversions(WallID.CrimsonUnsafe3, WallID.Sets.Conversion.NewWall3);
-			AddWallConversions(WallID.CrimsonUnsafe4, WallID.Sets.Conversion.NewWall4);
 		}
 		public class CrimsonFishingPool : FishingLootPool<CrimsonAltBiome> {
 			public override void SetStaticDefaults() {
@@ -201,26 +163,12 @@ namespace AltLibrary.Common.AltBiomes {
 			BiomeChestTile = TileID.Containers;
 			BiomeChestTileStyle = 26;
 
-			AddTileConversion(TileID.Pearlstone, TileID.Stone);
-			AddTileConversion(TileID.HallowedGrass, TileID.Grass);
-			AddTileConversion(TileID.GolfGrassHallowed, TileID.GolfGrass);
-
-			AddTileConversion(TileID.HallowedIce, TileID.IceBlock);
-			AddTileConversion(TileID.Pearlsand, TileID.Sand);
-			AddTileConversion(TileID.HallowHardenedSand, TileID.HardenedSand);
-			AddTileConversion(TileID.HallowSandstone, TileID.Sandstone);
-
-			AddTileConversion(-2, TileID.JungleThorns);
-
-			AddWallConversions(WallID.HallowedGrassUnsafe, WallID.Sets.Conversion.Grass);
-			AddWallConversions(WallID.PearlstoneBrickUnsafe, WallID.Sets.Conversion.Stone);
-			AddWallConversions(WallID.HallowHardenedSand, WallID.Sets.Conversion.HardenedSand);
-			AddWallConversions(WallID.HallowSandstone, WallID.Sets.Conversion.Sandstone);
-
-			AddWallConversions(WallID.HallowUnsafe1, WallID.Sets.Conversion.NewWall1);
-			AddWallConversions(WallID.HallowUnsafe2, WallID.Sets.Conversion.NewWall2);
-			AddWallConversions(WallID.HallowUnsafe3, WallID.Sets.Conversion.NewWall3);
-			AddWallConversions(WallID.HallowUnsafe4, WallID.Sets.Conversion.NewWall4);
+			MaterialContext.SetLightBar(ItemID.HallowedBar)
+			.SetLightSword(ItemID.Excalibur)
+			.SetTrueLightSword(ItemID.TrueExcalibur)
+			.SetLightResidue(ItemID.PixieDust)
+			.SetLightInnard(ItemID.UnicornHorn)
+			.SetLightComponent(ItemID.CrystalShard);
 		}
 		public class HallowFishingPool : FishingLootPool<HallowAltBiome> {
 			public override void SetStaticDefaults() {
@@ -267,15 +215,6 @@ namespace AltLibrary.Common.AltBiomes {
 	}
 	public class MushroomAltBiome : VanillaBiome {
 		public MushroomAltBiome() : base("Mushroom", BiomeType.None, Color.Blue, shoppingBiome: new MushroomBiome(), conversionID: BiomeConversionID.GlowingMushroom) { }
-		public override void SetStaticDefaults() {
-			AddTileConversion(TileID.MushroomGrass, TileID.JungleGrass);
-			AddTileConversion(-2, TileID.JungleThorns);
-			for (int i = 0; i < WallLoader.WallCount; i++) {
-				if (WallID.Sets.CanBeConvertedToGlowingMushroom[i]) {
-					AddWallConversions(WallID.MushroomUnsafe, i);
-				}
-			}
-		}
 	}
 	#region 1.4.4 solutions
 	public class DesertAltBiome : VanillaBiome {
@@ -310,4 +249,30 @@ namespace AltLibrary.Common.AltBiomes {
 			nameColor = Color.Magenta;
 		}
 	}
+#if DEBUG
+	public class DebugHallowAltBiome : AltBiome {
+		public override void SetStaticDefaults() {
+			BiomeType = BiomeType.Hallow;
+			MechDropItemType = ItemID.Beenade;
+			HammerType = ItemID.BeeGreaves;
+
+			AddTileConversion(TileID.Hive, TileID.Stone, false, true, false);
+			AddTileConversion(TileID.Hive, TileID.Grass, false, true, false);
+			AddTileConversion(TileID.Hive, TileID.Dirt, false, true, false);
+			AddTileConversion(TileID.Hive, TileID.Sand, false, true, false);
+			AddTileConversion(TileID.Hive, TileID.Sandstone, false, true, false);
+			AddTileConversion(TileID.Hive, TileID.HardenedSand, false, true, false);
+		}
+	}
+	public class DebugJungleAltBiome : AltBiome {
+		public override void SetStaticDefaults() {
+			BiomeType = BiomeType.Jungle;
+		}
+	}
+	public class DebugHellAltBiome : AltBiome {
+		public override void SetStaticDefaults() {
+			BiomeType = BiomeType.Hell;
+		}
+	}
+#endif
 }

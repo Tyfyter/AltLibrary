@@ -414,6 +414,27 @@ Mods: {
 				GenPassName: Debugging None Biome2
 				DryadTextDescriptor: Debugging None Biome2
 			}
+
+			DebugHallowAltBiome: {
+				DisplayName: Debug Hallow Alt Biome
+				Description: Debug Hallow Alt Biome
+				GenPassName: Debug Hallow Alt Biome
+				DryadTextDescriptor: Debug Hallow Alt Biome
+			}
+
+			DebugHellAltBiome: {
+				DisplayName: Debug Hell Alt Biome
+				Description: Debug Hell Alt Biome
+				GenPassName: Debug Hell Alt Biome
+				DryadTextDescriptor: Debug Hell Alt Biome
+			}
+
+			DebugJungleAltBiome: {
+				DisplayName: Debug Jungle Alt Biome
+				Description: Debug Jungle Alt Biome
+				GenPassName: Debug Jungle Alt Biome
+				DryadTextDescriptor: Debug Jungle Alt Biome
+			}
 		}
 
 		AltOres: {
