@@ -115,12 +115,10 @@ namespace AltLibrary.Common.AltBiomes {
 					FishingCatch.Item(ItemID.Toxikarp, (player, attempt) => Main.hardMode && Main.rand.NextBool(2))
 				));
 				Rare.Add(FishingCatch.Item(ItemID.PurpleClubberfish));
-				Uncommon.Add(new SequentialCatches(
-					FishingCatch.QuestFish(ItemID.Cursedfish),
-					FishingCatch.QuestFish(ItemID.InfectedScabbardfish),
-					FishingCatch.QuestFish(ItemID.EaterofPlankton),
-					FishingCatch.Item(ItemID.Ebonkoi)
-				));
+				AddQuestFish(ItemID.Cursedfish);
+				AddQuestFish(ItemID.InfectedScabbardfish);
+				AddQuestFish(ItemID.EaterofPlankton);
+				Uncommon.Add(FishingCatch.Item(ItemID.Ebonkoi));
 			}
 		}
 	}
@@ -187,11 +185,9 @@ namespace AltLibrary.Common.AltBiomes {
 					FishingCatch.Item(ItemID.ScalyTruffle, (player, attempt) => Main.hardMode && player.ZoneSnow && attempt.heightLevel == 3 && !Main.rand.NextBool(3)),
 					FishingCatch.Item(ItemID.Bladetongue, (player, attempt) => Main.hardMode && Main.rand.NextBool(2))
 				));
-				Uncommon.Add(new SequentialCatches(
-					FishingCatch.QuestFish(ItemID.BloodyManowar),
-					FishingCatch.QuestFish(ItemID.Ichorfish),
-					FishingCatch.Item(ItemID.Hemopiranha)
-				));
+				AddQuestFish(ItemID.BloodyManowar);
+				AddQuestFish(ItemID.Ichorfish);
+				Uncommon.Add(FishingCatch.Item(ItemID.Hemopiranha));
 				Common.Add(FishingCatch.Item(ItemID.CrimsonTigerfish));
 			}
 		}
@@ -235,19 +231,21 @@ namespace AltLibrary.Common.AltBiomes {
 					FishingCatch.Item(ItemID.LadyOfTheLake, (player, attempt) => Main.hardMode && !Main.rand.NextBool(3))
 				));
 				VeryRare.Add(FishingCatch.Item(ItemID.ChaosFish, (_, attempt) => attempt.heightLevel > 1));
-				FishingCatch[] heightSpecificQuestFish = [
-					FishingCatch.Item(ItemID.MirageFish, (_, attempt) => attempt.uncommon && attempt.questFish == ItemID.MirageFish && attempt.heightLevel > 1),
-					FishingCatch.Item(ItemID.Pixiefish, (_, attempt) => attempt.uncommon && attempt.questFish == ItemID.Pixiefish && attempt.heightLevel < 2)
-				];
-				Rare.Add(new SequentialCatches([
-					..heightSpecificQuestFish,
-					FishingCatch.Item(ItemID.Prismite)
-				]));
-				Uncommon.Add(new SequentialCatches([
-					..heightSpecificQuestFish,
-					FishingCatch.QuestFish(ItemID.UnicornFish),
-					FishingCatch.Item(ItemID.PrincessFish)
-				]));
+				Rare.Add(FishingCatch.Item(ItemID.Prismite, (_, attempt) => {
+					if (!attempt.uncommon) return true;
+					switch (attempt.questFish) {
+						case ItemID.MirageFish:
+						return attempt.heightLevel <= 1;
+						case ItemID.Pixiefish:
+						return attempt.heightLevel >= 2;
+						default:
+						return true;
+					}
+				}));
+				AddQuestFish(ItemID.UnicornFish);
+				AddQuestFish(ItemID.MirageFish, (_, attempt) => attempt.heightLevel > 1);
+				AddQuestFish(ItemID.Pixiefish, (_, attempt) => attempt.heightLevel < 2);
+				Uncommon.Add(FishingCatch.Item(ItemID.PrincessFish));
 			}
 		}
 	}
