@@ -8,6 +8,7 @@ using AltLibrary.Core;
 using AltLibrary.Core.Baking;
 using AltLibrary.Core.Generation;
 using MonoMod.Utils;
+using PegasusLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,7 @@ namespace AltLibrary {
 		internal static List<AltBiome> Biomes { get; private set; } = [];
 		internal static List<AltBiome> VanillaBiomes { get; private set; } = [];
 		public static MultiList<AltBiome> AllBiomes { get; private set; }
+		internal static List<AltBiome>[] BiomesByType { get; private set; } = new List<AltBiome>[(int)BiomeType.None];
 
 		internal static List<AltOre> Ores = [];
 
@@ -219,6 +221,7 @@ namespace AltLibrary {
 
 
 		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
+		public static IReadOnlyList<AltBiome> GetAltBiomes(BiomeType type) => BiomesByType.GetIfInRange((int)type) ?? [];
 		public static AltBiome GetAltBiome(int type) => Biomes.GetIfInRange(type);
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
 		public static IReadOnlyList<AltOre> GetAltOres() => Ores;

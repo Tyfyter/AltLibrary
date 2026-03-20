@@ -363,6 +363,7 @@ namespace AltLibrary.Common.AltBiomes {
 		public sealed override void SetupContent() {
 			if (NPCsHate && Biome is not null) ShopHelper_EvilBiomes.DangerousBiomes.Add(Biome);
 			SetStaticDefaults();
+			if (AltLibrary.BiomesByType.IndexInRange((int)BiomeType)) (AltLibrary.BiomesByType[(int)BiomeType] ??= []).Add(this);
 			if (BossBulb != null) AltLibrary.planteraBulbs.Add((int)BossBulb);
 			if (BiomeType == BiomeType.Jungle) {
 				if (BiomeGrass != null) {
