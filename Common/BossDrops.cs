@@ -13,38 +13,10 @@ using VanillaConditions = Terraria.GameContent.ItemDropRules.Conditions;
 namespace AltLibrary.Common {
 	internal class BossDrops : GlobalNPC {
 		public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) {
-			List<AltBiome> HallowList = [
-				GetInstance<HallowAltBiome>()
-			];
-			List<AltBiome> HellList = [
-				GetInstance<UnderworldAltBiome>()
-			];
-			List<AltBiome> JungleList = [
-				GetInstance<JungleAltBiome>()
-			];
-			List<AltBiome> EvilList = [
-				GetInstance<CorruptionAltBiome>(),
-				GetInstance<CrimsonAltBiome>()
-			];
-			foreach (AltBiome biome in AltLibrary.Biomes) {
-				switch (biome.BiomeType) {
-					case BiomeType.Evil:
-					EvilList.Add(biome);
-					break;
-
-					case BiomeType.Hallow:
-					HallowList.Add(biome);
-					break;
-
-					case BiomeType.Hell:
-					HellList.Add(biome);
-					break;
-
-					case BiomeType.Jungle:
-					JungleList.Add(biome);
-					break;
-				}
-			}
+			IReadOnlyList<AltBiome> HallowList = AltLibrary.GetAltBiomes(BiomeType.Hallow);
+			IReadOnlyList<AltBiome> HellList = AltLibrary.GetAltBiomes(BiomeType.Hell);
+			IReadOnlyList<AltBiome> JungleList = AltLibrary.GetAltBiomes(BiomeType.Jungle);
+			IReadOnlyList<AltBiome> EvilList = AltLibrary.GetAltBiomes(BiomeType.Evil);
 
 			List<IItemDropRule> entries = npcLoot.Get(false);
 			switch (npc.type) {

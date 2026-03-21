@@ -311,13 +311,13 @@ Mods: {
 			CrimsonBiome: {
 				DisplayName: Crimson
 				Description: "{$UI.WorldDescriptionEvilCrimson}"
-				GenPassName: Crimson Biome
+				GenPassName: Crimson
 			}
 
 			CorruptBiome: {
 				DisplayName: Corruption
 				Description: "{$UI.WorldDescriptionEvilCorrupt}"
-				GenPassName: Corrupt Biome
+				GenPassName: Corruption
 			}
 
 			DebuggingHallowBiome: {
@@ -328,7 +328,7 @@ Mods: {
 			}
 
 			DebuggingHellBiome: {
-				DisplayName: AltLibrary
+				DisplayName: Debugging Hell Biome
 				Description: Debugging Hell Biome
 				GenPassName: Debugging Hell Biome
 				DryadTextDescriptor: Debugging Hell Biome
@@ -349,30 +349,30 @@ Mods: {
 			}
 
 			DesertBiome: {
-				DisplayName: Desert Biome
-				Description: Desert Biome
-				GenPassName: Desert Biome
-				DryadTextDescriptor: Desert Biome
+				DisplayName: Desert
+				Description: Desert
+				GenPassName: Desert
+				DryadTextDescriptor: Desert
 			}
 
 			ForestBiome: {
-				DisplayName: Forest Biome
-				Description: Forest Biome
-				GenPassName: Forest Biome
-				DryadTextDescriptor: Forest Biome
+				DisplayName: Forest
+				Description: Forest
+				GenPassName: Forest
+				DryadTextDescriptor: Forest
 			}
 
 			HallowBiome: {
 				DisplayName: Hallow
-				Description: Hallow Biome
-				GenPassName: Hallow Biome
+				Description: The classic Hallow is guaranteed to be present in your world.
+				GenPassName: Hallow
 			}
 
 			JungleBiome: {
 				DisplayName: Jungle
-				Description: Jungle Biome
-				GenPassName: Jungle Biome
-				DryadTextDescriptor: Jungle Biome
+				Description: The classic Jungle is guaranteed to be present in your world.
+				GenPassName: Jungle
+				DryadTextDescriptor: Jungle
 			}
 
 			Mushroom: {
@@ -383,17 +383,17 @@ Mods: {
 			}
 
 			SnowBiome: {
-				DisplayName: Snow Biome
-				Description: Snow Biome
-				GenPassName: Snow Biome
-				DryadTextDescriptor: Snow Biome
+				DisplayName: Snow
+				Description: Snow
+				GenPassName: Snow
+				DryadTextDescriptor: Snow
 			}
 
 			UnderworldBiome: {
 				DisplayName: Underworld
-				Description: Underworld Biome
-				GenPassName: Underworld Biome
-				DryadTextDescriptor: Underworld Biome
+				Description: The classic Underworld is guaranteed to be present in your world.
+				GenPassName: Underworld
+				DryadTextDescriptor: Underworld
 			}
 
 			RandomOptionBiome: {
