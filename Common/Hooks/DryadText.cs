@@ -41,6 +41,7 @@ namespace AltLibrary.Common.Hooks {
 			byte highestGoodP = 0;
 			AltBiome highestGood = null;
 			foreach ((int i, byte percent) in WorldBiomeManager.BiomePercents.Iterate()) {
+				if (percent <= 0) continue;
 				AltBiome biome = AltLibrary.GetAltBiome(i);
 				if (biome is not null) {
 					switch (biome.BiomeType) {
