@@ -110,8 +110,7 @@ namespace AltLibrary.Common.Hooks {
 
 			c.EmitDelegate(() => {
 				for (int i = 0; i < WorldGen.tileCounts.Length; i++) {
-					if (WorldGen.tileCounts[i] > 0 && TileSets.GetOwnerBiome(i) is AltBiome fromBiome) {
-						if (fromBiome is DeconvertAltBiome) continue;
+					if (WorldGen.tileCounts[i] > 0 && TileSets.GetOwnerBiome(i) is AltBiome fromBiome and not DeconvertAltBiome) {
 						WorldBiomeManager.BiomeCountsWorking[fromBiome.Type] += WorldGen.tileCounts[i];
 						WorldGen.totalSolid2 += WorldGen.tileCounts[i];
 					}

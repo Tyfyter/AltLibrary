@@ -634,8 +634,8 @@ namespace AltLibrary.Common.AltBiomes {
 			if (spread) {
 				spreadingTiles.Add(block);
 				TileSets.BiomeSightColors[block] = BiomeSightColor;
+				if (TileSets.OwnedByBiomeID[block] == -1) TileSets.OwnedByBiomeID[block] = Type;
 			}
-			if (TileSets.OwnedByBiomeID[block] == -1) TileSets.OwnedByBiomeID[block] = Type;
 			void CreateConversion(int fromType) {
 				switch (block) {
 					case -2:
@@ -683,12 +683,12 @@ namespace AltLibrary.Common.AltBiomes {
 			if (WallSets.OwnedByBiomeID[with] == -1) WallSets.OwnedByBiomeID[with] = Type;
 		}
 
-		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public void AddChildTile(int Block, int ParentBlock, BitsByte? BreakIfConversionFail = null) {
 			TileLoader.RegisterConversionFallback(Block, ParentBlock, ConversionType);
 			if (TileSets.OwnedByBiomeID[Block] == -1) TileSets.OwnedByBiomeID[Block] = Type;
 		}
-		[Obsolete("AltLibrary no longer replaces the vanilla conversion system")]
+		[Obsolete("AltLibrary no longer replaces the vanilla conversion system", true)]
 		public void AddChildWall(int Wall, int ParentWall, BitsByte? BreakIfConversionFail = null) {
 			WallLoader.RegisterConversionFallback(Wall, ParentWall, ConversionType);
 			if (WallSets.OwnedByBiomeID[Wall] == -1) WallSets.OwnedByBiomeID[Wall] = Type;
