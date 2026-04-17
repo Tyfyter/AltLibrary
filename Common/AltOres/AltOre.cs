@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System;
+using System.IO;
+using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -66,11 +68,43 @@ namespace AltLibrary.Common.AltOres {
 
 		public sealed override void SetupContent() {
 			SetStaticDefaults();
-			if (oreItem == 0) oreItem = TileLoader.GetItemDropFromTypeAndStyle(ore);
 			try {
 				_ = DisplayName;
 				_ = Description;
 			} catch { }
+		}
+		internal void VerifyRequiredItems() {
+			if (oreItem == 0) oreItem = TileLoader.GetItemDropFromTypeAndStyle(ore);
+			if (oreItem == 0) {
+				for (int i = 0; i < ItemLoader.ItemCount; i++) {
+					try {
+						if (!ItemID.Sets.DisableAutomaticPlaceableDrop[i] && new Item(i).createTile == ore) {
+							oreItem = i;
+							break;
+						}
+					} catch (Exception) { }
+				}
+			}
+			if (AnyUnset(out string[] unset, (nameof(ore), ore), (nameof(oreItem), oreItem), (nameof(bar), bar))) {
+				string message = $"{Name}: fields [{string.Join(", ", unset)}] were unset, these values must be set in SetStaticDefaults";
+				if (Directory.Exists(Path.Combine(Program.SavePathShared, "ModSources", Mod.Name))) {
+					throw new NotImplementedException(message);
+				} else {
+					Mod.Logger.Error(message);
+				}
+			}
+		}
+		static bool AnyUnset(out string[] unset, params Span<(string name, int value)> values) {
+			int count = 0;
+			for (int i = 0; i < values.Length; i++) {
+				if (values[i].value == 0) count++;
+			}
+			unset = new string[count];
+			int j = 0;
+			for (int i = 0; j < count; i++) {
+				if (values[i].value == 0) unset[j++] = values[i].name;
+			}
+			return count > 0;
 		}
 	}
 }

@@ -64,6 +64,12 @@ namespace AltLibrary {
 			ModIconVariation = Main.rand.Next(ALTextureAssets.AnimatedModIcon.Length);
 			TimeHoveringOnIcon = 0;
 			HallowBunnyUnlocked = false;
+			On_ContentSamples.Initialize += _On_ContentSamples_Initialize;
+		}
+
+		static void _On_ContentSamples_Initialize(On_ContentSamples.orig_Initialize orig) {
+			foreach (AltOre ore in GetAltOres()) ore.VerifyRequiredItems();
+			orig();
 		}
 
 		public override void PostSetupContent() {
