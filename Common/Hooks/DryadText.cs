@@ -2,8 +2,11 @@
 using AltLibrary.Common.Systems;
 using AltLibrary.Core.Baking;
 using MonoMod.Cil;
+using PegasusLib;
+using PegasusLib.Networking;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Terraria;
 using Terraria.ID;
@@ -26,10 +29,20 @@ namespace AltLibrary.Common.Hooks {
 					WorldBiomeManager.BiomePercents[i] = (byte)Math.Round(count * 100.0 / WorldGen.totalSolid2);
 					if (WorldBiomeManager.BiomePercents[i] <= 0 && count > 0) WorldBiomeManager.BiomePercents[i] = 1;
 				}
+				new SyncBiomePercents().Send();
 			}
 			orig(X);
 		}
-
+		record SyncBiomePercents() : SyncedAction {
+			public override SyncedAction NetReceive(BinaryReader reader) {
+				reader.Read(WorldBiomeManager.BiomePercents, 0, WorldBiomeManager.BiomePercents.Length);
+				return this;
+			}
+			public override void NetSend(BinaryWriter writer) {
+				writer.Write(WorldBiomeManager.BiomePercents);
+			}
+			protected override void Perform() { }
+		}
 		private static string Lang_GetDryadWorldStatusDialog(On_Lang.orig_GetDryadWorldStatusDialog orig, out bool worldIsEntirelyPure) {
 			int tGood = 0;
 			int tEvil = 0;
