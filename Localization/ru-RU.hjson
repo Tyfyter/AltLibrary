@@ -187,6 +187,8 @@ Mods: {
 			GoldWatches: Золотые часы
 			IronOres: Железная руда
 			GoldOres: Золотая руда
+			// Bars: "{0} Bar (Testing)"
+			// Ores: "{0} Ore (Testing)"
 		}
 
 		DryadSpecialText: {
@@ -521,13 +523,40 @@ Mods: {
 		}
 
 		AltOreSlot: {
-			// AdamantiteOreSlot.DisplayName: Adamantite-Tier Ore
-			// CobaltOreSlot.DisplayName: Cobalt-Tier Ore
-			// CopperOreSlot.DisplayName: Copper-Tier Ore
-			// GoldOreSlot.DisplayName: Gold-Tier Ore
-			// IronOreSlot.DisplayName: Iron-Tier Ore
-			// MythrilOreSlot.DisplayName: Mythril-Tier Ore
-			// SilverOreSlot.DisplayName: Silver-Tier Ore
+			AdamantiteOreSlot: {
+				// DisplayName: Adamantite-Tier Ore
+				// RecipeGroupDisplayName: Adamantite
+			}
+
+			CobaltOreSlot: {
+				// DisplayName: Cobalt-Tier Ore
+				// RecipeGroupDisplayName: Cobalt
+			}
+
+			CopperOreSlot: {
+				// DisplayName: Copper-Tier Ore
+				// RecipeGroupDisplayName: Copper
+			}
+
+			GoldOreSlot: {
+				// DisplayName: Gold-Tier Ore
+				// RecipeGroupDisplayName: Gold
+			}
+
+			IronOreSlot: {
+				// DisplayName: Iron-Tier Ore
+				// RecipeGroupDisplayName: Iron
+			}
+
+			MythrilOreSlot: {
+				// DisplayName: Mythril-Tier Ore
+				// RecipeGroupDisplayName: Mythril
+			}
+
+			SilverOreSlot: {
+				// DisplayName: Silver-Tier Ore
+				// RecipeGroupDisplayName: Silver
+			}
 		}
 	}
 }

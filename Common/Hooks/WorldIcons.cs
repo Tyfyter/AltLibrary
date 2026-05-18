@@ -218,6 +218,8 @@ namespace AltLibrary.Common.Hooks {
 						if (warningOffset > pixels) warningOffset = pixels;
 					}
 				}
+				/*if (_hasBeenPlayedByActivePlayer || _isNewlyGenerated)
+					warningOffset -= 24;*/
 				for (int i = 0; i < 4; i++) {
 					Asset<Texture2D> asset = ALTextureAssets.BestiaryIcons;
 					Rectangle? frame = null;

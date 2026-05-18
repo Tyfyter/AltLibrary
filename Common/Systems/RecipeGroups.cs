@@ -391,7 +391,18 @@ namespace AltLibrary.Common.Systems {
 				return DefaultTo(WorldBiomeManager.GetWorldHell(true).MaterialContext?.UnderworldForge, ItemID.Hellforge);
 			});
 
+			foreach (OreSlot slot in OreSlotLoader.GetOreSlots()) slot.SetupRecipeGroups();
+			CopperBars = ModContent.GetInstance<CopperOreSlot>().Bars;
+			IronOres = ModContent.GetInstance<IronOreSlot>().Ores;
+			IronBars = ModContent.GetInstance<IronOreSlot>().Bars;
+			SilverBars = ModContent.GetInstance<SilverOreSlot>().Bars;
+			GoldOres = ModContent.GetInstance<GoldOreSlot>().Ores;
+			GoldBars = ModContent.GetInstance<GoldOreSlot>().Bars;
+			CobaltBars = ModContent.GetInstance<CobaltOreSlot>().Bars;
+			MythrilBars = ModContent.GetInstance<MythrilOreSlot>().Bars;
+			AdamantiteBars = ModContent.GetInstance<AdamantiteOreSlot>().Bars;
 
+			/*
 			CopperBars = new RecipeGroup(
 				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.CopperBars")}",
 				OreSlotLoader.GetOres<CopperOreSlot>().Select(o => o.bar).ToArray()
@@ -444,6 +455,7 @@ namespace AltLibrary.Common.Systems {
 				OreSlotLoader.GetOres<AdamantiteOreSlot>().Select(o => o.bar).ToArray()
 			);
 			RecipeGroup.RegisterGroup("AdamantiteBars", AdamantiteBars);
+			*/
 
 			GoldCandles = new RecipeGroup(
 				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.GoldCandles")}",

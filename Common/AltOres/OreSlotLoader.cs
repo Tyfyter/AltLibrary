@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -33,6 +35,7 @@ namespace AltLibrary.Common.AltOres {
 			}
 		}
 		public static OreSlot GetOreSlot(int type) => oreSlots[type];
+		public static IEnumerable<OreSlot> GetOreSlots() => oreSlots;
 		public static IEnumerable<AltOre> GetOres(int type) => GetOres(oreSlots[type]);
 		public static IEnumerable<AltOre> GetOres<TOreSlot>() where TOreSlot : OreSlot => GetOres(ModContent.GetInstance<TOreSlot>());
 		public static IEnumerable<AltOre> GetOres(OreSlot slot) {
@@ -59,16 +62,41 @@ namespace AltLibrary.Common.AltOres {
 		/// The name of this ore that will display on the biome selection screen.
 		/// </summary>
 		public virtual LocalizedText DisplayName => this.GetLocalization("DisplayName", PrettyPrintName);
+		/// <summary>
+		/// The name of this ore that will display in recipe groups.
+		/// </summary>
+		public virtual LocalizedText RecipeGroupDisplayName => this.GetLocalization("RecipeGroupDisplayName", PrettyPrintName);
 		public string LocalizationCategory => "AltOreSlot";
 		protected sealed override void Register() {
 			ModTypeLookup<OreSlot>.Register(this);
 			OreSlotLoader.oreSlots.Add(this);
 			_ = DisplayName;
+			_ = RecipeGroupDisplayName;
 		}
+		[Obsolete("Override SetStaticDefaults instead", true)]
+		public override void SetupContent() {
+			SetStaticDefaults();
+		}
+		public override void SetStaticDefaults() { }
 		/// <summary>
 		/// Used for unloaded ores
 		/// </summary>
 		public abstract AltOre FallbackOre { get; }
+		internal virtual void SetupRecipeGroups() {
+			Bars = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Bars", RecipeGroupDisplayName.Value)}",
+				OreSlotLoader.GetOres(this).Select(o => o.bar).ToArray()
+			);
+			RecipeGroup.RegisterGroup(RecipeGroupName + "Bars", Bars);
+			Ores = new RecipeGroup(
+				() => $"{Language.GetTextValue("LegacyMisc.37")} {Language.GetTextValue("Mods.AltLibrary.RecipeGroups.Ores", RecipeGroupDisplayName.Value)}",
+				OreSlotLoader.GetOres(this).Select(o => o.oreItem).ToArray()
+			);
+			RecipeGroup.RegisterGroup(RecipeGroupName + "Ores", Ores);
+		}
+		public RecipeGroup Bars { get; private protected set; }
+		public RecipeGroup Ores { get; private protected set; }
+		internal virtual string RecipeGroupName => Name;
 		public int CompareTo(OreSlot other) => OreSlotLoader.oreder[Type][other.Type];
 		public static bool operator <(OreSlot left, OreSlot right) => left.CompareTo(right) < 0;
 		public static bool operator <=(OreSlot left, OreSlot right) => left.CompareTo(right) <= 0;

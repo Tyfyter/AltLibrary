@@ -668,6 +668,11 @@
             The name of this ore that will display on the biome selection screen.
             </summary>
         </member>
+        <member name="P:AltLibrary.Common.AltOres.OreSlot.RecipeGroupDisplayName">
+            <summary>
+            The name of this ore that will display in recipe groups.
+            </summary>
+        </member>
         <member name="P:AltLibrary.Common.AltOres.OreSlot.FallbackOre">
             <summary>
             Used for unloaded ores
