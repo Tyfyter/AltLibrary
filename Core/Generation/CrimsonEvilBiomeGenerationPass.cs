@@ -10,99 +10,75 @@ namespace AltLibrary.Core.Generation {
 		public override int DrunkRNGMapCenterGive => 100;
 		public override void GenerateEvil(int evilBiomePosition, int evilBiomePositionWestBound, int evilBiomePositionEastBound) {
 			WorldGen.CrimStart(evilBiomePosition, (int)GenVars.worldSurfaceLow - 10);
-			double num22 = Main.worldSurface + 40.0;
-			int worldSurfaceLow = (int)GenVars.worldSurfaceLow;
-			for (int l = evilBiomePositionWestBound; l < evilBiomePositionEastBound; l++) {
-				num22 += WorldGen.genRand.Next(-2, 3);
-				if (num22 < Main.worldSurface + 30.0) {
-					num22 = Main.worldSurface + 30.0;
-				}
-				if (num22 > Main.worldSurface + 50.0) {
-					num22 = Main.worldSurface + 50.0;
-				}
-				int i2 = l;
-				bool flag4 = false;
-				while (worldSurfaceLow < num22) {
-					if (Main.tile[i2, worldSurfaceLow].HasTile) {
-						if (Main.tile[i2, worldSurfaceLow].TileType == 53 && i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5)) {
-							Main.tile[i2, worldSurfaceLow].TileType = 234;
-						}
-						if (worldSurfaceLow < Main.worldSurface - 1.0 && !flag4) {
-							if (Main.tile[i2, worldSurfaceLow].TileType == TileID.Dirt) {
+			double maxSurfaceDepth = Main.worldSurface + 40.0;
+			int j = (int)GenVars.worldSurfaceLow;
+			for (int i = evilBiomePositionWestBound; i < evilBiomePositionEastBound; i++) {
+				maxSurfaceDepth += WorldGen.genRand.Next(-2, 3);
+				Max(ref maxSurfaceDepth, Main.worldSurface + 30.0);
+				Min(ref maxSurfaceDepth, Main.worldSurface + 50.0);
+				bool highestTile = true;
+				while (j < maxSurfaceDepth) {
+					Tile tile = Main.tile[i, j];
+					if (tile.HasTile) {
+						if (j < Main.worldSurface - 1.0 && highestTile) {
+							if (tile.TileType == TileID.Dirt) {
 								WorldGen.grassSpread = 0;
-								WorldGen.SpreadGrass(i2, worldSurfaceLow, TileID.Dirt, TileID.CrimsonGrass, true);
-							} else if (Main.tile[i2, worldSurfaceLow].TileType == TileID.Mud) {
+								WorldGen.SpreadGrass(i, j, TileID.Dirt, TileID.CrimsonGrass, true);
+							} else if (tile.TileType == TileID.Mud) {
 								WorldGen.grassSpread = 0;
-								WorldGen.SpreadGrass(i2, worldSurfaceLow, TileID.Mud, TileID.CrimsonJungleGrass);
+								WorldGen.SpreadGrass(i, j, TileID.Mud, TileID.CrimsonJungleGrass);
 							}
 						}
-						flag4 = true;
-						if (Main.tile[i2, worldSurfaceLow].WallType == 216) {
-							Main.tile[i2, worldSurfaceLow].WallType = 218;
-						} else if (Main.tile[i2, worldSurfaceLow].WallType == 187) {
-							Main.tile[i2, worldSurfaceLow].WallType = 221;
-						}
-						if (Main.tile[i2, worldSurfaceLow].TileType == 1) {
-							if (i2 >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i2 <= evilBiomePositionEastBound - WorldGen.genRand.Next(5)) {
-								Main.tile[i2, worldSurfaceLow].TileType = 203;
-							}
-						} else if (Main.tile[i2, worldSurfaceLow].TileType == 2) {
-							Main.tile[i2, worldSurfaceLow].TileType = 199;
-						} else if (Main.tile[i2, worldSurfaceLow].TileType == 161) {
-							Main.tile[i2, worldSurfaceLow].TileType = 200;
-						} else if (Main.tile[i2, worldSurfaceLow].TileType == 396) {
-							Main.tile[i2, worldSurfaceLow].TileType = 401;
-						} else if (Main.tile[i2, worldSurfaceLow].TileType == 397) {
-							Main.tile[i2, worldSurfaceLow].TileType = 399;
+						highestTile = false;
+						WorldGen.Convert(i, j, BiomeConversionID.Crimson,
+							tiles: tile.TileType is not TileID.Stone and not TileID.Sand || (i >= evilBiomePositionWestBound + WorldGen.genRand.Next(5) && i <= evilBiomePositionEastBound - WorldGen.genRand.Next(5)),
+							walls: false
+						);
+						if (tile.WallType == WallID.HardenedSand) {
+							tile.WallType = WallID.CrimsonHardenedSand;
+						} else if (tile.WallType == WallID.Sandstone) {
+							tile.WallType = WallID.CrimsonSandstone;
 						}
 					}
-					worldSurfaceLow++;
+					j++;
 				}
 			}
-			int num24 = WorldGen.genRand.Next(10, 15);
-			for (int m = 0; m < num24; m++) {
-				int num25 = 0;
-				bool flag5 = false;
-				int num26 = 0;
-				while (!flag5) {
-					num25++;
-					int x = WorldGen.genRand.Next(evilBiomePositionWestBound - num26, evilBiomePositionEastBound + num26);
-					int num27 = WorldGen.genRand.Next((int)(Main.worldSurface - num26 / 2), (int)(Main.worldSurface + 100.0 + num26));
-					while (WorldGen.oceanDepths(x, num27)) {
-						x = WorldGen.genRand.Next(evilBiomePositionWestBound - num26, evilBiomePositionEastBound + num26);
-						num27 = WorldGen.genRand.Next((int)(Main.worldSurface - num26 / 2), (int)(Main.worldSurface + 100.0 + num26));
+			int altarCount = WorldGen.genRand.Next(10, 15);
+			for (int k = 0; k < altarCount; k++) {
+				int tries = 0;
+				bool placedAltar = false;
+				int tryLevel = 0;
+				while (!placedAltar) {
+					tries++;
+					int x;
+					int y;
+					do {
+						x = WorldGen.genRand.Next(evilBiomePositionWestBound - tryLevel, evilBiomePositionEastBound + tryLevel);
+						y = WorldGen.genRand.Next((int)(Main.worldSurface - tryLevel / 2), (int)(Main.worldSurface + 100.0 + tryLevel));
+					} while (WorldGen.oceanDepths(x, y));
+					if (tries > 100) {
+						tryLevel++;
+						tries = 0;
 					}
-					if (num25 > 100) {
-						num26++;
-						num25 = 0;
-					}
-					if (!Main.tile[x, num27].HasTile) {
-						while (!Main.tile[x, num27].HasTile) {
-							num27++;
-						}
-						num27--;
+					if (!Main.tile[x, y].HasTile) {
+						while (!Main.tile[x, y].HasTile) y++;
+						y--;
 					} else {
-						while (Main.tile[x, num27].HasTile && num27 > Main.worldSurface) {
-							num27--;
-						}
+						while (Main.tile[x, y].HasTile && y > Main.worldSurface) y--;
 					}
-					if ((num26 > 10 || Main.tile[x, num27 + 1].HasTile && Main.tile[x, num27 + 1].TileType == 203) && !WorldGen.IsTileNearby(x, num27, 26, 3)) {
-						WorldGen.Place3x2(x, num27, 26, 1);
-						if (Main.tile[x, num27].TileType == 26) {
-							flag5 = true;
-						}
+					if ((tryLevel > 10 || Main.tile[x, y + 1].HasTile && Main.tile[x, y + 1].TileType == TileID.Crimstone) && !WorldGen.IsTileNearby(x, y, TileID.DemonAltar, 3)) {
+						WorldGen.Place3x2(x, y, TileID.DemonAltar, 1);
+						if (Main.tile[x, y].TileType == TileID.DemonAltar) placedAltar = true;
 					}
-					if (num26 > 100) {
-						flag5 = true;
-					}
+					if (tryLevel > 100) placedAltar = true;
 				}
 			}
 
 			WorldBiomeGeneration.EvilBiomeGenRanges.Add(new Rectangle(
 				evilBiomePositionWestBound,
-				worldSurfaceLow,
+				j,
 				evilBiomePositionEastBound - evilBiomePositionWestBound,
-				(int)GenVars.worldSurfaceHigh - worldSurfaceLow + 500
+				(int)GenVars.worldSurfaceHigh - j + 500
 			));
 		}
 
