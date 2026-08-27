@@ -187,8 +187,8 @@ Mods: {
 			GoldWatches: Золотые часы
 			IronOres: Железная руда
 			GoldOres: Золотая руда
-			// Bars: "{0} Bar (Testing)"
-			// Ores: "{0} Ore (Testing)"
+			// Bars: "{0} Bar"
+			// Ores: "{0} Ore"
 		}
 
 		DryadSpecialText: {

@@ -12,6 +12,17 @@ using Terraria.ModLoader;
 
 namespace AltLibrary.Core {
 	internal class Spreading : GlobalTile {
+		public override void Load() {
+			On_WorldGen.hardUpdateWorld += _On_WorldGen_hardUpdateWorld;
+		}
+		static void _On_WorldGen_hardUpdateWorld(On_WorldGen.orig_hardUpdateWorld orig, int i, int j) {
+			orig(i, j);
+			Tile tile = Main.tile[i, j];
+			if (!Main.hardMode || tile.IsActuated) return;
+			AltBiome biome = AltLibrary.GetAltBiome(TileSets.OwnedByBiomeID[tile.TileType]);
+			if (biome is null or VanillaBiome || !biome.SpreadingTiles.Contains(tile.TileType)) return;
+			SpreadInfection(i, j, biome);
+		}
 		public override void RandomUpdate(int i, int j, int type) {
 			if (Main.tile[i, j].IsActuated) {
 				return;
