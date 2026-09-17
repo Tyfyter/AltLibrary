@@ -228,9 +228,11 @@ namespace AltLibrary {
 
 		public static IReadOnlyList<AltBiome> GetAltBiomes() => Biomes;
 		public static IReadOnlyList<AltBiome> GetAltBiomes(BiomeType type) => BiomesByType.GetIfInRange((int)type) ?? [];
+		/// <returns>The biome with the provided type, or <see langword="null"/> if no such biome exists</returns>
 		public static AltBiome GetAltBiome(int type) => Biomes.GetIfInRange(type);
 		public static int AltBiomeType<T>() where T : AltBiome => ModContent.GetInstance<T>()?.Type ?? 0;
 		public static IReadOnlyList<AltOre> GetAltOres() => Ores;
+		/// <returns>The ore with the provided type, or <see langword="null"/> if no such biome exists</returns>
 		public static AltOre GetAltOre(int type) => Ores.GetIfInRange(type);
 		public static int AltAltOre<T>() where T : AltOre => ModContent.GetInstance<T>()?.Type ?? 0;
 		

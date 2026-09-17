@@ -693,6 +693,7 @@ namespace AltLibrary.Common.AltBiomes {
 			WallLoader.RegisterConversionFallback(Wall, ParentWall, ConversionType);
 			if (WallSets.OwnedByBiomeID[Wall] == -1) WallSets.OwnedByBiomeID[Wall] = Type;
 		}
+		public virtual bool PreSpread(int i, int j) => true;
 		public virtual bool PreConvertMultitileAway(int i, int j, int width, int height, ref int newTile, AltBiome targetBiome) {
 			return true;
 		}

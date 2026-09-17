@@ -13,18 +13,38 @@ using Terraria.ModLoader;
 namespace AltLibrary.Core {
 	internal class Spreading : GlobalTile {
 		public override void Load() {
-			On_WorldGen.hardUpdateWorld += _On_WorldGen_hardUpdateWorld;
+			IL_WorldGen.hardUpdateWorld += _IL_WorldGen_hardUpdateWorld;
 		}
-		static void _On_WorldGen_hardUpdateWorld(On_WorldGen.orig_hardUpdateWorld orig, int i, int j) {
-			orig(i, j);
+
+		static void _IL_WorldGen_hardUpdateWorld(ILContext il) {
+			ILCursor c = new(il);
+			c.GotoNext(MoveType.After, i => i.MatchLdsfld(typeof(TileID.Sets), nameof(TileID.Sets.CanGrowCrystalShards)));
+			ILLabel skipCrystalGrowing = default;
+			c.GotoNext(MoveType.After,
+				i => i.MatchLdelemU1(),
+				i => i.MatchBrfalse(out skipCrystalGrowing)
+			);
+			c.GotoLabel(skipCrystalGrowing, MoveType.AfterLabel);
+			c.EmitLdarg0();
+			c.EmitLdarg1();
+			c.EmitDelegate(DoSpreading);
+			ILLabel cont = il.DefineLabel();
+			c.EmitBrtrue(cont);
+			c.EmitRet();
+			c.MarkLabel(cont);
+		}
+
+		static bool DoSpreading(int i, int j) {
 			Tile tile = Main.tile[i, j];
-			if (!Main.hardMode || tile.IsActuated) return;
 			AltBiome biome = AltLibrary.GetAltBiome(TileSets.OwnedByBiomeID[tile.TileType]);
-			if (biome is null or VanillaBiome || !biome.SpreadingTiles.Contains(tile.TileType)) return;
-			SpreadInfection(i, j, biome);
+			if (biome is null) return true;
+			if (!GlobalBiomeHooks.PreSpread(biome, i, j) || !biome.PreSpread(i, j)) return false;
+			GlobalBiomeHooks.OnSpread(biome, i, j);
+			if (biome is not null and not VanillaBiome && biome.SpreadingTiles.Contains(tile.TileType)) SpreadInfection(i, j, biome);
+			return true;
 		}
 		public override void RandomUpdate(int i, int j, int type) {
-			if (Main.tile[i, j].IsActuated) {
+			if (!Main.tile[i, j].HasUnactuatedTile) {
 				return;
 			}
 			bool isOreGrowingTile = false;

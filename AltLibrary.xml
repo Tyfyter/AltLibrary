@@ -4,6 +4,12 @@
         <name>AltLibrary</name>
     </assembly>
     <members>
+        <member name="M:AltLibrary.AltLibrary.GetAltBiome(System.Int32)">
+            <returns>The biome with the provided type, or <see langword="null"/> if no such biome exists</returns>
+        </member>
+        <member name="M:AltLibrary.AltLibrary.GetAltOre(System.Int32)">
+            <returns>The ore with the provided type, or <see langword="null"/> if no such biome exists</returns>
+        </member>
         <member name="F:AltLibrary.Common.AltBiomeID.Search">
             <inheritdoc cref="T:ReLogic.Reflection.IdDictionary"/>
         </member>
@@ -559,9 +565,6 @@
             Handles <see cref="M:AltLibrary.Common.AltBiomes.FishingLootPool`1.IsActive(Terraria.Player,Terraria.DataStructures.FishingAttempt)"/> for the provided alt biome, otherwise the same as <see cref="T:PegasusLib.FishingLootPool"/>
             </summary>
         </member>
-        <member name="T:AltLibrary.Common.AltBiomes.GlobalBiome">
-            TODO: use <see cref="T:Terraria.ModLoader.Core.GlobalHookList`1"/>
-        </member>
         <member name="M:AltLibrary.Common.AltBiomes.GlobalBiome.PreConvertTile(AltLibrary.Common.AltBiomes.AltBiome,AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
             <summary>
             Called before a tile is converted to a different biome
@@ -586,6 +589,19 @@
             Called after a tile is converted
             </summary>
         </member>
+        <member name="M:AltLibrary.Common.AltBiomes.GlobalBiome.PreSpread(AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
+            <summary>
+            Called before a tile attempts to spread to nearby blocks
+            Return false to prevent spreading
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AltLibrary.Common.AltBiomes.GlobalBiome.OnSpread(AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
+            <summary>
+            Called just before a tile spreads to nearby blocks
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:AltLibrary.Common.AltBiomes.GlobalBiomeHooks.PreConvertTile(AltLibrary.Common.AltBiomes.AltBiome,AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
             <summary>
             Called before a tile is converted to a different biome
@@ -596,6 +612,17 @@
         <member name="M:AltLibrary.Common.AltBiomes.GlobalBiomeHooks.PostConvertTile(AltLibrary.Common.AltBiomes.AltBiome,AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
             <summary>
             Called after a tile is converted
+            </summary>
+        </member>
+        <member name="M:AltLibrary.Common.AltBiomes.GlobalBiomeHooks.PreSpread(AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
+            <summary>
+            Called before a tile attempts to spread to nearby blocks
+            Return false to prevent spreading
+            </summary>
+        </member>
+        <member name="M:AltLibrary.Common.AltBiomes.GlobalBiomeHooks.OnSpread(AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
+            <summary>
+            Called just before a tile spreads to nearby blocks
             </summary>
         </member>
         <member name="M:AltLibrary.Common.AltBiomes.GlobalBiomeHooks.PreConvertWall(AltLibrary.Common.AltBiomes.AltBiome,AltLibrary.Common.AltBiomes.AltBiome,System.Int32,System.Int32)">
